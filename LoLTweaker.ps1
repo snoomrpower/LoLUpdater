@@ -9,9 +9,11 @@ Remove-Item NTFSSecurity.zip
 Remove-Item NDP451-KB2858728-x86-x64-AllOS-ENU.exe
 Remove-Item *.msu
 Write-Host "Downloading files..."
+Start-BitsTransfer https://www.bugsplatsoftware.com/files/BugSplatNative.zip
 Start-BitsTransfer http://gallery.technet.microsoft.com/scriptcenter/1abd77a5-9c0b-4a2b-acef-90dbb2b84e85/file/107400/1/NTFSSecurity.zip
-new-item .\NTFSSecurity -itemtype directory
+new-item NTFSSecurity -itemtype directory
 Start-Process 7z.exe "x NTFSSecurity.zip -oNTFSSecurity -y"
+Start-Process 7z.exe "x BugSplatNative.zip -oBugSplatNative -y"
 Copy-Item .\NTFSSecurity\ C:\Users\$env:UserName\Documents\WindowsPowershell\Modules -recurse
 }
 if ((Test-Path $net) -eq "4.5.51078")
@@ -43,6 +45,9 @@ ls *.msu | %{start -wait $_ -argumentlist ' /quiet /forcerestart'}
 
 
 if($PSVersionTable.PSVersion.Major -eq 4 ) {
+Write-Host "Closing League of Legends..."
+Stop-Process -ProcessName LoLLauncher
+Stop-Process -ProcessName LoLClient
 Write-Host "Patching LoL"
 Pop-Location
 Push-Location
@@ -55,12 +60,9 @@ Pop-Location
 Push-Location RADS\projects\lol_air_client\releases
 $air = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
 cd $dir
-Write-Host "Closing League of Legends..."
-Stop-Process -ProcessName LoLLauncher
-Stop-Process -ProcessName LoLClient
-Write-Host "Patching..."
-Copy-Item .\BsSndRpt.exe .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\BugSplat.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+
+Copy-Item .\BugSplatNative\bin\BsSndRpt.exe .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\BugSplatNative\bin\BugSplat.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
 Copy-Item .\dbghelp.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
 Copy-Item .\cg.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
 Copy-Item .\cgD3D9.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
@@ -73,7 +75,6 @@ Import-Module NTFSSecurity
 Import-Module ActiveDirectory
 Update-Help
 
-$file = $Env:ProgramFiles
 $acl = get-acl c:\
 $accessRule = new-object System.Security.AccessControl.FileSystemAccessRule $env:UserName,”FullControl”,”ContainerInherit,ObjectInherit”,”None”,”Allow”
 $acl.AddAccessRule($accessRule)
@@ -83,10 +84,10 @@ $acl.psbase.SetOwner($principal)
 function Set-Owner {
  param(
   [System.Security.Principal.IdentityReference]$Principal=$(throw "Mandatory parameter -Principal missing."),
-  $File=$(throw "Mandatory parameter -File missing.")
+  $Env:ProgramFiles=$(throw "Mandatory parameter -File missing.")
  )
- if(-not (Test-Path $file)){
-  throw "File $file is missing."
+ if(-not (Test-Path $Env:ProgramFiles)){
+  throw "File $Env:ProgramFiles is missing."
  }
  if($Principal -eq $null){
   throw "Principal is NULL"
@@ -233,14 +234,15 @@ namespace CosmosKey.Utils
  if($type -eq $null){
   add-type $code
  }
- $acl = Get-Acl $File
+ $acl = Get-Acl $Env:ProgramFiles
  $acl.psbase.SetOwner($principal)
  $acl.AddAccessRule($accessRule)
  [void][CosmosKey.Utils.TokenManipulator]::AddPrivilege([CosmosKey.Utils.TokenManipulator]::SE_RESTORE_NAME)
- set-acl -Path $File -AclObject $acl -passthru
+ set-acl -Path $Env:ProgramFiles -AclObject $acl -passthru
  [void][CosmosKey.Utils.TokenManipulator]::RemovePrivilege([CosmosKey.Utils.TokenManipulator]::SE_RESTORE_NAME)
 }
-
+Write-Host "Removing Read-Only Attributes..."
+Get-ChildItem c:\ -Recurse | foreach {$_.Attributes = 'Normal'}
 Write-Host "Setting Windows Permissions..."
 set-owner $(new-object security.principal.ntaccount "$env:computername\$env:UserName") C:\
 Write-Host "Unblocking Windows files..."
@@ -302,6 +304,8 @@ Start-Process $PMB\uninst.exe
 Remove-Item .\NTFSSecurity.zip
 Remove-Item .\NDP451-KB2858728-x86-x64-AllOS-ENU.exe
 Remove-Item .\*.msu
+Remove-Item .\BugSplatNative
+Remove-Item .\BugSplatNative.zip
 Write-Host "Starting The LoL-Launcher"
 Start-Process .\lol.launcher.exe}
 Else
