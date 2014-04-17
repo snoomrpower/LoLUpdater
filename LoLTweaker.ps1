@@ -66,7 +66,6 @@ Function Log-Error{
     
     If ($ExitGracefully -eq $True){
       Log-Finish -LogPath $LogPath
-      Break
     }
   }
 }
@@ -290,7 +289,6 @@ Function Get-WUInstall
 					$objSearcher.ServerSelection = 3
 					$objSearcher.ServiceID = $objService.ServiceID
 					$serviceName = $objService.Name
-					Break
 				}
 			}
 			
@@ -311,7 +309,6 @@ Function Get-WUInstall
 						$objSearcher.ServiceID = $ServiceID
 						$objSearcher.ServerSelection = 3
 						$serviceName = $objService.Name
-						Break
 					} 
 				} 
 				Else
@@ -319,7 +316,6 @@ Function Get-WUInstall
 					If($objService.IsDefaultAUService -eq $True)
 					{
 						$serviceName = $objService.Name
-						Break
 					} 
 				} 
 			} 
@@ -464,7 +460,6 @@ Function Get-WUInstall
 					Else
 					{
 						$UpdateAccess = $true
-						Break
 					} 
 				} 
 			}
@@ -479,7 +474,6 @@ Function Get-WUInstall
 					{
 						Write-Debug "UpdateAccess: false"
 						$UpdateAccess = $false
-						Break
 					} 
 				} 
 			} 		
@@ -548,10 +542,10 @@ Function Get-WUInstall
 				Write-Debug "Convert size"
 				Switch($Update.MaxDownloadSize)
 				{
-					{[System.Math]::Round($_/1KB,0) -lt 1024} { $size = [String]([System.Math]::Round($_/1KB,0))+" KB"; break }
-					{[System.Math]::Round($_/1MB,0) -lt 1024} { $size = [String]([System.Math]::Round($_/1MB,0))+" MB"; break }  
-					{[System.Math]::Round($_/1GB,0) -lt 1024} { $size = [String]([System.Math]::Round($_/1GB,0))+" GB"; break }    
-					{[System.Math]::Round($_/1TB,0) -lt 1024} { $size = [String]([System.Math]::Round($_/1TB,0))+" TB"; break }
+					{[System.Math]::Round($_/1KB,0) -lt 1024} { $size = [String]([System.Math]::Round($_/1KB,0))+" KB"}
+					{[System.Math]::Round($_/1MB,0) -lt 1024} { $size = [String]([System.Math]::Round($_/1MB,0))+" MB"}  
+					{[System.Math]::Round($_/1GB,0) -lt 1024} { $size = [String]([System.Math]::Round($_/1GB,0))+" GB"}    
+					{[System.Math]::Round($_/1TB,0) -lt 1024} { $size = [String]([System.Math]::Round($_/1TB,0))+" TB"}
 					default { $size = $_+"B" }
 				} 
 			
@@ -989,12 +983,9 @@ Set-Service -Name WMPNetworkSvc -StartupType Disabled | out-null
 Set-Service -Name WSearch -StartupType Disabled | out-null
 cls
 
-
 Write-Host "Configuring Windows Features..."
 Dism /online /Disable-Feature /FeatureName:WindowsGadgetPlatform /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:InboxGames /norestart | out-null
-
-
 Dism /online /Disable-Feature /FeatureName:MediaPlayback /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:TabletPCOC /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:Xps-Foundation-Xps-Viewer /norestart | out-null
@@ -1016,7 +1007,6 @@ Else
     Catch{
 $sError = $Error[0] | Out-String
  Log-Error -LogPath $sLogFile -ErrorDesc $sError -ExitGracefully $True
-      Break
     }
   
   
