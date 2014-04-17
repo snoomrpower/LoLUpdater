@@ -1,0 +1,14 @@
+*.zip
+NTFSSecurity/PrivilegeControl.dll
+NTFSSecurity/NTFSSecurity.types.ps1xml
+NTFSSecurity/ProcessPrivileges.dll
+NTFSSecurity/ProcessPrivileges.pdb
+NTFSSecurity/PrivilegeControl.pdb
+NTFSSecurity/NTFSSecurity.psd1
+NTFSSecurity/NTFSSecurity.pdb
+NTFSSecurity/Security2.dll
+NTFSSecurity/NTFSSecurity.dll
+NTFSSecurity/NTFSSecurity.Init.ps1
+NTFSSecurity/NTFSSecurity.format.ps1xml
+NTFSSecurity/NTFSSecurity-Help.xml
+NTFSSecurity/Security2.pdb

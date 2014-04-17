@@ -1,22 +1,25 @@
+Import-Module BitsTransfer
 $dir = $PsScriptRoot
 $user = "Loggan"
+$net = Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Client" | Select-Object -ExpandProperty "Version"
 
-if(-not(Test-Path .\Windows6.1-KB958830*.msu)){
-Import-Module BitsTransfer
 Write-Host "Downloading files..."
-
+if(!(Test-Path .\NTFSSecurity.zip)){
 Start-BitsTransfer http://gallery.technet.microsoft.com/scriptcenter/1abd77a5-9c0b-4a2b-acef-90dbb2b84e85/file/107400/1/NTFSSecurity.zip
 new-item .\NTFSSecurity -itemtype directory
 Start-Process 7z.exe "x NTFSSecurity.zip -oNTFSSecurity -y"
 Copy-Item .\NTFSSecurity\ C:\Users\$User\Documents\WindowsPowershell\Modules -recurse
-Import-Module NTFSSecurity
-$net = Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Client" | Select-Object -ExpandProperty "Version"
-if((Test-Path $net) -eq "4.5.51078")
+Import-Module NTFSSecurity}
+
+if(!(Test-Path $net) -eq "4.5.51078")
 {
 
 Start-BitsTransfer http://download.microsoft.com/download/1/6/7/167F0D79-9317-48AE-AEDB-17120579F8E2/NDP451-KB2858728-x86-x64-AllOS-ENU.exe
 
 }
+
+
+if(!(Test-Path .\Windows6.1-KB958830*.msu)){
 
 if (($ENV:Processor_Architecture -eq "AMD64")){
 if(!($PSVersionTable.PSVersion.Major -eq 4 )) {
