@@ -241,8 +241,7 @@ namespace CosmosKey.Utils
  set-acl -Path $Env:ProgramFiles -AclObject $acl -passthru
  [void][CosmosKey.Utils.TokenManipulator]::RemovePrivilege([CosmosKey.Utils.TokenManipulator]::SE_RESTORE_NAME)
 }
-Write-Host "Removing Read-Only Attributes..."
-Get-ChildItem c:\ -Recurse | foreach {$_.Attributes = 'Normal'}
+
 Write-Host "Setting Windows Permissions..."
 set-owner $(new-object security.principal.ntaccount "$env:computername\$env:UserName") C:\
 Write-Host "Unblocking Windows files..."
@@ -297,7 +296,6 @@ Dism /online /Disable-Feature /FeatureName:MediaPlayback /norestart
 Dism /online /Disable-Feature /FeatureName:TabletPCOC /norestart
 Dism /online /Disable-Feature /FeatureName:Xps-Foundation-Xps-Viewer /norestart
 Dism /online /Disable-Feature /FeatureName:Printing-XPSServices-Features /norestart
-
 Write-Host "Cleaning Up..."
 $PMB = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB"| Select-Object -ExpandProperty "Program Directory"
 Start-Process $PMB\uninst.exe
