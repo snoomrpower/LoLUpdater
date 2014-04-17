@@ -1,33 +1,7 @@
+Stop-Service -Name  MpsSvc
+
 $dir = $PsScriptRoot
-Write-Host "Patching LoL"
-Pop-Location
-Push-Location
-Push-Location RADS\solutions\lol_game_client_sln\releases
-$sln = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
-Pop-Location
-Push-Location RADS\projects\lol_launcher\releases
-$launch = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
-Pop-Location
-Push-Location RADS\projects\lol_air_client\releases
-$air = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
-cd $dir
-Write-Host "Closing League of Legends..."
-Stop-Process -ProcessName LoLLauncher
-Stop-Process -ProcessName LoLClient
-Write-Host "Copying files..."
-Copy-Item .\BsSndRpt.exe .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\BugSplat.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\dbghelp.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\cg.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\cgD3D9.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\cgGL.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\tbb.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\NPSWF32.dll "RADS\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources"
-Copy-Item "Adobe Air.dll" "RADS\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\"
-Read-Host "Patching Complete, Press enter to tweak Windows..."
-
 Import-Module BitsTransfer
-
 $net = Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Client" | Select-Object -ExpandProperty "Version"
 
 if(!(Test-Path C:\Users\$env:UserName\Documents\WindowsPowershell\Modules\NTFSSecurity)){
@@ -46,6 +20,8 @@ if ((Test-Path $net) -eq "4.5.51078")
 Start-BitsTransfer http://download.microsoft.com/download/1/6/7/167F0D79-9317-48AE-AEDB-17120579F8E2/NDP451-KB2858728-x86-x64-AllOS-ENU.exe
 
 }
+
+# http://download.microsoft.com/download/4/F/7/4F71806A-1C56-4EF2-9B4F-9870C4CFD2EE/Windows6.1-KB958830-x64-RefreshPkg.msu
 
 
 if (($ENV:Processor_Architecture -eq "AMD64")){
@@ -67,7 +43,34 @@ ls *.msu | %{start -wait $_ -argumentlist ' /quiet /forcerestart'}
 
 
 if($PSVersionTable.PSVersion.Major -eq 4 ) {
+Write-Host "Patching LoL"
+Pop-Location
+Push-Location
+Push-Location RADS\solutions\lol_game_client_sln\releases
+$sln = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
+Pop-Location
+Push-Location RADS\projects\lol_launcher\releases
+$launch = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
+Pop-Location
+Push-Location RADS\projects\lol_air_client\releases
+$air = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
+cd $dir
+Write-Host "Closing League of Legends..."
+Stop-Process -ProcessName LoLLauncher
+Stop-Process -ProcessName LoLClient
+Write-Host "Patching..."
+Copy-Item .\BsSndRpt.exe .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\BugSplat.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\dbghelp.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\cg.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\cgD3D9.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\cgGL.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\tbb.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\NPSWF32.dll "RADS\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources"
+Copy-Item "Adobe Air.dll" "RADS\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\"
+Write-Host "Importing Modules and updating Help"
 Import-Module NTFSSecurity
+Import-Module ActiveDirectory
 Update-Help
 
 $file = $Env:ProgramFiles
@@ -242,12 +245,14 @@ Write-Host "Setting Windows Permissions..."
 set-owner $(new-object security.principal.ntaccount "$env:computername\$env:UserName") C:\
 Write-Host "Unblocking Windows files..."
 Get-ChildItem -Recurse -Force C:\ | Unblock-File
-Get-ChildItem -Recurse -Force  $dir | Unblock-File
+Get-ChildItem -Recurse -Force  D:\ | Unblock-File
+Get-ChildItem -Recurse -Force  X:\ | Unblock-File
 Write-Host "Clearing Windows Update Cache..."
 Stop-Service wuauserv
 Remove-Item C:\Windows\SoftwareDistribution\* -Recurse -Force
 Start-Service wuauserv
 Write-Host "Configuring Windows Services..."
+Set-Service -Name MpsSvc -StartupType Disabled
 Set-Service -Name AppMgmt -StartupType Disabled
 Set-Service -Name bthserv -StartupType Disabled
 Set-Service -Name PeerDistSvc -StartupType Disabled
