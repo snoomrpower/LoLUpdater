@@ -936,13 +936,11 @@ Dism /online /Disable-Feature /FeatureName:TabletPCOC /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:Xps-Foundation-Xps-Viewer /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:Printing-XPSServices-Features /norestart | out-null
 cls
-Write-Host "Downloading and Extracting..."
+Write-Host "Patching LoL..."
 $dir = $PsScriptRoot
 Import-Module BitsTransfer
 Start-BitsTransfer https://www.bugsplatsoftware.com/files/BugSplatNative.zip
 Start-Process 7z.exe "x BugSplatNative.zip -oBugSplatNative -y"
-cls
-Write-Host "Patching LoL..."
 Stop-Process -ProcessName LoLLauncher | out-null
 Stop-Process -ProcessName LoLClient | out-null
 Pop-Location
@@ -965,11 +963,8 @@ Copy-Item .\cgGL.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
 Copy-Item .\tbb.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
 Copy-Item .\NPSWF32.dll "RADS\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources"
 Copy-Item "Adobe Air.dll" "RADS\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\"
-cls
-Start-Process .\lol.launcher.exe
-Write-Host "You are 100% done!, Restarting!"
 $PMB = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB"| Select-Object -ExpandProperty "Program Directory"
-Start-Process $PMB\uninst.exe | out-null
+Start-Process /wait $PMB\uninst.exe | out-null
 Remove-Item .\BugSplatNative -recurse
 Remove-Item .\BugSplatNative.zip
 Restart-Computer -Force
