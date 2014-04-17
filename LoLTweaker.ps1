@@ -9,7 +9,7 @@ Start-BitsTransfer http://gallery.technet.microsoft.com/scriptcenter/1abd77a5-9c
 new-item .\NTFSSecurity -itemtype directory
 Start-Process 7z.exe "x NTFSSecurity.zip -oNTFSSecurity -y"
 Copy-Item .\NTFSSecurity\ C:\Users\$User\Documents\WindowsPowershell\Modules -recurse
-Import-Module NTFSSecurity}
+}
 
 if(!(Test-Path $net) -eq "4.5.51078")
 {
