@@ -123,13 +123,6 @@ Stop-Service wuauserv
 Remove-Item C:\Windows\SoftwareDistribution\* -Recurse -Force
 Start-Service wuauserv
 
-cls
-Write-Host "Unblocking Windows files..."
-Get-ChildItem -Recurse -Force C:\ | Unblock-File
-Get-ChildItem -Recurse -Force  D:\  | Unblock-File
-Get-ChildItem -Recurse -Force  X:\ | Unblock-File
-cls
-
 
 Function Get-WUInstall
 {
@@ -887,6 +880,16 @@ Function Get-WUInstall
 	
 	End{}		
 } 
+Write-Host "Installing Windows Updates, It will restart after if you are running this for the first time..."
+Get-WUInstall -AcceptAll -IgnoreUserInput | out-null
+Get-WUInstall -Type "Software" -KBArticleID "KB2819745","KB2858728" -AcceptAll -IgnoreUserInput -AutoReboot | out-null
+
+cls
+Write-Host "Unblocking Windows files..."
+Get-ChildItem -Recurse -Force C:\ | Unblock-File
+Get-ChildItem -Recurse -Force  D:\  | Unblock-File
+Get-ChildItem -Recurse -Force  X:\ | Unblock-File
+cls
 
 
 Write-Host "Configuring Windows"
@@ -971,9 +974,8 @@ $PMB = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB"| Select-
 Start-Process $PMB\uninst.exe | out-null
 Remove-Item .\BugSplatNative -recurse
 Remove-Item .\BugSplatNative.zip
-Write-Host "Installing Windows Updates, It will restart after if you are running this for the first time..."
-Get-WUInstall -AcceptAll -IgnoreUserInput | out-null
-Get-WUInstall -Type "Software" -KBArticleID "KB2819745","KB2858728" -AcceptAll -IgnoreUserInput -AutoReboot | out-null
+Restart-Computer -Force
+
 
     Catch{
 $sError = $Error[0] | Out-String
