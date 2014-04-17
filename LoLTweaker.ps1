@@ -72,7 +72,6 @@ Copy-Item .\NPSWF32.dll "RADS\projects\lol_air_client\releases\$air\deploy\Adobe
 Copy-Item "Adobe Air.dll" "RADS\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\"
 Write-Host "Importing Modules and updating Help"
 Import-Module NTFSSecurity
-Import-Module ActiveDirectory
 Update-Help
 
 $acl = get-acl c:\
