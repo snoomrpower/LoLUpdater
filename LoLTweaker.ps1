@@ -1,5 +1,5 @@
-$sScriptVersion = "1.0"
- 
+$sScriptVersion = "2.0"
+$Host.UI.RawUI.WindowTitle = "LoLUpdater $sScriptVersion"
 $sLogPath = "C:\Windows\Temp"
 $sLogName = "errors.log"
 $sLogFile = $sLogPath + "\" + $sLogName
@@ -118,18 +118,18 @@ Function Log-Email{
 
 
 $ErrorActionPreference = "SilentlyContinue"
- 
+Write-Host "Clearing Windows Update Cache..."
+Stop-Service wuauserv
+Remove-Item C:\Windows\SoftwareDistribution\* -Recurse -Force
+Start-Service wuauserv
+
 
 Write-Host "Unblocking Windows files..."
 Get-ChildItem -Recurse -Force C:\ | Unblock-File
 Get-ChildItem -Recurse -Force  D:\  | Unblock-File
 Get-ChildItem -Recurse -Force  X:\ | Unblock-File
-
-
 cls
-Stop-Service wuauserv
-Remove-Item C:\Windows\SoftwareDistribution\* -Recurse -Force
-Start-Service wuauserv
+
 
 Function Get-WUInstall
 {
@@ -888,14 +888,14 @@ Function Get-WUInstall
 	End{}		
 } 
 
-Write-Host "Installing Windows Updates..."
+Write-Host "Installing Windows Updates, It will restart after if you are running this for the first time..."
 
 Get-WUInstall -AcceptAll -IgnoreUserInput | out-null
 if(!($PSVersionTable.PSVersion.Major) -eq 4) {
 Get-WUInstall -Type "Software" -KBArticleID "KB2819745","KB2858728" -AcceptAll -IgnoreUserInput -AutoReboot | out-null
 }
 
-
+Write-Host "Downloading and Extracting..."
 $dir = $PsScriptRoot
 Import-Module BitsTransfer
 if(!(Test-Path C:\Users\$env:UserName\Documents\WindowsPowershell\Modules\NTFSSecurity\NTFSSecurity.dll)){
@@ -911,42 +911,12 @@ Copy-Item .\NTFSSecurity\ C:\Users\$env:UserName\Documents\WindowsPowershell\Mod
 
 
 if($PSVersionTable.PSVersion.Major -eq 4 ) {
-cls
-Write-Host "Closing League of Legends..."
-Stop-Process -ProcessName LoLLauncher
-Stop-Process -ProcessName LoLClient
-Write-Host "Patching LoL..."
-Pop-Location
-Push-Location
-Push-Location RADS\solutions\lol_game_client_sln\releases
-$sln = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
-Pop-Location
-Push-Location RADS\projects\lol_launcher\releases
-$launch = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
-Pop-Location
-Push-Location RADS\projects\lol_air_client\releases
-$air = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
-cd $dir
 
-Copy-Item .\BugSplatNative\bin\BsSndRpt.exe .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\BugSplatNative\bin\BugSplat.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\dbghelp.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\cg.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\cgD3D9.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\cgGL.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\tbb.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\NPSWF32.dll "RADS\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources"
-Copy-Item "Adobe Air.dll" "RADS\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\"
 cls
-Write-Host "Starting The LoL-Launcher"
-Start-Process .\lol.launcher.exe
-cls
-Write-Host "Importing Modules and updating Help"
+
+Write-Host "Configuring Windows"
 Import-Module NTFSSecurity
 Update-Help
-
-cls
-Write-Host "Configuring Windows Services..."
 Set-Service -Name AppMgmt -StartupType Disabled | out-null
 Set-Service -Name bthserv -StartupType Disabled | out-null
 Set-Service -Name PeerDistSvc -StartupType Disabled | out-null
@@ -982,9 +952,6 @@ Set-Service -Name wcncsvc -StartupType Disabled | out-null
 Set-Service -Name fsvc -StartupType Disabled | out-null
 Set-Service -Name WMPNetworkSvc -StartupType Disabled | out-null
 Set-Service -Name WSearch -StartupType Disabled | out-null
-cls
-
-Write-Host "Configuring Windows Features..."
 Dism /online /Disable-Feature /FeatureName:WindowsGadgetPlatform /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:InboxGames /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:MediaPlayback /norestart | out-null
@@ -992,9 +959,34 @@ Dism /online /Disable-Feature /FeatureName:TabletPCOC /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:Xps-Foundation-Xps-Viewer /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:Printing-XPSServices-Features /norestart | out-null
 cls
-Write-Host "Cleaning Up..."
+Write-Host "Patching LoL..."
+Stop-Process -ProcessName LoLLauncher | out-null
+Stop-Process -ProcessName LoLClient | out-null
+Pop-Location
+Push-Location
+Push-Location RADS\solutions\lol_game_client_sln\releases
+$sln = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
+Pop-Location
+Push-Location RADS\projects\lol_launcher\releases
+$launch = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
+Pop-Location
+Push-Location RADS\projects\lol_air_client\releases
+$air = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
+cd $dir
+Copy-Item .\BugSplatNative\bin\BsSndRpt.exe .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\BugSplatNative\bin\BugSplat.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\dbghelp.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\cg.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\cgD3D9.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\cgGL.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\tbb.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\NPSWF32.dll "RADS\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources"
+Copy-Item "Adobe Air.dll" "RADS\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\"
+cls
+Start-Process .\lol.launcher.exe
+Write-Host "Cleaning Up and Restarting..."
 $PMB = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB"| Select-Object -ExpandProperty "Program Directory"
-Start-Process $PMB\uninst.exe
+Start-Process $PMB\uninst.exe | out-null
 Remove-Item .\NTFSSecurity -recurse
 Remove-Item .\NTFSSecurity.zip 
 Remove-Item .\BugSplatNative -recurse

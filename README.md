@@ -1,10 +1,11 @@
-LoLTweaker
+LoLUpdater
 ==========
-Only for Win7SP1+
+Only for Win7SP1+ (If you have WIN7SP0 you need to Install SP1 first)
 
+SAVE ALL YOUR WORK BEFORE RUNNING THIS PATCH, IT FORCE RESTARTS THE COMPUTER 2 TIMES
 
-SAVE ALL YOUR WORK BEFORE RUNNING THIS PATCH, IT FORCE RESTARTS THE COMPUTER
-
+Go to C:\Riot Games\League of Legends\RADS\projects\lol_air_client\releases
+Delete all folders except the newest one
 
 Right Click the zip file -> Properties -> Unblock
 
