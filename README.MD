@@ -11,3 +11,4 @@ cd "C:\Riot Games\League of Legends"
 Set-ExecutionPolicy Unrestricted
 .\LoLTweaker.ps1
 
+After the first restart you should follow the image and run the script again.

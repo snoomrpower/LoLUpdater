@@ -33,7 +33,17 @@ ls *.msu | %{start -wait $_ -argumentlist '/quiet /norestart'}
 Restart-Computer
 }
 
+try { Import-Module ActiveDirectory }
+catch { "Error occured" }
+if (error) {
+Read-Host "You didn't follow the image or didnt install the updates"
+exit
+}
+Else
+{
+
 if($PSVersionTable.PSVersion.Major -eq 4 ) {
+Import-Module NTFSSecurity
 Update-Help
 Write-Host "Finding Latest LoL Update"
 
@@ -279,11 +289,13 @@ Write-Host "Cleaning Up..."
 $PMB = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB"| Select-Object -ExpandProperty "Program Directory"
 Start-Process $PMB\uninst.exe
 Remove-Item .\NTFSSecurity.zip
+Remove-Item .\NDP451-KB2858728-x86-x64-AllOS-ENU.exe
+Remove-Item .\*.msu
 Write-Host "Starting The LoL-Launcher"
 Start-Process .\lol.launcher.exe}
 Else
 {Exit}
 
-Import-Module ActiveDirectory
+}
 
 
