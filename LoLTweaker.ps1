@@ -2,7 +2,9 @@ Import-Module BitsTransfer
 $dir = $PsScriptRoot
 $user = "Loggan"
 $net = Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Client" | Select-Object -ExpandProperty "Version"
-
+Remove-Item NTFSSecurity.zip
+Remove-Item NDP451-KB2858728-x86-x64-AllOS-ENU.exe
+Remove-Item *.msu
 Write-Host "Downloading files..."
 if(!(Test-Path .\NTFSSecurity.zip)){
 Start-BitsTransfer http://gallery.technet.microsoft.com/scriptcenter/1abd77a5-9c0b-4a2b-acef-90dbb2b84e85/file/107400/1/NTFSSecurity.zip
