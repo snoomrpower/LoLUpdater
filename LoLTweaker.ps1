@@ -301,7 +301,7 @@ Start-Process $PMB\uninst.exe
 Remove-Item .\NTFSSecurity.zip
 Remove-Item .\NDP451-KB2858728-x86-x64-AllOS-ENU.exe
 Remove-Item .\*.msu
-Remove-Item .\BugSplatNative
+Remove-Item .\BugSplatNative -recurse
 Remove-Item .\BugSplatNative.zip
 Write-Host "Starting The LoL-Launcher"
 Start-Process .\lol.launcher.exe}
