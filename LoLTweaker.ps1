@@ -1,172 +1,125 @@
-$acl = get-acl c:\
-$accessRule = new-object System.Security.AccessControl.FileSystemAccessRule $env:UserName,”FullControl”,”ContainerInherit,ObjectInherit”,”None”,”Allow”
-$acl.AddAccessRule($accessRule)
-$principal = New-Object Security.Principal.NTAccount "$env:computername\$env:UserName"
-$acl.psbase.SetOwner($principal)
+$sScriptVersion = "1.0"
+ 
+$sLogPath = "C:\Windows\Temp"
+$sLogName = "errors.log"
+$sLogFile = $sLogPath + "\" + $sLogName
 
-function Set-Owner {
- param(
-  [System.Security.Principal.IdentityReference]$Principal=$(throw "Mandatory parameter -Principal missing."),
-  $Env:ProgramFiles=$(throw "Mandatory parameter -File missing.")
- )
- if(-not (Test-Path $Env:ProgramFiles)){
-  throw "File $Env:ProgramFiles is missing."
- }
- if($Principal -eq $null){
-  throw "Principal is NULL"
- }
-
-
- $code = @"
-using System;
-using System.Runtime.InteropServices;
-
-
-namespace CosmosKey.Utils
-{
- public class TokenManipulator
- {
-
-
-  [DllImport("advapi32.dll", ExactSpelling = true, SetLastError = true)]
-  internal static extern bool AdjustTokenPrivileges(IntPtr htok, bool disall,
-  ref TokPriv1Luid newst, int len, IntPtr prev, IntPtr relen);
-
-
-  [DllImport("kernel32.dll", ExactSpelling = true)]
-  internal static extern IntPtr GetCurrentProcess();
-
-
-  [DllImport("advapi32.dll", ExactSpelling = true, SetLastError = true)]
-  internal static extern bool OpenProcessToken(IntPtr h, int acc, ref IntPtr
-  phtok);
-
-
-  [DllImport("advapi32.dll", SetLastError = true)]
-  internal static extern bool LookupPrivilegeValue(string host, string name,
-  ref long pluid);
-
-
-  [StructLayout(LayoutKind.Sequential, Pack = 1)]
-  internal struct TokPriv1Luid
-  {
-   public int Count;
-   public long Luid;
-   public int Attr;
+Function Log-Start{
+    
+  [CmdletBinding()]
+  
+  Param ([Parameter(Mandatory=$true)][string]$LogPath, [Parameter(Mandatory=$true)][string]$LogName, [Parameter(Mandatory=$true)][string]$ScriptVersion)
+  
+  Process{
+    $sFullPath = $LogPath + "\" + $LogName
+    
+    If((Test-Path -Path $sFullPath)){
+      Remove-Item -Path $sFullPath -Force
+    }
+    
+    New-Item -Path $LogPath -Value $LogName –ItemType File
+    
+    Add-Content -Path $sFullPath -Value "***************************************************************************************************"
+    Add-Content -Path $sFullPath -Value "Started processing at [$([DateTime]::Now)]."
+    Add-Content -Path $sFullPath -Value "***************************************************************************************************"
+    Add-Content -Path $sFullPath -Value ""
+    Add-Content -Path $sFullPath -Value "Running script version [$ScriptVersion]."
+    Add-Content -Path $sFullPath -Value ""
+    Add-Content -Path $sFullPath -Value "***************************************************************************************************"
+    Add-Content -Path $sFullPath -Value ""
+  
+    Write-Debug "***************************************************************************************************"
+    Write-Debug "Started processing at [$([DateTime]::Now)]."
+    Write-Debug "***************************************************************************************************"
+    Write-Debug ""
+    Write-Debug "Running script version [$ScriptVersion]."
+    Write-Debug ""
+    Write-Debug "***************************************************************************************************"
+    Write-Debug ""
   }
-
-
-  internal const int SE_PRIVILEGE_DISABLED = 0x00000000;
-  internal const int SE_PRIVILEGE_ENABLED = 0x00000002;
-  internal const int TOKEN_QUERY = 0x00000008;
-  internal const int TOKEN_ADJUST_PRIVILEGES = 0x00000020;
-
-
-  public const string SE_ASSIGNPRIMARYTOKEN_NAME = "SeAssignPrimaryTokenPrivilege";
-  public const string SE_AUDIT_NAME = "SeAuditPrivilege";
-  public const string SE_BACKUP_NAME = "SeBackupPrivilege";
-  public const string SE_CHANGE_NOTIFY_NAME = "SeChangeNotifyPrivilege";
-  public const string SE_CREATE_GLOBAL_NAME = "SeCreateGlobalPrivilege";
-  public const string SE_CREATE_PAGEFILE_NAME = "SeCreatePagefilePrivilege";
-  public const string SE_CREATE_PERMANENT_NAME = "SeCreatePermanentPrivilege";
-  public const string SE_CREATE_SYMBOLIC_LINK_NAME = "SeCreateSymbolicLinkPrivilege";
-  public const string SE_CREATE_TOKEN_NAME = "SeCreateTokenPrivilege";
-  public const string SE_DEBUG_NAME = "SeDebugPrivilege";
-  public const string SE_ENABLE_DELEGATION_NAME = "SeEnableDelegationPrivilege";
-  public const string SE_IMPERSONATE_NAME = "SeImpersonatePrivilege";
-  public const string SE_INC_BASE_PRIORITY_NAME = "SeIncreaseBasePriorityPrivilege";
-  public const string SE_INCREASE_QUOTA_NAME = "SeIncreaseQuotaPrivilege";
-  public const string SE_INC_WORKING_SET_NAME = "SeIncreaseWorkingSetPrivilege";
-  public const string SE_LOAD_DRIVER_NAME = "SeLoadDriverPrivilege";
-  public const string SE_LOCK_MEMORY_NAME = "SeLockMemoryPrivilege";
-  public const string SE_MACHINE_ACCOUNT_NAME = "SeMachineAccountPrivilege";
-  public const string SE_MANAGE_VOLUME_NAME = "SeManageVolumePrivilege";
-  public const string SE_PROF_SINGLE_PROCESS_NAME = "SeProfileSingleProcessPrivilege";
-  public const string SE_RELABEL_NAME = "SeRelabelPrivilege";
-  public const string SE_REMOTE_SHUTDOWN_NAME = "SeRemoteShutdownPrivilege";
-  public const string SE_RESTORE_NAME = "SeRestorePrivilege";
-  public const string SE_SECURITY_NAME = "SeSecurityPrivilege";
-  public const string SE_SHUTDOWN_NAME = "SeShutdownPrivilege";
-  public const string SE_SYNC_AGENT_NAME = "SeSyncAgentPrivilege";
-  public const string SE_SYSTEM_ENVIRONMENT_NAME = "SeSystemEnvironmentPrivilege";
-  public const string SE_SYSTEM_PROFILE_NAME = "SeSystemProfilePrivilege";
-  public const string SE_SYSTEMTIME_NAME = "SeSystemtimePrivilege";
-  public const string SE_TAKE_OWNERSHIP_NAME = "SeTakeOwnershipPrivilege";
-  public const string SE_TCB_NAME = "SeTcbPrivilege";
-  public const string SE_TIME_ZONE_NAME = "SeTimeZonePrivilege";
-  public const string SE_TRUSTED_CREDMAN_ACCESS_NAME = "SeTrustedCredManAccessPrivilege";
-  public const string SE_UNDOCK_NAME = "SeUndockPrivilege";
-  public const string SE_UNSOLICITED_INPUT_NAME = "SeUnsolicitedInputPrivilege";        
-
-
-  public static bool AddPrivilege(string privilege)
-  {
-   try
-   {
-    bool retVal;
-    TokPriv1Luid tp;
-    IntPtr hproc = GetCurrentProcess();
-    IntPtr htok = IntPtr.Zero;
-    retVal = OpenProcessToken(hproc, TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, ref htok);
-    tp.Count = 1;
-    tp.Luid = 0;
-    tp.Attr = SE_PRIVILEGE_ENABLED;
-    retVal = LookupPrivilegeValue(null, privilege, ref tp.Luid);
-    retVal = AdjustTokenPrivileges(htok, false, ref tp, 0, IntPtr.Zero, IntPtr.Zero);
-    return retVal;
-   }
-   catch (Exception ex)
-   {
-    throw ex;
-   }
-
-
-  }
-  public static bool RemovePrivilege(string privilege)
-  {
-   try
-   {
-    bool retVal;
-    TokPriv1Luid tp;
-    IntPtr hproc = GetCurrentProcess();
-    IntPtr htok = IntPtr.Zero;
-    retVal = OpenProcessToken(hproc, TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, ref htok);
-    tp.Count = 1;
-    tp.Luid = 0;
-    tp.Attr = SE_PRIVILEGE_DISABLED;
-    retVal = LookupPrivilegeValue(null, privilege, ref tp.Luid);
-    retVal = AdjustTokenPrivileges(htok, false, ref tp, 0, IntPtr.Zero, IntPtr.Zero);
-    return retVal;
-   }
-   catch (Exception ex)
-   {
-    throw ex;
-   }
-
-
-  }
- }
 }
-"@
-
-
- $errPref = $ErrorActionPreference
- $ErrorActionPreference= "silentlycontinue"
- $type = [CosmosKey.Utils.TokenManipulator]
- $ErrorActionPreference = $errPref
- if($type -eq $null){
-  add-type $code
- }
- $acl = Get-Acl $Env:ProgramFiles
- $acl.psbase.SetOwner($principal)
- $acl.AddAccessRule($accessRule)
- [void][CosmosKey.Utils.TokenManipulator]::AddPrivilege([CosmosKey.Utils.TokenManipulator]::SE_RESTORE_NAME)
- set-acl -Path $Env:ProgramFiles -AclObject $acl -passthru
- [void][CosmosKey.Utils.TokenManipulator]::RemovePrivilege([CosmosKey.Utils.TokenManipulator]::SE_RESTORE_NAME)
+ 
+Function Log-Write{
+ 
+  
+  [CmdletBinding()]
+  
+  Param ([Parameter(Mandatory=$true)][string]$LogPath, [Parameter(Mandatory=$true)][string]$LineValue)
+  
+  Process{
+    Add-Content -Path $LogPath -Value $LineValue
+  
+    Write-Debug $LineValue
+  }
 }
-cls
-Write-Host "Setting Windows Permissions..."
-set-owner $(new-object security.principal.ntaccount "$env:computername\$env:UserName") C:\
+ 
+Function Log-Error{
+  
+  [CmdletBinding()]
+  
+  Param ([Parameter(Mandatory=$true)][string]$LogPath, [Parameter(Mandatory=$true)][string]$ErrorDesc, [Parameter(Mandatory=$true)][boolean]$ExitGracefully)
+  
+  Process{
+    Add-Content -Path $LogPath -Value "Error: An error has occurred [$ErrorDesc]."
+  
+    Write-Debug "Error: An error has occurred [$ErrorDesc]."
+    
+    If ($ExitGracefully -eq $True){
+      Log-Finish -LogPath $LogPath
+      Break
+    }
+  }
+}
+ 
+Function Log-Finish{
+  
+  [CmdletBinding()]
+  
+  Param ([Parameter(Mandatory=$true)][string]$LogPath, [Parameter(Mandatory=$false)][string]$NoExit)
+  
+  Process{
+    Add-Content -Path $LogPath -Value ""
+    Add-Content -Path $LogPath -Value "***************************************************************************************************"
+    Add-Content -Path $LogPath -Value "Finished processing at [$([DateTime]::Now)]."
+    Add-Content -Path $LogPath -Value "***************************************************************************************************"
+  
+    Write-Debug ""
+    Write-Debug "***************************************************************************************************"
+    Write-Debug "Finished processing at [$([DateTime]::Now)]."
+    Write-Debug "***************************************************************************************************"
+  
+    If(!($NoExit) -or ($NoExit -eq $False)){
+      Exit
+    }    
+  }
+}
+ 
+Function Log-Email{
+  
+  [CmdletBinding()]
+  
+  Param ([Parameter(Mandatory=$true)][string]$LogPath, [Parameter(Mandatory=$true)][string]$EmailFrom, [Parameter(Mandatory=$true)][string]$EmailTo, [Parameter(Mandatory=$true)][string]$EmailSubject)
+  
+  Process{
+    Try{
+      $sBody = (Get-Content $LogPath | out-string)
+      
+      $sSmtpServer = "smtp.yourserver"
+      $oSmtp = new-object Net.Mail.SmtpClient($sSmtpServer)
+      $oSmtp.Send($EmailFrom, $EmailTo, $EmailSubject, $sBody)
+      Exit 0
+    }
+    
+    Catch{
+      Exit 1
+    } 
+  }
+}
+
+
+
+$ErrorActionPreference = "SilentlyContinue"
+ 
 cls
 Write-Host "Unblocking Windows files..."
 function unblock {
@@ -176,7 +129,6 @@ Get-ChildItem -Recurse -Force  X:\ | Unblock-File
 }
 
 cls
-Write-Host "Clearing Windows Update Cache and installing updates"
 Stop-Service wuauserv
 Remove-Item C:\Windows\SoftwareDistribution\* -Recurse -Force
 Start-Service wuauserv
@@ -695,7 +647,7 @@ Function Get-WUInstall
 			
 					Write-Debug "Add update to collection"
 					$objCollectionChoose.Add($Update) | Out-Null
-				} #End If $AcceptAll
+				}
 				ElseIf($AutoSelectOnly)  
 				{  
 					If($Update.AutoSelectOnWebsites)  
@@ -945,7 +897,7 @@ Function Get-WUInstall
 
 Write-Host "Installing Windows Updates..."
 
-Get-WUInstall -IgnoreUserInput -AcceptAll -IgnoreUserInput | out-null
+Get-WUInstall -AcceptAll -IgnoreUserInput | out-null
 Get-WUInstall -Type "Software" -KBArticleID "KB2819745","KB2858728" -AcceptAll -IgnoreUserInput -AutoReboot | out-null
 
 
@@ -1036,9 +988,13 @@ Set-Service -Name fsvc -StartupType Disabled | out-null
 Set-Service -Name WMPNetworkSvc -StartupType Disabled | out-null
 Set-Service -Name WSearch -StartupType Disabled | out-null
 cls
+
+
 Write-Host "Configuring Windows Features..."
 Dism /online /Disable-Feature /FeatureName:WindowsGadgetPlatform /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:InboxGames /norestart | out-null
+
+
 Dism /online /Disable-Feature /FeatureName:MediaPlayback /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:TabletPCOC /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:Xps-Foundation-Xps-Viewer /norestart | out-null
@@ -1055,3 +1011,21 @@ Restart-Computer -Force
 }
 Else
 {Exit}
+    
+    
+    Catch{
+$sError = $Error[0] | Out-String
+ Log-Error -LogPath $sLogFile -ErrorDesc $sError -ExitGracefully $True
+      Break
+    }
+  
+  
+  End{
+    If($?){
+      Log-Write -LogPath $sLogFile -LineValue "Completed Successfully."
+      Log-Write -LogPath $sLogFile -LineValue " "
+      Log-Finish -LogPath $sLogFile
+    }
+  }
+
+patch
