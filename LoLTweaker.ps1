@@ -19,12 +19,17 @@ Start-BitsTransfer http://download.microsoft.com/download/1/6/7/167F0D79-9317-48
 }
 
 if (($ENV:Processor_Architecture -eq "AMD64")){
+if(!($PSVersionTable.PSVersion.Major -eq 4 )) {
 Start-BitsTransfer http://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows6.1-KB2819745-x64-MultiPkg.msu
+}
 Start-BitsTransfer http://download.microsoft.com/download/4/F/7/4F71806A-1C56-4EF2-9B4F-9870C4CFD2EE/Windows6.1-KB958830-x64-RefreshPkg.msu
 }
 Else
 {
+if(!($PSVersionTable.PSVersion.Major -eq 4 )) {
 Start-BitsTransfer http://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows6.1-KB2819745-x86-MultiPkg.msu
+}
+
 Start-BitsTransfer http://download.microsoft.com/download/4/F/7/4F71806A-1C56-4EF2-9B4F-9870C4CFD2EE/Windows6.1-KB958830-x86-RefreshPkg.msu
 }
 
