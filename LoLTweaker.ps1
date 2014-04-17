@@ -6,12 +6,11 @@ Remove-Item NTFSSecurity.zip
 Remove-Item NDP451-KB2858728-x86-x64-AllOS-ENU.exe
 Remove-Item *.msu
 Write-Host "Downloading files..."
-if(!(Test-Path .\NTFSSecurity.zip)){
 Start-BitsTransfer http://gallery.technet.microsoft.com/scriptcenter/1abd77a5-9c0b-4a2b-acef-90dbb2b84e85/file/107400/1/NTFSSecurity.zip
 new-item .\NTFSSecurity -itemtype directory
 Start-Process 7z.exe "x NTFSSecurity.zip -oNTFSSecurity -y"
 Copy-Item .\NTFSSecurity\ C:\Users\$User\Documents\WindowsPowershell\Modules -recurse
-}
+
 
 if(!(Test-Path $net) -eq "4.5.51078")
 {
