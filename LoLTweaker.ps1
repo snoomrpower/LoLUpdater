@@ -285,7 +285,6 @@ Set-Service -Name WMPNetworkSvc -StartupType Disabled
 Set-Service -Name WSearch -StartupType Disabled
 Write-Host "Configuring Windows Features..."
 Dism /online /Disable-Feature /FeatureName:WindowsGadgetPlatform /norestart
-Dism /online /Disable-Feature /FeatureName:NetFx3 /norestart
 Dism /online /Disable-Feature /FeatureName:InboxGames /norestart
 Dism /online /Disable-Feature /FeatureName:MediaPlayback /norestart
 Dism /online /Disable-Feature /FeatureName:TabletPCOC /norestart
