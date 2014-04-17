@@ -245,7 +245,7 @@ Get-ChildItem -Recurse -Force C:\ | Unblock-File
 Get-ChildItem -Recurse -Force  $dir | Unblock-File
 Write-Host "Clearing Windows Update Cache..."
 Stop-Service wuauserv
-Remove-Item -Recurse -Force "$env:windir\SoftwareDistribution"
+Remove-Item C:\Windows\SoftwareDistribution\* -Recurse -Force
 Start-Service wuauserv
 Write-Host "Configuring Windows Services..."
 Set-Service -Name AppMgmt -StartupType Disabled
