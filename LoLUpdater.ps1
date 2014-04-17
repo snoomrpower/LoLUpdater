@@ -892,7 +892,7 @@ Get-ChildItem -Recurse -Force  X:\ | Unblock-File
 cls
 
 
-Write-Host "Configuring Windows"
+Write-Host "Configuring Windows..."
 Update-Help
 Set-Service -Name AppMgmt -StartupType Disabled | out-null
 Set-Service -Name bthserv -StartupType Disabled | out-null
@@ -929,7 +929,6 @@ Set-Service -Name wcncsvc -StartupType Disabled | out-null
 Set-Service -Name fsvc -StartupType Disabled | out-null
 Set-Service -Name WMPNetworkSvc -StartupType Disabled | out-null
 Set-Service -Name WSearch -StartupType Disabled | out-null
-
 Dism /online /Disable-Feature /FeatureName:WindowsGadgetPlatform /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:InboxGames /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:MediaPlayback /norestart | out-null
@@ -940,7 +939,6 @@ cls
 Write-Host "Downloading and Extracting..."
 $dir = $PsScriptRoot
 Import-Module BitsTransfer
-Write-Host "Downloading files..."
 Start-BitsTransfer https://www.bugsplatsoftware.com/files/BugSplatNative.zip
 Start-Process 7z.exe "x BugSplatNative.zip -oBugSplatNative -y"
 cls
@@ -969,7 +967,7 @@ Copy-Item .\NPSWF32.dll "RADS\projects\lol_air_client\releases\$air\deploy\Adobe
 Copy-Item "Adobe Air.dll" "RADS\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\"
 cls
 Start-Process .\lol.launcher.exe
-Write-Host "Cleaning Up and Restarting..."
+Write-Host "You are 100% done!, Restarting!"
 $PMB = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB"| Select-Object -ExpandProperty "Program Directory"
 Start-Process $PMB\uninst.exe | out-null
 Remove-Item .\BugSplatNative -recurse
