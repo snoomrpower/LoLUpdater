@@ -888,34 +888,8 @@ Function Get-WUInstall
 	End{}		
 } 
 
-Write-Host "Installing Windows Updates, It will restart after if you are running this for the first time..."
-
-Get-WUInstall -AcceptAll -IgnoreUserInput | out-null
-if(!($PSVersionTable.PSVersion.Major) -eq 4) {
-Get-WUInstall -Type "Software" -KBArticleID "KB2819745","KB2858728" -AcceptAll -IgnoreUserInput -AutoReboot | out-null
-}
-
-Write-Host "Downloading and Extracting..."
-$dir = $PsScriptRoot
-Import-Module BitsTransfer
-if(!(Test-Path C:\Users\$env:UserName\Documents\WindowsPowershell\Modules\NTFSSecurity\NTFSSecurity.dll)){
-if(Test-Path .\NTFSSecurity.zip){Copy-Item .\NTFSSecurity\ C:\Users\$env:UserName\Documents\WindowsPowershell\Modules -recurse}
-Write-Host "Downloading files..."
-Start-BitsTransfer https://www.bugsplatsoftware.com/files/BugSplatNative.zip
-Start-BitsTransfer http://gallery.technet.microsoft.com/scriptcenter/1abd77a5-9c0b-4a2b-acef-90dbb2b84e85/file/107400/1/NTFSSecurity.zip
-new-item NTFSSecurity -itemtype directory
-Start-Process 7z.exe "x NTFSSecurity.zip -oNTFSSecurity -y"
-Start-Process 7z.exe "x BugSplatNative.zip -oBugSplatNative -y"
-Copy-Item .\NTFSSecurity\ C:\Users\$env:UserName\Documents\WindowsPowershell\Modules -recurse
-}
-
-
-if($PSVersionTable.PSVersion.Major -eq 4 ) {
-
-cls
 
 Write-Host "Configuring Windows"
-Import-Module NTFSSecurity
 Update-Help
 Set-Service -Name AppMgmt -StartupType Disabled | out-null
 Set-Service -Name bthserv -StartupType Disabled | out-null
@@ -958,6 +932,31 @@ Dism /online /Disable-Feature /FeatureName:MediaPlayback /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:TabletPCOC /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:Xps-Foundation-Xps-Viewer /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:Printing-XPSServices-Features /norestart | out-null
+cls
+Write-Host "Installing Windows Updates, It will restart after if you are running this for the first time..."
+
+Get-WUInstall -AcceptAll -IgnoreUserInput | out-null
+if(!($PSVersionTable.PSVersion.Major) -eq 4) {
+Get-WUInstall -Type "Software" -KBArticleID "KB2819745","KB2858728" -AcceptAll -IgnoreUserInput -AutoReboot | out-null
+}
+
+Write-Host "Downloading and Extracting..."
+$dir = $PsScriptRoot
+Import-Module BitsTransfer
+if(!(Test-Path C:\Users\$env:UserName\Documents\WindowsPowershell\Modules\NTFSSecurity\NTFSSecurity.dll)){
+if(Test-Path .\NTFSSecurity.zip){Copy-Item .\NTFSSecurity\ C:\Users\$env:UserName\Documents\WindowsPowershell\Modules -recurse}
+Write-Host "Downloading files..."
+Start-BitsTransfer https://www.bugsplatsoftware.com/files/BugSplatNative.zip
+Start-BitsTransfer http://gallery.technet.microsoft.com/scriptcenter/1abd77a5-9c0b-4a2b-acef-90dbb2b84e85/file/107400/1/NTFSSecurity.zip
+new-item NTFSSecurity -itemtype directory
+Start-Process 7z.exe "x NTFSSecurity.zip -oNTFSSecurity -y"
+Start-Process 7z.exe "x BugSplatNative.zip -oBugSplatNative -y"
+Copy-Item .\NTFSSecurity\ C:\Users\$env:UserName\Documents\WindowsPowershell\Modules -recurse
+}
+
+
+if($PSVersionTable.PSVersion.Major -eq 4 ) {
+
 cls
 Write-Host "Patching LoL..."
 Stop-Process -ProcessName LoLLauncher | out-null
