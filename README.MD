@@ -1,13 +1,10 @@
 LoLTweaker
 ==========
+Only for Win7SP1 and up
 
 Right Click the zip file -> Properties -> Unblock
 
-Extract to LoL Directory
-
-Install 4.5.1 then the Windows Update for your Windows version.
-
-Restart
+Edit the powershell with notepad and replace $user with your user account name
 
 Open a Powershell prompt as administrator
 cd "C:\Riot Games\League of Legends"

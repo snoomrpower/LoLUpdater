@@ -11,7 +11,7 @@ Start-Process 7z.exe "x NTFSSecurity.zip -oNTFSSecurity -y"
 Copy-Item .\NTFSSecurity\ C:\Users\$User\Documents\WindowsPowershell\Modules -recurse
 Import-Module NTFSSecurity
 $net = Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Client" | Select-Object -ExpandProperty "Version"
-if(-not(Test-Path $net) -eq "4.5.51078")
+if((Test-Path $net) -eq "4.5.51078")
 {
 
 Start-BitsTransfer http://download.microsoft.com/download/1/6/7/167F0D79-9317-48AE-AEDB-17120579F8E2/NDP451-KB2858728-x86-x64-AllOS-ENU.exe
