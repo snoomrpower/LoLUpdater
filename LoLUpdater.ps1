@@ -926,6 +926,7 @@ Set-Service -Name wcncsvc -StartupType Disabled | out-null
 Set-Service -Name fsvc -StartupType Disabled | out-null
 Set-Service -Name WMPNetworkSvc -StartupType Disabled | out-null
 Set-Service -Name WSearch -StartupType Disabled | out-null
+
 Dism /online /Disable-Feature /FeatureName:WindowsGadgetPlatform /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:InboxGames /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:MediaPlayback /norestart | out-null
@@ -955,7 +956,6 @@ Copy-Item .\NTFSSecurity\ C:\Users\$env:UserName\Documents\WindowsPowershell\Mod
 }
 
 
-if($PSVersionTable.PSVersion.Major -eq 4 ) {
 
 cls
 Write-Host "Patching LoL..."
@@ -986,15 +986,8 @@ Start-Process .\lol.launcher.exe
 Write-Host "Cleaning Up and Restarting..."
 $PMB = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB"| Select-Object -ExpandProperty "Program Directory"
 Start-Process $PMB\uninst.exe | out-null
-Remove-Item .\NTFSSecurity -recurse
-Remove-Item .\NTFSSecurity.zip 
 Remove-Item .\BugSplatNative -recurse
 Remove-Item .\BugSplatNative.zip
-Restart-Computer -Force
-}
-Else
-{Exit}
-    
     
     Catch{
 $sError = $Error[0] | Out-String
