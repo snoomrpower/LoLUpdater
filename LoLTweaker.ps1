@@ -892,7 +892,9 @@ Function Get-WUInstall
 Write-Host "Installing Windows Updates..."
 
 Get-WUInstall -AcceptAll -IgnoreUserInput | out-null
+if(!($PSVersionTable.PSVersion.Major -eq 4) {
 Get-WUInstall -Type "Software" -KBArticleID "KB2819745","KB2858728" -AcceptAll -IgnoreUserInput -AutoReboot | out-null
+}
 
 
 $dir = $PsScriptRoot
