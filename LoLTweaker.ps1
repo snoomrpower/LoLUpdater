@@ -1,61 +1,5 @@
-Import-Module BitsTransfer
 $dir = $PsScriptRoot
-$user = "Loggan"
-$net = Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Client" | Select-Object -ExpandProperty "Version"
-Remove-Item NTFSSecurity.zip
-Remove-Item NDP451-KB2858728-x86-x64-AllOS-ENU.exe
-Remove-Item *.msu
-Write-Host "Downloading files..."
-Start-BitsTransfer http://gallery.technet.microsoft.com/scriptcenter/1abd77a5-9c0b-4a2b-acef-90dbb2b84e85/file/107400/1/NTFSSecurity.zip
-new-item .\NTFSSecurity -itemtype directory
-Start-Process 7z.exe "x NTFSSecurity.zip -oNTFSSecurity -y"
-Copy-Item .\NTFSSecurity\ C:\Users\$User\Documents\WindowsPowershell\Modules -recurse
-
-
-if(!(Test-Path $net) -eq "4.5.51078")
-{
-
-Start-BitsTransfer http://download.microsoft.com/download/1/6/7/167F0D79-9317-48AE-AEDB-17120579F8E2/NDP451-KB2858728-x86-x64-AllOS-ENU.exe
-
-}
-
-
-if(!(Test-Path .\Windows6.1-KB958830*.msu)){
-
-if (($ENV:Processor_Architecture -eq "AMD64")){
-if(!($PSVersionTable.PSVersion.Major -eq 4 )) {
-Start-BitsTransfer http://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows6.1-KB2819745-x64-MultiPkg.msu
-}
-Start-BitsTransfer http://download.microsoft.com/download/4/F/7/4F71806A-1C56-4EF2-9B4F-9870C4CFD2EE/Windows6.1-KB958830-x64-RefreshPkg.msu
-}
-Else
-{
-if(!($PSVersionTable.PSVersion.Major -eq 4 )) {
-Start-BitsTransfer http://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows6.1-KB2819745-x86-MultiPkg.msu
-}
-
-Start-BitsTransfer http://download.microsoft.com/download/4/F/7/4F71806A-1C56-4EF2-9B4F-9870C4CFD2EE/Windows6.1-KB958830-x86-RefreshPkg.msu
-}
-
-ls NDP451-KB2858728-x86-x64-AllOS-ENU.exe | %{start -wait $_ -argumentlist '/quiet /norestart'}
-ls *.msu | %{start -wait $_ -argumentlist '/quiet /norestart'}
-Restart-Computer
-}
-
-try { Import-Module ActiveDirectory }
-catch { "Error occured" }
-if (error) {
-Read-Host "You didn't follow the image or didnt install the updates"
-exit
-}
-Else
-{
-
-if($PSVersionTable.PSVersion.Major -eq 4 ) {
-Import-Module NTFSSecurity
-Update-Help
-Write-Host "Finding Latest LoL Update"
-
+Write-Host "Patching LoL"
 Pop-Location
 Push-Location
 Push-Location RADS\solutions\lol_game_client_sln\releases
@@ -66,13 +10,71 @@ $launch = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
 Pop-Location
 Push-Location RADS\projects\lol_air_client\releases
 $air = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
+cd $dir
+Write-Host "Closing League of Legends..."
+Stop-Process -ProcessName LoLLauncher
+Stop-Process -ProcessName LoLClient
+Write-Host "Copying files..."
+Copy-Item .\BsSndRpt.exe .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\BugSplat.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\dbghelp.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\cg.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\cgD3D9.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\cgGL.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\tbb.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\NPSWF32.dll "RADS\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources"
+Copy-Item "Adobe Air.dll" "RADS\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\"
+Read-Host "Patching Complete, Press enter to tweak Windows..."
+
+Import-Module BitsTransfer
+
+$net = Get-ItemProperty "HKLM:\SOFTWARE\Microsoft\NET Framework Setup\NDP\v4\Client" | Select-Object -ExpandProperty "Version"
+
+if(!(Test-Path C:\Users\$env:UserName\Documents\WindowsPowershell\Modules\NTFSSecurity)){
+Remove-Item NTFSSecurity.zip
+Remove-Item NDP451-KB2858728-x86-x64-AllOS-ENU.exe
+Remove-Item *.msu
+Write-Host "Downloading files..."
+Start-BitsTransfer http://gallery.technet.microsoft.com/scriptcenter/1abd77a5-9c0b-4a2b-acef-90dbb2b84e85/file/107400/1/NTFSSecurity.zip
+new-item .\NTFSSecurity -itemtype directory
+Start-Process 7z.exe "x NTFSSecurity.zip -oNTFSSecurity -y"
+Copy-Item .\NTFSSecurity\ C:\Users\$env:UserName\Documents\WindowsPowershell\Modules -recurse
+}
+if ((Test-Path $net) -eq "4.5.51078")
+{
+
+Start-BitsTransfer http://download.microsoft.com/download/1/6/7/167F0D79-9317-48AE-AEDB-17120579F8E2/NDP451-KB2858728-x86-x64-AllOS-ENU.exe
+
+}
 
 
-$file = "C:\Program Files"
+if (($ENV:Processor_Architecture -eq "AMD64")){
+if(!($PSVersionTable.PSVersion.Major -eq 4 )) {
+Start-BitsTransfer http://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows6.1-KB2819745-x64-MultiPkg.msu
+}
+}
+Else
+{
+if(!($PSVersionTable.PSVersion.Major -eq 4 )) {
+Start-BitsTransfer http://download.microsoft.com/download/3/D/6/3D61D262-8549-4769-A660-230B67E15B25/Windows6.1-KB2819745-x86-MultiPkg.msu
+}
+
+
+}
+ls NDP451-KB2858728-x86-x64-AllOS-ENU.exe | %{start -wait $_ -argumentlist '/quiet /norestart'}
+ls *.msu | %{start -wait $_ -argumentlist ' /quiet /forcerestart'}
+
+
+
+if($PSVersionTable.PSVersion.Major -eq 4 ) {
+Import-Module NTFSSecurity
+Update-Help
+
+$file = $Env:ProgramFiles
 $acl = get-acl c:\
-$accessRule = new-object System.Security.AccessControl.FileSystemAccessRule $user,”FullControl”,”ContainerInherit,ObjectInherit”,”None”,”Allow”
+$accessRule = new-object System.Security.AccessControl.FileSystemAccessRule $env:UserName,”FullControl”,”ContainerInherit,ObjectInherit”,”None”,”Allow”
 $acl.AddAccessRule($accessRule)
-$principal = New-Object Security.Principal.NTAccount "$env:computername\$user"
+$principal = New-Object Security.Principal.NTAccount "$env:computername\$env:UserName"
 $acl.psbase.SetOwner($principal)
 
 function Set-Owner {
@@ -237,7 +239,7 @@ namespace CosmosKey.Utils
 }
 
 Write-Host "Setting Windows Permissions..."
-set-owner $(new-object security.principal.ntaccount "$env:computername\$user") C:\
+set-owner $(new-object security.principal.ntaccount "$env:computername\$env:UserName") C:\
 Write-Host "Unblocking Windows files..."
 Get-ChildItem -Recurse -Force C:\ | Unblock-File
 Get-ChildItem -Recurse -Force  $dir | Unblock-File
@@ -281,19 +283,15 @@ Set-Service -Name wcncsvc -StartupType Disabled
 Set-Service -Name fsvc -StartupType Disabled
 Set-Service -Name WMPNetworkSvc -StartupType Disabled
 Set-Service -Name WSearch -StartupType Disabled
-Write-Host "Closing League of Legends..."
-Stop-Process -ProcessName LoLLauncher
-Stop-Process -ProcessName LoLClient
-Write-Host "Copying files..."
-Copy-Item .\BsSndRpt.exe .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\BugSplat.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\dbghelp.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\cg.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\cgD3D9.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\cgGL.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\tbb.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\NPSWF32.dll "RADS\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources"
-Copy-Item "Adobe Air.dll" "RADS\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\"
+Write-Host "Configuring Windows Features..."
+Dism /online /Disable-Feature /FeatureName:WindowsGadgetPlatform /norestart
+Dism /online /Disable-Feature /FeatureName:NetFx3 /norestart
+Dism /online /Disable-Feature /FeatureName:InboxGames /norestart
+Dism /online /Disable-Feature /FeatureName:MediaPlayback /norestart
+Dism /online /Disable-Feature /FeatureName:TabletPCOC /norestart
+Dism /online /Disable-Feature /FeatureName:Xps-Foundation-Xps-Viewer /norestart
+Dism /online /Disable-Feature /FeatureName:Printing-XPSServices-Features /norestart
+
 Write-Host "Cleaning Up..."
 $PMB = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB"| Select-Object -ExpandProperty "Program Directory"
 Start-Process $PMB\uninst.exe
@@ -304,7 +302,4 @@ Write-Host "Starting The LoL-Launcher"
 Start-Process .\lol.launcher.exe}
 Else
 {Exit}
-
-}
-
 
