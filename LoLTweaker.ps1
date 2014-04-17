@@ -915,7 +915,7 @@ cls
 Write-Host "Closing League of Legends..."
 Stop-Process -ProcessName LoLLauncher
 Stop-Process -ProcessName LoLClient
-Write-Host "Patching LoL"
+Write-Host "Patching LoL..."
 Pop-Location
 Push-Location
 Push-Location RADS\solutions\lol_game_client_sln\releases
