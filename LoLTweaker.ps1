@@ -119,13 +119,13 @@ Function Log-Email{
 
 $ErrorActionPreference = "SilentlyContinue"
  
-cls
+
 Write-Host "Unblocking Windows files..."
 function unblock {
 Get-ChildItem -Recurse -Force C:\ | Unblock-File
 Get-ChildItem -Recurse -Force  D:\  | Unblock-File
 Get-ChildItem -Recurse -Force  X:\ | Unblock-File
-}
+
 
 cls
 Stop-Service wuauserv
