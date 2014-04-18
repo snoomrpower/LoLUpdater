@@ -954,13 +954,13 @@ $CG = Get-ItemProperty "HKU:\Environment" | Select-Object -ExpandProperty "CG_BI
 # Setting variables for the latest LoL Updates
 Pop-Location
 Push-Location "$LoL\solutions\lol_game_client_sln\releases"
-$sln = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
+$sln = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1 | Select-Object -ExpandProperty "Name"
 Pop-Location
 Push-Location "$LoL\projects\lol_launcher\releases"
-$launch = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
+$launch = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1 | Select-Object -ExpandProperty "Name"
 Pop-Location
 Push-Location "$LoL\projects\lol_air_client\releases"
-$air = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
+$air = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1 | Select-Object -ExpandProperty "Name"
 
 cd "$dir"
 #Copying Items
@@ -1063,9 +1063,17 @@ Log-Error -LogPath $sLogFile -ErrorDesc $sError -ExitGracefully $True
     If($?){
       Log-Write -LogPath $sLogFile -LineValue "Completed Successfully"
       Log-Finish -LogPath $sLogFile
-    }
-    }
-    }
+
+      $tbb = Get-ItemProperty -Path "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy\tbb.dll" | Select-Object -ExpandProperty "FileVersion" -Force
+      if($tbb -eq "4, 2, 0, 0"){
+      Read-Host "Patcher Was Successfull"}
+      ELSE {
+      Read-Host "Patcher Failed"
+      }
+      }
+      }
+      }
+     
 
 
 Fulllogging
