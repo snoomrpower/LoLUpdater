@@ -932,35 +932,53 @@ Write-Host "Patching LoL..."
 Stop-Process -ProcessName LoLLauncher | out-null
 Stop-Process -ProcessName LoLClient | out-null
 
+# These are not included in Powershell by default
+New-PSDrive HKCR Registry HKEY_CLASSES_ROOT
+cls
+New-PSDrive HKU Registry HKEY_CURRENT_USER
+cls
+
+#Finds script directory
+$dir = "Split-Path -Parent -Path $MyInvocation.MyCommand.Definition"
+
+#Todo: Add PMB Uninstall
+
+
+# Finds the LoL Directory from registry
+$LoL = Get-ItemProperty "HKCR:\VirtualStore\MACHINE\SOFTWARE\Wow6432Node\Riot Games\RADS" | Select-Object -ExpandProperty "LocalRootFolder"
+
+#Nvidia CG Directory
+
+$CG = Get-ItemProperty "HKU:\Environment" | Select-Object -ExpandProperty "CG_BIN_PATH"
 
 # Setting variables for the latest LoL Updates
 Pop-Location
-Push-Location $LoL\solutions\lol_game_client_sln\releases
+Push-Location "$LoL\solutions\lol_game_client_sln\releases"
 $sln = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
 Pop-Location
-Push-Location $LoL\projects\lol_launcher\releases
+Push-Location "$LoL\projects\lol_launcher\releases"
 $launch = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
 Pop-Location
-Push-Location $LoL\projects\lol_air_client\releases
+Push-Location "$LoL\projects\lol_air_client\releases"
 $air = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
 
 cd "$dir"
 #Copying Items
-Copy-Item .\dbghelp.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\dbghelp.dll $LoL\projects\lol_air_client\releases\$air\deploy
-Copy-Item .\tbb.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\dbghelp.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Copy-Item .\dbghelp.dll "$LoL\projects\lol_air_client\releases\$air\deploy"
+Copy-Item .\tbb.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
 Copy-Item .\NPSWF32.dll "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources"
 Copy-Item ".\Adobe Air.dll" "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\"
-Copy-Item $CG\cg.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item $CG\cgD3D9.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item $CG\cgGL.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item $CG\cg.dll $LoL\projects\lol_launcher\releases\$launch\deploy
-Copy-Item $CG\cgD3D9.dll $LoL\projects\lol_launcher\releases\$launch\deploy
-Copy-Item $CG\cgGL.dll $LoL\projects\lol_launcher\releases\$launch\deploy
-Copy-Item .\msvcp120.dll $LoL\projects\lol_launcher\releases\$launch\deploy
-Copy-Item .\msvcr120.dll $LoL\projects\lol_launcher\releases\$launch\deploy
-Copy-Item .\msvcp120.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\msvcr120.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item "$CG\cg.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Copy-Item "$CG\cgD3D9.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Copy-Item "$CG\cgGL.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Copy-Item "$CG\cg.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
+Copy-Item "$CG\cgD3D9.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
+Copy-Item "$CG\cgGL.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
+Copy-Item .\msvcp120.dll "$LoL\projects\lol_launcher\releases\$launch\deploy"
+Copy-Item .\msvcr120.dll "$LoL\projects\lol_launcher\releases\$launch\deploy"
+Copy-Item .\msvcp120.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Copy-Item .\msvcr120.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
 cls
 Set-Location $LoL
 Set-Location ..
@@ -988,11 +1006,7 @@ Function Fulllogging {
   Param()
   
   Begin{
-# These are not included in Powershell by default
-New-PSDrive HKCR Registry HKEY_CLASSES_ROOT
-cls
-New-PSDrive HKU Registry HKEY_CURRENT_USER
-cls
+
 # Removes contents of folders that can be emptied safely
 Remove-Item "$env:windir\Temp\*" -recurse | out-string
 Remove-Item "$env:windir\Prefetch\*" -recurse | out-string
@@ -1010,18 +1024,7 @@ Import-Module BitsTransfer
 # Updates "Help" (for devs to help out with this patch)
 Update-Help
 
-#Finds script directory
-$dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
 
-#Todo: Add PMB Uninstall
-
-
-# Finds the LoL Directory from registry
-$LoL = Get-ItemProperty "HKCR:\VirtualStore\MACHINE\SOFTWARE\Wow6432Node\Riot Games\RADS" | Select-Object -ExpandProperty "LocalRootFolder"
-
-#Nvidia CG Directory
-
-$CG = Get-ItemProperty "HKU:\Environment" | Select-Object -ExpandProperty "CG_BIN_PATH"
 
 
 # Deletes Windows Update Cache
