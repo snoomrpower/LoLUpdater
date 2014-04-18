@@ -12,16 +12,21 @@ goto C:\Program Files (x86)\NVIDIA Corporation\Cg\bin and copy "cg.dll","cgD3D9"
 
 copy these files to
 
-C:\Riot Games\League of Legends\RADS\projects\lol_launcher\releases\0.0.0.205\deploy
+C:\Riot Games\League of Legends\RADS\projects\lol_launcher\releases\0.0.0.205(orlatestnumber)\deploy
 and
-C:\Riot Games\League of Legends\RADS\solutions\lol_game_client_sln\releases\0.0.1.17\deploy
+C:\Riot Games\League of Legends\RADS\solutions\lol_game_client_sln\releases\0.0.1.17(orlatestnumber)\deploy
 
 Right Click the zip file -> Properties -> Unblock
 
 Open a Windows command prompt as admin
 
-cd "Path of extractions (where the files are)"
+Commands:
+
+cd "Path of extractions" (where the files are)
 
 powershell -NoProfile -ExecutionPolicy bypass -File LoLUpdater.ps1
 
+
 After the restart you should rerun the script again to patch the game.
+
+It creates a errors.log in C:\Windows\Temp
