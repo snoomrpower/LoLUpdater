@@ -914,7 +914,6 @@ Set-Service SCardSvr -StartupType Disabled | out-null
 Set-Service SCPolicySvc -StartupType Disabled | out-null
 Set-Service SNMPTRAP -StartupType Disabled | out-null
 Set-Service StorSvc -StartupType Disabled | out-null
-Set-Service WbioSrvc -StartupType Disabled | out-null
 Set-Service wcncsvc -StartupType Disabled | out-null
 Set-Service fsvc -StartupType Disabled | out-null
 Set-Service WMPNetworkSvc -StartupType Disabled | out-null
