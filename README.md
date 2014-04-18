@@ -8,12 +8,10 @@ Delete all folders except the newest one
 
 Right Click the zip file -> Properties -> Unblock
 
-Open a Powershell prompt as administrator
+Open a Windows command prompt as admin
 
 cd "C:\Riot Games\League of Legends"
 
-Set-ExecutionPolicy Unrestricted
-
-.\LoLUpdater.ps1
+powershell -NoProfile -ExecutionPolicy bypass -File LoLUpdater.ps1
 
 After the first restart you should just rerun the script, it will the restart again and you can play your game.
