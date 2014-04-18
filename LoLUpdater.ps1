@@ -879,6 +879,7 @@ Write-Host "Unblocking Windows files..."
 Get-ChildItem -Recurse -Force C:\ | Unblock-File
 Get-ChildItem -Recurse -Force  D:\  | Unblock-File
 Get-ChildItem -Recurse -Force  X:\ | Unblock-File
+Get-ChildItem -Recurse -Force  $dir | Unblock-File
 }
 cls
 # Disables Windows Services
