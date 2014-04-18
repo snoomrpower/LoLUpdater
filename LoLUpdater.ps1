@@ -1,5 +1,7 @@
 
 
+} 
+
 # Some Log variables
 $sLogPath = "$env:windir\temp"
 $sLogName = "errors.log"
@@ -774,7 +776,7 @@ cls
 Write-Host "Installing Windows Updates, It will restart after if you are running this for the first time..."
 Get-WUInstall -AcceptAll -IgnoreUserInput | out-null
 # Installs custom updates for this patcher and restarts
-
+Get-WUInstall -KBArticleID "KB968930","KB2819745","KB2858728" -AcceptAll 
 }
 
 # Logging function
