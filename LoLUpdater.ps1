@@ -1,7 +1,3 @@
-
-
-} 
-
 # Some Log variables
 $sLogPath = "$env:windir\temp"
 $sLogName = "errors.log"
@@ -862,13 +858,16 @@ Function Log-Finish{
   }
 }
  
-Function patcher {
-
+Function update {
 cls
 Write-Host "Installing Windows Updates, It will restart after if you are running this for the first time..."
-Get-WUInstall -AcceptAll -IgnoreUserInput | out-null
+Get-WUInstall -AcceptAll -IgnoreUserInput -IgnoreReboot | out-null
 # Installs custom updates for this patcher and restarts
 Get-WUInstall -KBArticleID "KB968930","KB2819745","KB2858728" -AcceptAll -IgnoreReboot | out-null
+}
+
+Function patcher {
+
 cls
 # Unblocks files (Powershell 3.0 minimum requirement) (# Todo: get access to protected paths with Set-Acl)
 if($PSVersionTable.PSVersion.Major -ge 3){
@@ -978,6 +977,7 @@ switch ($result)
         0 {Restart-Computer -Force
         }
         1 {exit}
+}
 }
 
 Function Fulllogging {
