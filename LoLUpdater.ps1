@@ -8,7 +8,13 @@ Update-Help
 # Sets script directory
 $dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
 $PMB = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB"| Select-Object -ExpandProperty "Program Directory"
+
+# Finds the LoL Directory from registry
+New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT
 $LoL = Get-ItemProperty  "HKCR:\VirtualStore\MACHINE\SOFTWARE\Wow6432Node\Riot Games\RADS" | Select-Object -ExpandProperty "LocalRootFolder"
+
+#Nvidia CG Directory
+$CG = Get-ItemProperty "HKEY_CURRENT_USER\Environment" | Select-Object -ExpandProperty "CG_BIN_PATH"
 
 # Sets Windows Title
 $sScriptVersion = "Github"
@@ -892,8 +898,7 @@ Function Log-Finish{
  
 Function patcher {
 cls
-# Finds the LoL Directory from registry
-New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-String
+
 
 # Unblocks files (Powershell 3.0 minimum requirement) (# Todo: get access to protected paths with Set-Acl)
 if($PSVersionTable.PSVersion.Major -ge 3){
@@ -966,24 +971,39 @@ $launch = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
 Pop-Location
 Push-Location "$LoL\projects\lol_air_client\releases"
 $air = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
-Set-Location $dir
+cd $dir
 
 #Copying Items
 Copy-Item .\BsSndRpt.exe "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
 Copy-Item .\BugSplat.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Copy-Item .\BugSplatRc.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
 Copy-Item .\dbghelp.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Copy-Item .\dbghelp.dll "$LoL\projects\lol_air_client\releases\$air\deploy"
 Copy-Item .\tbb.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
 Copy-Item .\NPSWF32.dll "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources"
 Copy-Item "Adobe Air.dll" "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\"
+Copy-Item "$CG\cg.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Copy-Item "$CG\cgD3D9.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Copy-Item "$CG\cgGL.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Copy-Item "$CG\cg.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
+Copy-Item "$CG\cgD3D9.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
+Copy-Item "$CG\cgGL.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
+Copy-Item "msvcp120.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
+Copy-Item "msvcr120.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
+Copy-Item "msvcp120.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
+Copy-Item "msvcr120.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
+Copy-Item "msvcp120.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Copy-Item "msvcr120.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+
 # Uninstalling Pando Media Booster
 
 if((Test-Path ("$PMB"))){
 Start-Process "$PMB\uninst.exe"
 } 
-Set-Location $LoL
+cd $LoL
 Set-Location ..
 Start-Proces .\lol.launcher.exe
-
+}
 
 Function Fulllogging{
   Param()

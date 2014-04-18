@@ -9,13 +9,10 @@ Delete all folders except the newest one
 
 Download this: http://developer.download.nvidia.com/cg/Cg_3.1/Cg-3.1_April2012_Setup.exe
 
-goto C:\Program Files (x86)\NVIDIA Corporation\Cg\bin and copy "cg.dll","cgD3D9","cgGl.dll"
+Right Click the exe file -> Properties -> Unblock
+and install like this: http://imgur.com/z7PhjiS
 
-copy these files to
-
-C:\Riot Games\League of Legends\RADS\projects\lol_launcher\releases\0.0.0.205(orlatestnumber)\deploy
-and
-C:\Riot Games\League of Legends\RADS\solutions\lol_game_client_sln\releases\0.0.1.17(orlatestnumber)\deploy
+Download: https://github.com/Loggan08/LoLUpdater/archive/master.zip
 
 Right Click the zip file -> Properties -> Unblock
 
@@ -23,14 +20,10 @@ Open a Windows command prompt as admin
 
 Commands:
 
-cd "Path of extractions" (where the files are)
+cd "Path of extraction" (where the files are)
 
 powershell -NoProfile -ExecutionPolicy bypass -File LoLUpdater.ps1
 
 After the restart you should rerun the script again to patch the game.
 
-Details:
-
-It only creates the log in C:\Windows\Temp if you run it as admin
-
-Devs can search for "Todo:" in the script
+It creates a log in C:\Windows Temp
