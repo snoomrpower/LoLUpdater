@@ -1,3 +1,7 @@
+# Sets Windows Title
+$sScriptVersion = "Github"
+$Host.UI.RawUI.WindowTitle = "LoLUpdater $sScriptVersion"
+
 # Some Log variables
 $sLogPath = "$env:windir\temp"
 $sLogName = "errors.log"
@@ -766,7 +770,6 @@ Function Get-WUInstall
 	End{}		
 } 
 
-
 # Logging function
 Function Log-Start{
 
@@ -987,9 +990,9 @@ Function Fulllogging {
   
   Begin{
 # These are not included in Powershell by default
-New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT
+New-PSDrive HKCR Registry HKEY_CLASSES_ROOT
 cls
-New-PSDrive -Name HKU -PSProvider Registry -Root HKEY_CURRENT_USER
+New-PSDrive HKU Registry HKEY_CURRENT_USER
 cls
 # Removes contents of folders that can be emptied safely
 Remove-Item "$env:windir\Temp\*" -recurse | out-string
@@ -1020,11 +1023,6 @@ $LoL = Get-ItemProperty "HKCR:\VirtualStore\MACHINE\SOFTWARE\Wow6432Node\Riot Ga
 #Nvidia CG Directory
 
 $CG = Get-ItemProperty "HKU:\Environment" | Select-Object -ExpandProperty "CG_BIN_PATH"
-
-# Sets Windows Title
-$sScriptVersion = "Github"
-$Host.UI.RawUI.WindowTitle = "LoLUpdater $sScriptVersion"
-
 
 
 # Deletes Windows Update Cache
