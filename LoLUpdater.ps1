@@ -1,18 +1,27 @@
+
 # Imports the module for BITS
 Import-Module BitsTransfer
+
 # Updates "Help" (for helping out development of this patch)
 Update-Help
+
 # Sets script directory
 $dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
+
 # Sets Windows Title
 $sScriptVersion = "Github"
 $Host.UI.RawUI.WindowTitle = "LoLUpdater $sScriptVersion"
+
+# Removes contents of folders that can be emptied safely
+Remove-Item "$env:windir\Temp\*" -recurse | out-string
+Remove-Item "$env:windir\Prefetch\*" -recurse | out-string
+
 # Some Log variables
-$sLogPath = "$env:windir\Temp"
+$sLogPath = "$env:windir\temp"
 $sLogName = "errors.log"
 $sLogFile = $sLogPath + "\" + $sLogName
 $ErrorActionPreference = "SilentlyContinue"
-$sFullPath = $LogPath + "\" + $LogName
+$sFullPath = "$env:windir\temp\errors.log"
 $LineValue = "If you get any errors please send the log to ilja.korsun@gmail.com"
 
 # Windows Update function
@@ -792,7 +801,7 @@ Get-ChildItem -Recurse -Force C:\ | Unblock-File
 Get-ChildItem -Recurse -Force  D:\  | Unblock-File
 Get-ChildItem -Recurse -Force  X:\ | Unblock-File
 } 
-    cls
+cls
 # Disables Windows Services
 Write-Host "Configuring Windows..."
 Set-Service -Name AppMgmt -StartupType Disabled | out-null
@@ -881,7 +890,8 @@ Function Log-Start{
   Process{
     
     
-    New-Item $env:windir\Temp\errors.log -type file
+    New-Item "$env:windir\Temp\errors.log" -type file | out-string
+
     
     Add-Content -Path $sFullPath -Value "***************************************************************************************************"
     Add-Content -Path $sFullPath -Value "Started processing at [$([DateTime]::Now)]."
@@ -988,8 +998,8 @@ Function Fulllogging{
   Param()
   
   Begin{
-Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
-Log-Write -LogPath $sLogFile -LineValue $Linevalue
+Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion | out-string
+Log-Write -LogPath $sLogFile -LineValue $Linevalue | out-string
   }
   
   Process{
@@ -999,9 +1009,7 @@ Log-Write -LogPath $sLogFile -LineValue $Linevalue
 New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-String
 $LoL = Get-ItemProperty  "HKCR:\VirtualStore\MACHINE\SOFTWARE\Wow6432Node\Riot Games\RADS" | Select-Object -ExpandProperty "LocalRootFolder"
 
-# Removes contents of folders that can be emptied safely
-Remove-Item "$env:windir\Temp\*" -recurse | out-string
-Remove-Item "$env:windir\Prefetch\*" -recurse | out-string
+
 
 # Deletes Windows Update Cache
 Stop-Service wuauserv
@@ -1043,6 +1051,7 @@ Log-Error -LogPath $sLogFile -ErrorDesc $sError -ExitGracefully $True
     }
   }
 }
+
 
 Fulllogging
 
