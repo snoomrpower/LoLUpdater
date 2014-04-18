@@ -16,7 +16,7 @@ Download: https://github.com/Loggan08/LoLUpdater/archive/master.zip
 
 Right Click the zip file -> Properties -> Unblock
 
-Edit "Location.reg" and specify the LoL directory that you want to install it on, then save it and run it.
+Right click -> Edit "Location.reg" and specify the LoL directory that you want to install it on, then save it and run it.
 
 Open a Windows command prompt as admin
 
