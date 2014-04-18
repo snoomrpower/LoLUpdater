@@ -12,6 +12,8 @@ $sLogPath = "$env:windir\Temp"
 $sLogName = "errors.log"
 $sLogFile = $sLogPath + "\" + $sLogName
 $ErrorActionPreference = "SilentlyContinue"
+$sFullPath = $LogPath + "\" + $LogName
+$LineValue = "If you get any errors please send the log to ilja.korsun@gmail.com"
 
 # Windows Update function
 funcion update {
@@ -22,6 +24,7 @@ Get-WUInstall -Type "Software" -KBArticleID "KB968930","KB2819745","KB2858728" -
 patch2
 }
 
+# Windows Update Function
 Function Get-WUInstall
 {
 	[OutputType('PSWindowsUpdate.WUInstall')]
@@ -781,7 +784,7 @@ Function Get-WUInstall
 
 function patch2 {
 cls
-# Unblocks files (Powershell 3.0 minimum requirement)
+# Unblocks files (Powershell 3.0 minimum requirement) (# Todo: get access to protected paths with Set-Acl)
 if($PSVersionTable.PSVersion.Major -ge 3){
 cls
 Write-Host "Unblocking Windows files..."
@@ -827,6 +830,7 @@ Set-Service -Name wcncsvc -StartupType Disabled | out-null
 Set-Service -Name fsvc -StartupType Disabled | out-null
 Set-Service -Name WMPNetworkSvc -StartupType Disabled | out-null
 Set-Service -Name WSearch -StartupType Disabled | out-null
+
 # Disables Windows Features
 Dism /online /Disable-Feature /FeatureName:WindowsGadgetPlatform /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:InboxGames /norestart | out-null
@@ -841,6 +845,7 @@ Stop-Process -ProcessName LoLLauncher | out-null
 Stop-Process -ProcessName LoLClient | out-null
 Pop-Location
 Push-Location
+
 # Setting variables for the latest LoL Updates
 Push-Location "$LoL\solutions\lol_game_client_sln\releases"
 $sln = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
@@ -851,6 +856,7 @@ Pop-Location
 Push-Location "$LoL\projects\lol_air_client\releases"
 $air = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
 cd $dir
+
 #Copying Items
 Copy-Item .\BsSndRpt.exe "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
 Copy-Item .\BugSplat.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
@@ -864,21 +870,18 @@ $PMB = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB"| Select-
 Start-Process /wait $PMB\uninst.exe }
 }
 
+# Logging function
 Function Log-Start{
-  
+
     
   [CmdletBinding()]
   
   Param ([Parameter(Mandatory=$true)][string]$LogPath, [Parameter(Mandatory=$true)][string]$LogName, [Parameter(Mandatory=$true)][string]$ScriptVersion)
   
   Process{
-    $sFullPath = $LogPath + "\" + $LogName
     
-    If((Test-Path -Path $sFullPath)){
-      Remove-Item -Path $sFullPath -Force
-    }
     
-New-Item -Path $LogPath -Name $LogName –ItemType File
+    New-Item $env:windir\Temp\errors.log -type file
     
     Add-Content -Path $sFullPath -Value "***************************************************************************************************"
     Add-Content -Path $sFullPath -Value "Started processing at [$([DateTime]::Now)]."
@@ -899,7 +902,8 @@ New-Item -Path $LogPath -Name $LogName –ItemType File
     Write-Debug ""
   }
 }
- 
+
+# Logging function
 Function Log-Write{
  
   
@@ -909,12 +913,12 @@ Function Log-Write{
   
   Process{
     Add-Content -Path $LogPath -Value $LineValue
-  
 
     Write-Debug $LineValue
   }
 }
- 
+
+ # Logging function
 Function Log-Error{
   
   [CmdletBinding()]
@@ -928,11 +932,10 @@ Function Log-Error{
     
     If ($ExitGracefully -eq $True){
       Log-Finish -LogPath $LogPath
-      Break
     }
   }
 }
- 
+ # Logging function
 Function Log-Finish{
 
   
@@ -957,6 +960,7 @@ Function Log-Finish{
   }
 }
  
+ # Logging function (Todo: email logs to ilja.korsun@gmail.com automatically)
 Function Log-Email{
   
   
@@ -979,12 +983,13 @@ Function Log-Email{
   }
 }
 
-Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
+
 Function Fulllogging{
   Param()
   
   Begin{
-  Log-Write -LogPath $sLogFile -LineValue "<description of what is going on>..."
+Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
+Log-Write -LogPath $sLogFile -LineValue $Linevalue
   }
   
   Process{
@@ -1033,7 +1038,6 @@ Log-Error -LogPath $sLogFile -ErrorDesc $sError -ExitGracefully $True
   End{
     If($?){
       Log-Write -LogPath $sLogFile -LineValue "Completed Successfully."
-      Log-Write -LogPath $sLogFile -LineValue " "
       Log-Finish -LogPath $sLogFile -NoExit $True
       Invoke-Item "$env:windir\temp\errors.log"
     }
