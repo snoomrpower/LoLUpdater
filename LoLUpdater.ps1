@@ -7,6 +7,8 @@ Update-Help
 
 # Sets script directory
 $dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
+
+#FUKKING BUGS out
 $PMB = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB"| Select-Object -ExpandProperty "Program Directory"
 
 # Finds the LoL Directory from registry
@@ -972,31 +974,34 @@ $launch = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
 Pop-Location
 Push-Location "$LoL\projects\lol_air_client\releases"
 $air = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
+
 Set-Location $dir
 
 #Copying Items
-Copy-Item .\BsSndRpt.exe $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\BugSplat.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\BugSplatRc.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\dbghelp.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\dbghelp.dll $LoL\projects\lol_air_client\releases\$air\deploy
-Copy-Item .\tbb.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\NPSWF32.dll "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources"
-Copy-Item "Adobe Air.dll" "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\"
-Copy-Item $CG\cg.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item $CG\cgD3D9.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item $CG\cgGL.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item $CG\cg.dll $LoL\projects\lol_launcher\releases\$launch\deploy
-Copy-Item $CG\cgD3D9.dll $LoL\projects\lol_launcher\releases\$launch\deploy
-Copy-Item $CG\cgGL.dll $LoL\projects\lol_launcher\releases\$launch\deploy
-Copy-Item .\msvcp120.dll $LoL\projects\lol_launcher\releases\$launch\deploy
-Copy-Item .\msvcr120.dll $LoL\projects\lol_launcher\releases\$launch\deploy
-Copy-Item .\msvcp120.dll $LoL\projects\lol_launcher\releases\$launch\deploy
-Copy-Item .\msvcr120.dll $LoL\projects\lol_launcher\releases\$launch\deploy
-Copy-Item .\msvcp120.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\msvcr120.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
-# Todo:
-Set-Locaiton $LoL
+Copy-Item ".\BsSndRpt.exe" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Copy-Item ".\BugSplat.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Copy-Item ".\BugSplatRc.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Copy-Item ".\dbghelp.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Copy-Item ".\dbghelp.dll" "$LoL\projects\lol_air_client\releases\$air\deploy"
+Copy-Item ".\tbb.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Copy-Item ".\NPSWF32.dll" "$LoLprojects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources"
+Copy-Item ".\Adobe Air.dll" "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\"
+Copy-Item "$CG\cg.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Copy-Item "$CG\cgD3D9.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Copy-Item "$CG\cgGL.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Copy-Item "$CG\cg.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
+Copy-Item "$CG\cgD3D9.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
+Copy-Item "$CG\cgGL.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
+Copy-Item ".\msvcp120.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
+Copy-Item ".\msvcr120.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
+Copy-Item ".\msvcp120.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
+Copy-Item ".\msvcr120.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
+Copy-Item ".\msvcp120.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Copy-Item ".\msvcr120.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+if(Test-Path $PMB){
+Start-Process $PMB\uninst.exe}
+
+Set-Location $LoL
 Set-Location ..
 Start-Process .\lol.launcher.exe
 }
@@ -1042,8 +1047,8 @@ Log-Error -LogPath $sLogFile -ErrorDesc $sError -ExitGracefully $True
   End{
     If($?){
       Log-Write -LogPath $sLogFile -LineValue "Completed Successfully"
-      Log-Finish -LogPath $sLogFile -NoExit $True
-      Invoke-Item "$env:windir\temp\errors.log"
+      Log-Finish -LogPath $sLogFile
+
 
     }
     }
