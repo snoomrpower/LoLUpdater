@@ -2,11 +2,13 @@
 # Imports the module for BITS
 Import-Module BitsTransfer
 
-# Updates "Help" (for helping out development of this patch)
+# Updates "Help" (for devs to help out with this patch)
 Update-Help
 
 # Sets script directory
 $dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
+$PMB = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB"| Select-Object -ExpandProperty "Program Directory"
+$LoL = Get-ItemProperty  "HKCR:\VirtualStore\MACHINE\SOFTWARE\Wow6432Node\Riot Games\RADS" | Select-Object -ExpandProperty "LocalRootFolder"
 
 # Sets Windows Title
 $sScriptVersion = "Github"
@@ -29,13 +31,7 @@ $ErrorActionPreference = "SilentlyContinue"
 $sFullPath = "$env:windir\temp\errors.log"
 $LineValue = "If you get any errors please send the log to ilja.korsun@gmail.com"
 
-# Windows Update function
-function update {
-Write-Host "Installing Windows Updates, It will restart after if you are running this for the first time..."
-Get-WUInstall -AcceptAll -IgnoreUserInput | out-null
-# Installs custom updates for this patcher and restarts
 
-}
 
 # Windows Update Function
 Function Get-WUInstall
@@ -795,6 +791,13 @@ Function Get-WUInstall
 	End{}		
 } 
 
+# Windows Update function
+function update {
+Write-Host "Installing Windows Updates, It will restart after if you are running this for the first time..."
+Get-WUInstall -AcceptAll -IgnoreUserInput | out-null
+# Installs custom updates for this patcher and restarts
+
+}
 
 # Logging function
 Function Log-Start{
@@ -891,7 +894,7 @@ Function patcher {
 cls
 # Finds the LoL Directory from registry
 New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-String
-$LoL = Get-ItemProperty  "HKCR:\VirtualStore\MACHINE\SOFTWARE\Wow6432Node\Riot Games\RADS" | Select-Object -ExpandProperty "LocalRootFolder"
+
 # Unblocks files (Powershell 3.0 minimum requirement) (# Todo: get access to protected paths with Set-Acl)
 if($PSVersionTable.PSVersion.Major -ge 3){
 cls
@@ -963,7 +966,7 @@ $launch = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
 Pop-Location
 Push-Location "$LoL\projects\lol_air_client\releases"
 $air = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
-cd $dir
+Set-Location $dir
 
 #Copying Items
 Copy-Item .\BsSndRpt.exe "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
@@ -973,10 +976,13 @@ Copy-Item .\tbb.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
 Copy-Item .\NPSWF32.dll "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources"
 Copy-Item "Adobe Air.dll" "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\"
 # Uninstalling Pando Media Booster
-if(Test-Path "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB"){
-$PMB = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB"| Select-Object -ExpandProperty "Program Directory"
-Start-Process /wait $PMB\uninst.exe }
+
+if((Test-Path ("$PMB"))){
+Start-Process "$PMB\uninst.exe"
 } 
+Set-Location $LoL
+Set-Location ..
+Start-Proces .\lol.launcher.exe
 
 
 Function Fulllogging{
@@ -989,10 +995,6 @@ Log-Write -LogPath $sLogFile -LineValue $Linevalue | out-string
   
   Process{
     Try{
-
-
-
-
 
 # Windows Update choice menu
 cls
