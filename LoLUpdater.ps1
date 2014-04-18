@@ -1,3 +1,4 @@
+$dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
 $sScriptVersion = "2.0"
 $Host.UI.RawUI.WindowTitle = "LoLUpdater $sScriptVersion"
 $sLogPath = "C:\Windows\Temp"
@@ -880,18 +881,6 @@ Function Get-WUInstall
 	
 	End{}		
 } 
-Write-Host "Installing Windows Updates, It will restart after if you are running this for the first time..."
-Get-WUInstall -AcceptAll -IgnoreUserInput | out-null
-Get-WUInstall -Type "Software" -KBArticleID "KB2819745","KB2858728" -AcceptAll -IgnoreUserInput -AutoReboot | out-null
-
-cls
-Write-Host "Unblocking Windows files..."
-Get-ChildItem -Recurse -Force C:\ | Unblock-File
-Get-ChildItem -Recurse -Force  D:\  | Unblock-File
-Get-ChildItem -Recurse -Force  X:\ | Unblock-File
-cls
-
-
 Write-Host "Configuring Windows..."
 Update-Help
 Set-Service -Name AppMgmt -StartupType Disabled | out-null
@@ -936,8 +925,21 @@ Dism /online /Disable-Feature /FeatureName:TabletPCOC /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:Xps-Foundation-Xps-Viewer /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:Printing-XPSServices-Features /norestart | out-null
 cls
+Write-Host "Installing Windows Updates, It will restart after if you are running this for the first time..."
+Get-WUInstall -AcceptAll -IgnoreUserInput | out-null
+Get-WUInstall -Type "Software" -KBArticleID "KB2819745","KB2858728" -AcceptAll -IgnoreUserInput -AutoReboot | out-null
+
+cls
+Write-Host "Unblocking Windows files..."
+Get-ChildItem -Recurse -Force C:\ | Unblock-File
+Get-ChildItem -Recurse -Force  D:\  | Unblock-File
+Get-ChildItem -Recurse -Force  X:\ | Unblock-File
+cls
+
+
+
 Write-Host "Patching LoL..."
-$dir = $PsScriptRoot
+
 Import-Module BitsTransfer
 Start-BitsTransfer https://www.bugsplatsoftware.com/files/BugSplatNative.zip
 Start-Process 7z.exe "x BugSplatNative.zip -oBugSplatNative -y"
@@ -954,8 +956,8 @@ Pop-Location
 Push-Location RADS\projects\lol_air_client\releases
 $air = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
 cd $dir
-Copy-Item .\BugSplatNative\bin\BsSndRpt.exe .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\BugSplatNative\bin\BugSplat.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\BugSplatNative\Bugsplat\bin\BsSndRpt.exe .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\BugSplatNative\Bugsplat\bin\BugSplat.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
 Copy-Item .\dbghelp.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
 Copy-Item .\cg.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
 Copy-Item .\cgD3D9.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
@@ -967,7 +969,6 @@ $PMB = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB"| Select-
 Start-Process /wait $PMB\uninst.exe | out-null
 Remove-Item .\BugSplatNative -recurse
 Remove-Item .\BugSplatNative.zip
-Restart-Computer -Force
 
 
     Catch{
