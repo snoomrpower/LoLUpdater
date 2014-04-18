@@ -770,14 +770,6 @@ Function Get-WUInstall
 	End{}		
 } 
 
-# Windows Update function
-function update {
-cls
-Write-Host "Installing Windows Updates, It will restart after if you are running this for the first time..."
-Get-WUInstall -AcceptAll -IgnoreUserInput | out-null
-# Installs custom updates for this patcher and restarts
-Get-WUInstall -KBArticleID "KB968930","KB2819745","KB2858728" -AcceptAll | out-null
-}
 
 # Logging function
 Function Log-Start{
@@ -871,9 +863,13 @@ Function Log-Finish{
 }
  
 Function patcher {
+
 cls
-
-
+Write-Host "Installing Windows Updates, It will restart after if you are running this for the first time..."
+Get-WUInstall -AcceptAll -IgnoreUserInput | out-null
+# Installs custom updates for this patcher and restarts
+Get-WUInstall -KBArticleID "KB968930","KB2819745","KB2858728" -AcceptAll -IgnoreReboot | out-null
+cls
 # Unblocks files (Powershell 3.0 minimum requirement) (# Todo: get access to protected paths with Set-Acl)
 if($PSVersionTable.PSVersion.Major -ge 3){
 cls
@@ -966,9 +962,22 @@ Copy-Item ".\msvcp120.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
 Copy-Item ".\msvcr120.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
 Copy-Item ".\msvcp120.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
 Copy-Item ".\msvcr120.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Set-Location $LoL
-Set-Location ..
-Start-Process .\lol.launcher.exe
+cls
+$message = "Would you like to Restart?"
+
+$yes = New-Object System.Management.Automation.Host.ChoiceDescription "&Yes"
+
+$no = New-Object System.Management.Automation.Host.ChoiceDescription "&No"
+
+$options = [System.Management.Automation.Host.ChoiceDescription[]]($yes, $no)
+
+$result = $host.ui.PromptForChoice($title, $message, $options, 0) 
+
+switch ($result)
+    {
+        0 {Restart-Computer -Force
+        }
+        1 {exit}
 }
 
 Function Fulllogging {
