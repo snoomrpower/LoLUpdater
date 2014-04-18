@@ -15,6 +15,7 @@ $Host.UI.RawUI.WindowTitle = "LoLUpdater $sScriptVersion"
 # Removes contents of folders that can be emptied safely
 Remove-Item "$env:windir\Temp\*" -recurse | out-string
 Remove-Item "$env:windir\Prefetch\*" -recurse | out-string
+
 # Deletes Windows Update Cache
 Stop-Service wuauserv
 Remove-Item C:\Windows\SoftwareDistribution\* -Recurse -Force
@@ -33,7 +34,7 @@ function update {
 Write-Host "Installing Windows Updates, It will restart after if you are running this for the first time..."
 Get-WUInstall -AcceptAll -IgnoreUserInput | out-null
 # Installs custom updates for this patcher and restarts
-Get-WUInstall -Type "Software" -KBArticleID "KB968930","KB2819745","KB2858728" -AcceptAll -IgnoreUserInput -AutoReboot | out-null
+
 }
 
 # Windows Update Function
