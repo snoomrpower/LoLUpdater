@@ -1,134 +1,11 @@
-$sScriptVersion = "2.0.1"
-$Host.UI.RawUI.WindowTitle = "LoLUpdater $sScriptVersion"
-$dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
-$sLogPath = "$dir"
-$sLogName = "errors.log"
-$sLogFile = $sLogPath + "\" + $sLogName
-$ErrorActionPreference = "SilentlyContinue"
-Import-Module BitsTransfer
-New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | out-string
-$LoL = Get-ItemProperty  "HKCR:\VirtualStore\MACHINE\SOFTWARE\Wow6432Node\Riot Games\RADS" | Select-Object -ExpandProperty "LocalRootFolder"
-
-Function Log-Start{
-    
-  [CmdletBinding()]
-  
-  Param ([Parameter(Mandatory=$true)][string]$LogPath, [Parameter(Mandatory=$true)][string]$LogName, [Parameter(Mandatory=$true)][string]$ScriptVersion)
-  
-  Process{
-    $sFullPath = $LogPath + "\" + $LogName
-    
-    If((Test-Path -Path $sFullPath)){
-      Remove-Item -Path $sFullPath -Force
-    }
-    
-    New-Item -Path $LogPath -Value $LogName –ItemType File
-    
-    Add-Content -Path $sFullPath -Value "***************************************************************************************************"
-    Add-Content -Path $sFullPath -Value "Started processing at [$([DateTime]::Now)]."
-    Add-Content -Path $sFullPath -Value "***************************************************************************************************"
-    Add-Content -Path $sFullPath -Value ""
-    Add-Content -Path $sFullPath -Value "Running script version [$ScriptVersion]."
-    Add-Content -Path $sFullPath -Value ""
-    Add-Content -Path $sFullPath -Value "***************************************************************************************************"
-    Add-Content -Path $sFullPath -Value ""
-  
-    Write-Debug "***************************************************************************************************"
-    Write-Debug "Started processing at [$([DateTime]::Now)]."
-    Write-Debug "***************************************************************************************************"
-    Write-Debug ""
-    Write-Debug "Running script version [$ScriptVersion]."
-    Write-Debug ""
-    Write-Debug "***************************************************************************************************"
-    Write-Debug ""
-  }
+# Windows Update function
+funcion update {
+Write-Host "Installing Windows Updates, It will restart after if you are running this for the first time..."
+Get-WUInstall -AcceptAll -IgnoreUserInput | out-null
+# Installs custom updates for this patcher and restarts
+Get-WUInstall -Type "Software" -KBArticleID "KB968930","KB2819745","KB2858728" -AcceptAll -IgnoreUserInput -AutoReboot | out-null
+patch2
 }
- 
-Function Log-Write{
- 
-  
-  [CmdletBinding()]
-  
-  Param ([Parameter(Mandatory=$true)][string]$LogPath, [Parameter(Mandatory=$true)][string]$LineValue)
-  
-  Process{
-    Add-Content -Path $LogPath -Value $LineValue
-  
-    Write-Debug $LineValue
-  }
-}
- 
-Function Log-Error{
-  
-  [CmdletBinding()]
-  
-  Param ([Parameter(Mandatory=$true)][string]$LogPath, [Parameter(Mandatory=$true)][string]$ErrorDesc, [Parameter(Mandatory=$true)][boolean]$ExitGracefully)
-  
-  Process{
-    Add-Content -Path $LogPath -Value "Error: An error has occurred [$ErrorDesc]."
-  
-    Write-Debug "Error: An error has occurred [$ErrorDesc]."
-    
-    If ($ExitGracefully -eq $True){
-      Log-Finish -LogPath $LogPath
-    }
-  }
-}
- 
-Function Log-Finish{
-  
-  [CmdletBinding()]
-  
-  Param ([Parameter(Mandatory=$true)][string]$LogPath, [Parameter(Mandatory=$false)][string]$NoExit)
-  
-  Process{
-    Add-Content -Path $LogPath -Value ""
-    Add-Content -Path $LogPath -Value "***************************************************************************************************"
-    Add-Content -Path $LogPath -Value "Finished processing at [$([DateTime]::Now)]."
-    Add-Content -Path $LogPath -Value "***************************************************************************************************"
-  
-    Write-Debug ""
-    Write-Debug "***************************************************************************************************"
-    Write-Debug "Finished processing at [$([DateTime]::Now)]."
-    Write-Debug "***************************************************************************************************"
-  
-    If(!($NoExit) -or ($NoExit -eq $False)){
-      Exit
-    }    
-  }
-}
- 
-Function Log-Email{
-  
-  [CmdletBinding()]
-  
-  Param ([Parameter(Mandatory=$true)][string]$LogPath, [Parameter(Mandatory=$true)][string]$EmailFrom, [Parameter(Mandatory=$true)][string]$EmailTo, [Parameter(Mandatory=$true)][string]$EmailSubject)
-  
-  Process{
-    Try{
-      $sBody = (Get-Content $LogPath | out-string)
-      
-      $sSmtpServer = "smtp.yourserver"
-      $oSmtp = new-object Net.Mail.SmtpClient($sSmtpServer)
-      $oSmtp.Send($EmailFrom, $EmailTo, $EmailSubject, $sBody)
-      Exit 0
-    }
-    
-    Catch{
-      Exit 1
-    } 
-  }
-}
-
-
-
-
-
-
-
-
-
-
 
 Function Get-WUInstall
 {
@@ -887,13 +764,9 @@ Function Get-WUInstall
 	End{}		
 } 
 
-Write-Host "Installing Windows Updates, It will restart after if you are running this for the first time..."
-Stop-Service wuauserv
-Remove-Item C:\Windows\SoftwareDistribution\* -Recurse -Force
-Start-Service wuauserv
-Get-WUInstall -AcceptAll -IgnoreUserInput | out-null
-Get-WUInstall -Type "Software" -KBArticleID "KB968930","KB2819745","KB2858728" -AcceptAll -IgnoreUserInput -AutoReboot | out-null
-
+function patch2 {
+cls
+# Unblocks files (Powershell 3.0 minimum requirement)
 if($PSVersionTable.PSVersion.Major -ge 3){
 cls
 Write-Host "Unblocking Windows files..."
@@ -901,20 +774,9 @@ Get-ChildItem -Recurse -Force C:\ | Unblock-File
 Get-ChildItem -Recurse -Force  D:\  | Unblock-File
 Get-ChildItem -Recurse -Force  X:\ | Unblock-File
 } 
-
-
-Function patch {
-  Param()
-  
-  Begin{
-  Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
-    Log-Write -LogPath $sLogFile -LineValue "<description of what is going on>..."
-  }
-  
-  Process{
-    Try{
+    cls
+# Disables Windows Services
 Write-Host "Configuring Windows..."
-Update-Help
 Set-Service -Name AppMgmt -StartupType Disabled | out-null
 Set-Service -Name bthserv -StartupType Disabled | out-null
 Set-Service -Name PeerDistSvc -StartupType Disabled | out-null
@@ -950,6 +812,7 @@ Set-Service -Name wcncsvc -StartupType Disabled | out-null
 Set-Service -Name fsvc -StartupType Disabled | out-null
 Set-Service -Name WMPNetworkSvc -StartupType Disabled | out-null
 Set-Service -Name WSearch -StartupType Disabled | out-null
+# Disables Windows Features
 Dism /online /Disable-Feature /FeatureName:WindowsGadgetPlatform /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:InboxGames /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:MediaPlayback /norestart | out-null
@@ -957,54 +820,415 @@ Dism /online /Disable-Feature /FeatureName:TabletPCOC /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:Xps-Foundation-Xps-Viewer /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:Printing-XPSServices-Features /norestart | out-null
 cls
-
-cls
 Write-Host "Patching LoL..."
-Start-BitsTransfer https://www.bugsplatsoftware.com/files/BugSplatNative.zip
-Start-Process 7z.exe "x BugSplatNative.zip -oBugSplatNative -y"
+#Closing LoL
 Stop-Process -ProcessName LoLLauncher | out-null
 Stop-Process -ProcessName LoLClient | out-null
 Pop-Location
 Push-Location
-Push-Location RADS\solutions\lol_game_client_sln\releases
+# Setting variables for the latest LoL Updates
+Push-Location "$LoL\solutions\lol_game_client_sln\releases"
 $sln = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
 Pop-Location
-Push-Location RADS\projects\lol_launcher\releases
+Push-Location "$LoL\projects\lol_launcher\releases"
 $launch = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
 Pop-Location
-Push-Location RADS\projects\lol_air_client\releases
+Push-Location "$LoL\projects\lol_air_client\releases"
 $air = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
 cd $dir
-Copy-Item .\BugSplatNative\Bugsplat\bin\BsSndRpt.exe $LoL\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\BugSplatNative\Bugsplat\bin\BugSplat.dll $LoL\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\dbghelp.dll $LoL\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\cg.dll $LoL\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\cgD3D9.dll $LoL\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\cgGL.dll $LoL\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\tbb.dll $LoL\ADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\NPSWF32.dll "$LoL\RADS\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources"
-Copy-Item "Adobe Air.dll" "$LoL\RADS\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\"
+#Copying Items
+Star-BitsTransfer http://developer.download.nvidia.com/cg/Cg_3.1/Cg-3.1_April2012_Setup.exe¨Start-Process /wait Cg-3.1_April2012_Setup.exe /silent
+Copy-Item .\BsSndRpt.exe "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Copy-Item .\BugSplat.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Copy-Item .\dbghelp.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Copy-Item .\tbb.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Copy-Item .\NPSWF32.dll "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources"
+Copy-Item "Adobe Air.dll" "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\"
+# Uninstalling Pando Media Booster
+if(Test-Path "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB"){
 $PMB = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB"| Select-Object -ExpandProperty "Program Directory"
+Start-Process /wait $PMB\uninst.exe }
+}
 
-Start-Process /wait $PMB\uninst.exe | out-null
-Remove-Item .\BugSplatNative -recurse
-Remove-Item .\BugSplatNative.zip
+Function Log-Start{
+  <#
+  .SYNOPSIS
+    Creates log file
+ 
+  .DESCRIPTION
+    Creates log file with path and name that is passed. Checks if log file exists, and if it does deletes it and creates a new one.
+    Once created, writes initial logging data
+ 
+  .PARAMETER LogPath
+    Mandatory. Path of where log is to be created. Example: C:\Windows\Temp
+ 
+  .PARAMETER LogName
+    Mandatory. Name of log file to be created. Example: Test_Script.log
+      
+  .PARAMETER ScriptVersion
+    Mandatory. Version of the running script which will be written in the log. Example: 1.5
+ 
+  .INPUTS
+    Parameters above
+ 
+  .OUTPUTS
+    Log file created
+ 
+  .NOTES
+    Version:        1.0
+    Author:         Luca Sturlese
+    Creation Date:  10/05/12
+    Purpose/Change: Initial function development
+ 
+    Version:        1.1
+    Author:         Luca Sturlese
+    Creation Date:  19/05/12
+    Purpose/Change: Added debug mode support
+ 
+  .EXAMPLE
+    Log-Start -LogPath "C:\Windows\Temp" -LogName "Test_Script.log" -ScriptVersion "1.5"
+  #>
+    
+  [CmdletBinding()]
+  
+  Param ([Parameter(Mandatory=$true)][string]$LogPath, [Parameter(Mandatory=$true)][string]$LogName, [Parameter(Mandatory=$true)][string]$ScriptVersion)
+  
+  Process{
+    $sFullPath = $LogPath + "\" + $LogName
+    
+    #Check if file exists and delete if it does
+    If((Test-Path -Path $sFullPath)){
+      Remove-Item -Path $sFullPath -Force
+    }
+    
+    #Create file and start logging
+New-Item -Path $LogPath -Name $LogName –ItemType File
+    
+    Add-Content -Path $sFullPath -Value "***************************************************************************************************"
+    Add-Content -Path $sFullPath -Value "Started processing at [$([DateTime]::Now)]."
+    Add-Content -Path $sFullPath -Value "***************************************************************************************************"
+    Add-Content -Path $sFullPath -Value ""
+    Add-Content -Path $sFullPath -Value "Running script version [$ScriptVersion]."
+    Add-Content -Path $sFullPath -Value ""
+    Add-Content -Path $sFullPath -Value "***************************************************************************************************"
+    Add-Content -Path $sFullPath -Value ""
+  
+    #Write to screen for debug mode
+    Write-Debug "***************************************************************************************************"
+    Write-Debug "Started processing at [$([DateTime]::Now)]."
+    Write-Debug "***************************************************************************************************"
+    Write-Debug ""
+    Write-Debug "Running script version [$ScriptVersion]."
+    Write-Debug ""
+    Write-Debug "***************************************************************************************************"
+    Write-Debug ""
+  }
+}
+ 
+Function Log-Write{
+  <#
+  .SYNOPSIS
+    Writes to a log file
+ 
+  .DESCRIPTION
+    Appends a new line to the end of the specified log file
+  
+  .PARAMETER LogPath
+    Mandatory. Full path of the log file you want to write to. Example: C:\Windows\Temp\Test_Script.log
+  
+  .PARAMETER LineValue
+    Mandatory. The string that you want to write to the log
+      
+  .INPUTS
+    Parameters above
+ 
+  .OUTPUTS
+    None
+ 
+  .NOTES
+    Version:        1.0
+    Author:         Luca Sturlese
+    Creation Date:  10/05/12
+    Purpose/Change: Initial function development
+  
+    Version:        1.1
+    Author:         Luca Sturlese
+    Creation Date:  19/05/12
+    Purpose/Change: Added debug mode support
+ 
+  .EXAMPLE
+    Log-Write -LogPath "C:\Windows\Temp\Test_Script.log" -LineValue "This is a new line which I am appending to the end of the log file."
+  #>
+  
+  [CmdletBinding()]
+  
+  Param ([Parameter(Mandatory=$true)][string]$LogPath, [Parameter(Mandatory=$true)][string]$LineValue)
+  
+  Process{
+    Add-Content -Path $LogPath -Value $LineValue
+  
+    #Write to screen for debug mode
+    Write-Debug $LineValue
+  }
+}
+ 
+Function Log-Error{
+  <#
+  .SYNOPSIS
+    Writes an error to a log file
+ 
+  .DESCRIPTION
+    Writes the passed error to a new line at the end of the specified log file
+  
+  .PARAMETER LogPath
+    Mandatory. Full path of the log file you want to write to. Example: C:\Windows\Temp\Test_Script.log
+  
+  .PARAMETER ErrorDesc
+    Mandatory. The description of the error you want to pass (use $_.Exception)
+  
+  .PARAMETER ExitGracefully
+    Mandatory. Boolean. If set to True, runs Log-Finish and then exits script
+ 
+  .INPUTS
+    Parameters above
+ 
+  .OUTPUTS
+    None
+ 
+  .NOTES
+    Version:        1.0
+    Author:         Luca Sturlese
+    Creation Date:  10/05/12
+    Purpose/Change: Initial function development
+    
+    Version:        1.1
+    Author:         Luca Sturlese
+    Creation Date:  19/05/12
+    Purpose/Change: Added debug mode support. Added -ExitGracefully parameter functionality
+ 
+  .EXAMPLE
+    Log-Error -LogPath "C:\Windows\Temp\Test_Script.log" -ErrorDesc $_.Exception -ExitGracefully $True
+  #>
+  
+  [CmdletBinding()]
+  
+  Param ([Parameter(Mandatory=$true)][string]$LogPath, [Parameter(Mandatory=$true)][string]$ErrorDesc, [Parameter(Mandatory=$true)][boolean]$ExitGracefully)
+  
+  Process{
+    Add-Content -Path $LogPath -Value "Error: An error has occurred [$ErrorDesc]."
+  
+    #Write to screen for debug mode
+    Write-Debug "Error: An error has occurred [$ErrorDesc]."
+    
+    #If $ExitGracefully = True then run Log-Finish and exit script
+    If ($ExitGracefully -eq $True){
+      Log-Finish -LogPath $LogPath
+      Break
+    }
+  }
+}
+ 
+Function Log-Finish{
+  <#
+  .SYNOPSIS
+    Write closing logging data & exit
+ 
+  .DESCRIPTION
+    Writes finishing logging data to specified log and then exits the calling script
+  
+  .PARAMETER LogPath
+    Mandatory. Full path of the log file you want to write finishing data to. Example: C:\Windows\Temp\Test_Script.log
+ 
+  .PARAMETER NoExit
+    Optional. If this is set to True, then the function will not exit the calling script, so that further execution can occur
+  
+  .INPUTS
+    Parameters above
+ 
+  .OUTPUTS
+    None
+ 
+  .NOTES
+    Version:        1.0
+    Author:         Luca Sturlese
+    Creation Date:  10/05/12
+    Purpose/Change: Initial function development
+    
+    Version:        1.1
+    Author:         Luca Sturlese
+    Creation Date:  19/05/12
+    Purpose/Change: Added debug mode support
+  
+    Version:        1.2
+    Author:         Luca Sturlese
+    Creation Date:  01/08/12
+    Purpose/Change: Added option to not exit calling script if required (via optional parameter)
+ 
+  .EXAMPLE
+    Log-Finish -LogPath "C:\Windows\Temp\Test_Script.log"
+ 
+.EXAMPLE
+    Log-Finish -LogPath "C:\Windows\Temp\Test_Script.log" -NoExit $True
+  #>
+  
+  [CmdletBinding()]
+  
+  Param ([Parameter(Mandatory=$true)][string]$LogPath, [Parameter(Mandatory=$false)][string]$NoExit)
+  
+  Process{
+    Add-Content -Path $LogPath -Value ""
+    Add-Content -Path $LogPath -Value "***************************************************************************************************"
+    Add-Content -Path $LogPath -Value "Finished processing at [$([DateTime]::Now)]."
+    Add-Content -Path $LogPath -Value "***************************************************************************************************"
+  
+    #Write to screen for debug mode
+    Write-Debug ""
+    Write-Debug "***************************************************************************************************"
+    Write-Debug "Finished processing at [$([DateTime]::Now)]."
+    Write-Debug "***************************************************************************************************"
+  
+    #Exit calling script if NoExit has not been specified or is set to False
+    If(!($NoExit) -or ($NoExit -eq $False)){
+      Exit
+    }    
+  }
+}
+ 
+Function Log-Email{
+  <#
+  .SYNOPSIS
+    Emails log file to list of recipients
+ 
+  .DESCRIPTION
+    Emails the contents of the specified log file to a list of recipients
+  
+  .PARAMETER LogPath
+    Mandatory. Full path of the log file you want to email. Example: C:\Windows\Temp\Test_Script.log
+  
+  .PARAMETER EmailFrom
+    Mandatory. The email addresses of who you want to send the email from. Example: "admin@9to5IT.com"
+ 
+  .PARAMETER EmailTo
+    Mandatory. The email addresses of where to send the email to. Seperate multiple emails by ",". Example: "admin@9to5IT.com, test@test.com"
+  
+  .PARAMETER EmailSubject
+    Mandatory. The subject of the email you want to send. Example: "Cool Script - [" + (Get-Date).ToShortDateString() + "]"
+ 
+  .INPUTS
+    Parameters above
+ 
+  .OUTPUTS
+    Email sent to the list of addresses specified
+ 
+  .NOTES
+    Version:        1.0
+    Author:         Luca Sturlese
+    Creation Date:  05.10.12
+    Purpose/Change: Initial function development
+ 
+  .EXAMPLE
+    Log-Email -LogPath "C:\Windows\Temp\Test_Script.log" -EmailFrom "admin@9to5IT.com" -EmailTo "admin@9to5IT.com, test@test.com" -EmailSubject "Cool Script - [" + (Get-Date).ToShortDateString() + "]"
+  #>
+  
+  [CmdletBinding()]
+  
+  Param ([Parameter(Mandatory=$true)][string]$LogPath, [Parameter(Mandatory=$true)][string]$EmailFrom, [Parameter(Mandatory=$true)][string]$EmailTo, [Parameter(Mandatory=$true)][string]$EmailSubject)
+  
+  Process{
+    Try{
+      $sBody = (Get-Content $LogPath | out-string)
+      
+      #Create SMTP object and send email
+      $sSmtpServer = "smtp.yourserver"
+      $oSmtp = new-object Net.Mail.SmtpClient($sSmtpServer)
+      $oSmtp.Send($EmailFrom, $EmailTo, $EmailSubject, $sBody)
+      Exit 0
     }
     
     Catch{
+      Exit 1
+    } 
+  }
+}
+
+
+Function Fulllogging{
+  Param()
+  
+  Begin{
+  Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
+    Log-Write -LogPath $sLogFile -LineValue "<description of what is going on>..."
+  }
+  
+  Process{
+    Try{
+# Imports the module for BITS
+Import-Module BitsTransfer
+# Updates "Help" (for devs only)
+Update-Help
+# Sets script directory
+$dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
+# Sets Windows Title
+$sScriptVersion = "Github"
+$Host.UI.RawUI.WindowTitle = "LoLUpdater $sScriptVersion"
+# Some Log variables
+$sLogPath = "$env:windir\Temp"
+$sLogName = "errors.log"
+$sLogFile = $sLogPath + "\" + $sLogName
+$ErrorActionPreference = "SilentlyContinue"
+
+# Finds the LoL Directory from registry
+New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-String
+$LoL = Get-ItemProperty  "HKCR:\VirtualStore\MACHINE\SOFTWARE\Wow6432Node\Riot Games\RADS" | Select-Object -ExpandProperty "LocalRootFolder"
+
+# Removes contents of folders that can be emptied safely
+Remove-Item "$env:windir\Temp\*" -recurse | out-string
+Remove-Item "$env:windir\Prefetch\*" -recurse | out-string
+
+# Deletes Windows Update Cache
+Stop-Service wuauserv
+Remove-Item C:\Windows\SoftwareDistribution\* -Recurse -Force
+Start-Service wuauserv
+
+
+# Windows Update choice menu
+cls
+$message = "Do you want to perform a Windows Update before patching?"
+
+$yes = New-Object System.Management.Automation.Host.ChoiceDescription "&Yes"
+
+$no = New-Object System.Management.Automation.Host.ChoiceDescription "&No"
+
+$options = [System.Management.Automation.Host.ChoiceDescription[]]($yes, $no)
+
+$result = $host.ui.PromptForChoice($title, $message, $options, 0) 
+
+switch ($result)
+    {
+        0 {update
+        }
+        1 {patch2}
+    }
+    }
+    Catch{
 $sError = $Error[0] | Out-String
- Log-Error -LogPath $sLogFile -ErrorDesc $sError -ExitGracefully $True
+Log-Error -LogPath $sLogFile -ErrorDesc $sError -ExitGracefully $True
     }
   }
+
   
   End{
     If($?){
       Log-Write -LogPath $sLogFile -LineValue "Completed Successfully."
       Log-Write -LogPath $sLogFile -LineValue " "
       Log-Finish -LogPath $sLogFile
-      Invoke-Item $dir\errors.log
     }
   }
 }
 
-patch
+
+
+Fulllogging
+
+
+
