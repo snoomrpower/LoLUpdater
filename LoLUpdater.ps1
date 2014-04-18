@@ -972,7 +972,7 @@ Copy-Item ".\Adobe Air.dll" "$LoL\projects\lol_air_client\releases\$air\deploy\A
 Copy-Item "$CG\cg.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
 Copy-Item "$CG\cgD3D9.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
 Copy-Item "$CG\cgGL.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Copy-Item "$CG\cg.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
+Copy-Item $CG\cg.dll "$LoL\projects\lol_launcher\releases\$launch\deploy"
 Copy-Item "$CG\cgD3D9.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
 Copy-Item "$CG\cgGL.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
 Copy-Item .\msvcp120.dll "$LoL\projects\lol_launcher\releases\$launch\deploy"
