@@ -1,6 +1,9 @@
 LoLUpdater
 ==========
 
+Win7+ Exclusives:
+This patcher does extra things if you have Powershell 3.0, if you choose to do updates it will install it for you (if you are on Win 7+) then you can just restart and run the patcher again.
+
 Go to C:\Riot Games\League of Legends\RADS\projects\lol_air_client\releases
 Delete all folders except the newest one
 

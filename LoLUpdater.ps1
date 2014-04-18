@@ -863,7 +863,7 @@ cls
 Write-Host "Installing Windows Updates, It will restart after if you are running this for the first time..."
 Get-WUInstall -AcceptAll -IgnoreUserInput -IgnoreReboot | out-null
 # Installs custom updates for this patcher and restarts
-Get-WUInstall -KBArticleID "KB968930","KB2819745","KB2858728" -AcceptAll -IgnoreReboot | out-null
+Get-WUInstall -KBArticleID "KB968930","KB2506146","KB2506143","KB2819745","KB2858728" -AcceptAll -IgnoreReboot | out-null
 }
 
 Function patcher {
@@ -984,7 +984,7 @@ Function Fulllogging {
   Param()
   
   Begin{
-# These are not included in Powershell by defaul
+# These are not included in Powershell by default
 New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT
 cls
 New-PSDrive -Name HKU -PSProvider Registry -Root HKEY_CURRENT_USER
