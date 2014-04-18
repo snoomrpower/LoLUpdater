@@ -1,42 +1,4 @@
 
-# Imports the module for BITS
-Import-Module BitsTransfer
-
-# Updates "Help" (for devs to help out with this patch)
-Update-Help
-
-# Sets script directory
-$dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
-
-#FUKKING BUGS out
-if(Test-Path HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB){
-$PMB = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB"| Select-Object -ExpandProperty "Program Directory"}
-
-
-# Finds the LoL Directory from registry
-New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT
-New-PSDrive -Name HKU -PSProvider Registry -Root HKEY_CURRENT_USER
-$LoL = Get-ItemProperty "HKCR:\VirtualStore\MACHINE\SOFTWARE\Wow6432Node\Riot Games\RADS" | Select-Object -ExpandProperty "LocalRootFolder"
-
-#Nvidia CG Directory
-if(Test-Path ("HKU:\Environment" | Select-Object -ExpandProperty "CG_BIN_PATH")){
-$CG = Get-ItemProperty "HKU:\Environment" | Select-Object -ExpandProperty "CG_BIN_PATH"
-}
-ELSE {Read-Host "You did'nt Install Nvidia CG, please read the README.MD"
-}
-
-# Sets Windows Title
-$sScriptVersion = "Github"
-$Host.UI.RawUI.WindowTitle = "LoLUpdater $sScriptVersion"
-
-# Removes contents of folders that can be emptied safely
-Remove-Item "$env:windir\Temp\*" -recurse | out-string
-Remove-Item "$env:windir\Prefetch\*" -recurse | out-string
-
-# Deletes Windows Update Cache
-Stop-Service wuauserv
-Remove-Item C:\Windows\SoftwareDistribution\* -Recurse -Force
-Start-Service wuauserv
 
 # Some Log variables
 $sLogPath = "$env:windir\temp"
@@ -981,16 +943,12 @@ Pop-Location
 Push-Location "$LoL\projects\lol_air_client\releases"
 $air = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
 
-Set-Location $dir
-
+cd "$dir"
 #Copying Items
-Copy-Item ".\BsSndRpt.exe" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Copy-Item ".\BugSplat.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Copy-Item ".\BugSplatRc.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
 Copy-Item ".\dbghelp.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
 Copy-Item ".\dbghelp.dll" "$LoL\projects\lol_air_client\releases\$air\deploy"
 Copy-Item ".\tbb.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Copy-Item ".\NPSWF32.dll" "$LoLprojects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources"
+Copy-Item ".\NPSWF32.dll" "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources"
 Copy-Item ".\Adobe Air.dll" "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\"
 Copy-Item "$CG\cg.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
 Copy-Item "$CG\cgD3D9.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
@@ -1004,9 +962,6 @@ Copy-Item ".\msvcp120.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
 Copy-Item ".\msvcr120.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
 Copy-Item ".\msvcp120.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
 Copy-Item ".\msvcr120.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-if(Test-Path $PMB){
-Start-Process $PMB\uninst.exe}
-
 Set-Location $LoL
 Set-Location ..
 Start-Process .\lol.launcher.exe
@@ -1016,12 +971,51 @@ Function Fulllogging {
   Param()
   
   Begin{
-Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion | out-string
+# These are not included in Powershell by defaul
+New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT
+cls
+New-PSDrive -Name HKU -PSProvider Registry -Root HKEY_CURRENT_USER
+cls
+# Removes contents of folders that can be emptied safely
+Remove-Item "$env:windir\Temp\*" -recurse | out-string
+Remove-Item "$env:windir\Prefetch\*" -recurse | out-string
+#Starting Logs
+Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
 Log-Write -LogPath $sLogFile -LineValue $Linevalue | out-string
   }
   
   Process{
     Try{
+
+# Imports the module for BITS
+Import-Module BitsTransfer
+
+# Updates "Help" (for devs to help out with this patch)
+Update-Help
+
+#Finds script directory
+$dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
+
+#Todo: Add PMB Uninstall
+
+
+# Finds the LoL Directory from registry
+$LoL = Get-ItemProperty "HKCR:\VirtualStore\MACHINE\SOFTWARE\Wow6432Node\Riot Games\RADS" | Select-Object -ExpandProperty "LocalRootFolder"
+
+#Nvidia CG Directory
+
+$CG = Get-ItemProperty "HKU:\Environment" | Select-Object -ExpandProperty "CG_BIN_PATH"
+
+# Sets Windows Title
+$sScriptVersion = "Github"
+$Host.UI.RawUI.WindowTitle = "LoLUpdater $sScriptVersion"
+
+
+
+# Deletes Windows Update Cache
+Stop-Service wuauserv
+Remove-Item C:\Windows\SoftwareDistribution\* -Recurse -Force
+Start-Service wuauser
 
 # Windows Update choice menu
 cls
@@ -1054,8 +1048,6 @@ Log-Error -LogPath $sLogFile -ErrorDesc $sError -ExitGracefully $True
     If($?){
       Log-Write -LogPath $sLogFile -LineValue "Completed Successfully"
       Log-Finish -LogPath $sLogFile
-
-
     }
     }
     }
