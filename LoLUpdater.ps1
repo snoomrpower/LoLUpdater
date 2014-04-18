@@ -4,6 +4,7 @@ $Host.UI.RawUI.WindowTitle = "LoLUpdater $sScriptVersion"
 $sLogPath = "C:\Windows\Temp"
 $sLogName = "errors.log"
 $sLogFile = $sLogPath + "\" + $sLogName
+Import-Module BitsTransfer
 
 Function Log-Start{
     
@@ -939,8 +940,6 @@ cls
 
 
 Write-Host "Patching LoL..."
-
-Import-Module BitsTransfer
 Start-BitsTransfer https://www.bugsplatsoftware.com/files/BugSplatNative.zip
 Start-Process 7z.exe "x BugSplatNative.zip -oBugSplatNative -y"
 Stop-Process -ProcessName LoLLauncher | out-null
