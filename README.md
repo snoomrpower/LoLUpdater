@@ -13,7 +13,7 @@ Delete all folders except the newest one
 
 Right Click the exe file -> Properties -> Unblock
 
-![alt text](http://imgur.com/z7PhjiS)
+![alt text](Untitled)
 
 [Download](https://github.com/Loggan08/LoLUpdater/archive/master.zip)
 
