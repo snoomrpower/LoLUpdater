@@ -10,7 +10,7 @@ Right Click the zip file -> Properties -> Unblock
 
 Open a Windows command prompt as admin
 
-cd "C:\Riot Games\League of Legends"
+cd "Path of extractions (where the files are)"
 
 powershell -NoProfile -ExecutionPolicy bypass -File LoLUpdater.ps1
 
