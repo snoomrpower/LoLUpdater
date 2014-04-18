@@ -927,7 +927,7 @@ Dism /online /Disable-Feature /FeatureName:Printing-XPSServices-Features /norest
 cls
 Write-Host "Installing Windows Updates, It will restart after if you are running this for the first time..."
 Get-WUInstall -AcceptAll -IgnoreUserInput | out-null
-Get-WUInstall -Type "Software" -KBArticleID "KB2819745","KB2858728" -AcceptAll -IgnoreUserInput -AutoReboot | out-null
+Get-WUInstall -Type "Software" -KBArticleID "KB968930","KB2819745","KB2858728" -AcceptAll -IgnoreUserInput -AutoReboot | out-null
 
 cls
 Write-Host "Unblocking Windows files..."

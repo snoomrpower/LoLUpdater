@@ -1,14 +1,5 @@
 LoLUpdater
 ==========
-Prerequsistes:
-
-XP users need this first: http://www.microsoft.com/en-us/download/details.aspx?id=16818
-
-Vista 64bit: http://www.microsoft.com/en-us/download/details.aspx?id=9239
-
-Vista 32bit: http://www.microsoft.com/sv-se/download/details.aspx?id=9864
-
---------------
 
 SAVE ALL YOUR WORK BEFORE RUNNING THIS PATCH, IT FORCE RESTARTS THE COMPUTER 1 TIME
 
