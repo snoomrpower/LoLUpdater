@@ -10,11 +10,12 @@ $dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
 $PMB = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB"| Select-Object -ExpandProperty "Program Directory"
 
 # Finds the LoL Directory from registry
-New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-String
-$LoL = Get-ItemProperty  "HKCR:\VirtualStore\MACHINE\SOFTWARE\Wow6432Node\Riot Games\RADS" | Select-Object -ExpandProperty "LocalRootFolder"
+New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT
+New-PSDrive -Name HKU -PSProvider Registry -Root HKEY_CURRENT_USER
+$LoL = Get-ItemProperty "HKCR:\VirtualStore\MACHINE\SOFTWARE\Wow6432Node\Riot Games\RADS" | Select-Object -ExpandProperty "LocalRootFolder"
 
 #Nvidia CG Directory
-$CG = Get-ItemProperty "HKEY_CURRENT_USER\Environment" | Select-Object -ExpandProperty "CG_BIN_PATH"
+$CG = Get-ItemProperty "HKU:\Environment" | Select-Object -ExpandProperty "CG_BIN_PATH"
 
 # Sets Windows Title
 $sScriptVersion = "Github"
@@ -904,9 +905,9 @@ cls
 if($PSVersionTable.PSVersion.Major -ge 3){
 cls
 Write-Host "Unblocking Windows files..."
-Get-ChildItem -Recurse -Force C:\ | Unblock-File
-Get-ChildItem -Recurse -Force  D:\  | Unblock-File
-Get-ChildItem -Recurse -Force  X:\ | Unblock-File
+# Get-ChildItem -Recurse -Force C:\ | Unblock-File
+# Get-ChildItem -Recurse -Force  D:\  | Unblock-File
+# Get-ChildItem -Recurse -Force  X:\ | Unblock-File
 }
 cls
 # Disables Windows Services
@@ -959,10 +960,10 @@ Write-Host "Patching LoL..."
 #Closing LoL
 Stop-Process -ProcessName LoLLauncher | out-null
 Stop-Process -ProcessName LoLClient | out-null
-Pop-Location
-Push-Location
+
 
 # Setting variables for the latest LoL Updates
+Pop-Location
 Push-Location "$LoL\solutions\lol_game_client_sln\releases"
 $sln = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
 Pop-Location
@@ -971,41 +972,36 @@ $launch = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
 Pop-Location
 Push-Location "$LoL\projects\lol_air_client\releases"
 $air = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
-cd $dir
+Set-Location $dir
 
 #Copying Items
-Copy-Item .\BsSndRpt.exe "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Copy-Item .\BugSplat.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Copy-Item .\BugSplatRc.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Copy-Item .\dbghelp.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Copy-Item .\dbghelp.dll "$LoL\projects\lol_air_client\releases\$air\deploy"
-Copy-Item .\tbb.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Copy-Item .\BsSndRpt.exe $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\BugSplat.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\BugSplatRc.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\dbghelp.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\dbghelp.dll $LoL\projects\lol_air_client\releases\$air\deploy
+Copy-Item .\tbb.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
 Copy-Item .\NPSWF32.dll "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources"
 Copy-Item "Adobe Air.dll" "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\"
-Copy-Item "$CG\cg.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Copy-Item "$CG\cgD3D9.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Copy-Item "$CG\cgGL.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Copy-Item "$CG\cg.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
-Copy-Item "$CG\cgD3D9.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
-Copy-Item "$CG\cgGL.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
-Copy-Item "msvcp120.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
-Copy-Item "msvcr120.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
-Copy-Item "msvcp120.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
-Copy-Item "msvcr120.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
-Copy-Item "msvcp120.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Copy-Item "msvcr120.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-
-# Uninstalling Pando Media Booster
-
-if((Test-Path ("$PMB"))){
-Start-Process "$PMB\uninst.exe"
-} 
-cd $LoL
+Copy-Item $CG\cg.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item $CG\cgD3D9.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item $CG\cgGL.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item $CG\cg.dll $LoL\projects\lol_launcher\releases\$launch\deploy
+Copy-Item $CG\cgD3D9.dll $LoL\projects\lol_launcher\releases\$launch\deploy
+Copy-Item $CG\cgGL.dll $LoL\projects\lol_launcher\releases\$launch\deploy
+Copy-Item .\msvcp120.dll $LoL\projects\lol_launcher\releases\$launch\deploy
+Copy-Item .\msvcr120.dll $LoL\projects\lol_launcher\releases\$launch\deploy
+Copy-Item .\msvcp120.dll $LoL\projects\lol_launcher\releases\$launch\deploy
+Copy-Item .\msvcr120.dll $LoL\projects\lol_launcher\releases\$launch\deploy
+Copy-Item .\msvcp120.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\msvcr120.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
+# Todo:
+Set-Locaiton $LoL
 Set-Location ..
-Start-Proces .\lol.launcher.exe
+Start-Process .\lol.launcher.exe
 }
 
-Function Fulllogging{
+Function Fulllogging {
   Param()
   
   Begin{
@@ -1045,14 +1041,13 @@ Log-Error -LogPath $sLogFile -ErrorDesc $sError -ExitGracefully $True
   
   End{
     If($?){
-      Log-Write -LogPath $sLogFile -LineValue "Completed Successfully."
+      Log-Write -LogPath $sLogFile -LineValue "Completed Successfully"
       Log-Finish -LogPath $sLogFile -NoExit $True
       Invoke-Item "$env:windir\temp\errors.log"
 
     }
-  }
-}
+    }
+    }
+
+
 Fulllogging
-
-
-
