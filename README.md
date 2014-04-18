@@ -11,23 +11,19 @@ Delete all folders except the newest one
 
 [Download this first](http://developer.download.nvidia.com/cg/Cg_3.1/Cg-3.1_April2012_Setup.exe)
 
-Right Click the exe file -> Properties -> Unblock
+![alt text](Unblock.png)
 
-![alt text](Untitled.png)
+![alt text](CG.png)
 
 [Download](https://github.com/Loggan08/LoLUpdater/archive/master.zip)
 
-Right Click the zip file -> Properties -> Unblock
+![alt text](Unblock.png)
 
 Right click -> Edit "Location.reg" and specify the LoL directory that you want to install it on, then save it and run it.
 
-Open a Windows command prompt as admin
+
+
+![alt text](Execute.png)
 
 It creates a log in C:\Windows Temp
-
-
-```Batch
-cd "Pathofextractedfiles"
-
-powershell -NoProfile -ExecutionPolicy bypass -File LoLUpdater.ps1
 
