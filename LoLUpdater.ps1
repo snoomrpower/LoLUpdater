@@ -881,41 +881,41 @@ Get-ChildItem -Recurse -Force  $dir | Unblock-File
 cls
 # Disables Windows Services
 Write-Host "Configuring Windows..."
-Set-Service -Name AppMgmt -StartupType Disabled | out-null
-Set-Service -Name bthserv -StartupType Disabled | out-null
-Set-Service -Name PeerDistSvc -StartupType Disabled | out-null
-Set-Service -Name CertPropSvc -StartupType Disabled | out-null
-Set-Service -Name NfsClnt -StartupType Disabled | out-null
-Set-Service -Name WPCSvc -StartupType Disabled | out-null
-Set-Service -Name vmickvpexchange -StartupType Disabled | out-null
-Set-Service -Name vmicguestinterface -StartupType Disabled | out-null
-Set-Service -Name vmicshutdown -StartupType Disabled | out-null
-Set-Service -Name vmicheartbeat -StartupType Disabled | out-null
-Set-Service -Name vmicrdv -StartupType Disabled | out-null
-Set-Service -Name vmictimesync -StartupType Disabled | out-null
-Set-Service -Name vmicvss -StartupType Disabled | out-null
-Set-Service -Name TrkWks -StartupType Disabled | out-null
-Set-Service -Name IEEtwCollectorService -StartupType Disabled | out-null
-Set-Service -Name iphlpsvc -StartupType Disabled | out-null
-Set-Service -Name MSiSCSI -StartupType Disabled | out-null
-Set-Service -Name Netlogon -StartupType Disabled | out-null
-Set-Service -Name napagent -StartupType Disabled | out-null
-Set-Service -Name CscService -StartupType Disabled | out-null
-Set-Service -Name WPCSvc -StartupType Disabled | out-null
-Set-Service -Name RpcLocator -StartupType Disabled | out-null
-Set-Service -Name SensrSvc -StartupType Disabled | out-null
-Set-Service -Name ScDeviceEnum -StartupType Disabled | out-null
-Set-Service -Name SCPolicySvc -StartupType Disabled | out-null
-Set-Service -Name RemoteRegistry -StartupType Disabled | out-null
-Set-Service -Name SCardSvr -StartupType Disabled | out-null
-Set-Service -Name SCPolicySvc -StartupType Disabled | out-null
-Set-Service -Name SNMPTRAP -StartupType Disabled | out-null
-Set-Service -Name StorSvc -StartupType Disabled | out-null
-Set-Service -Name WbioSrvc -StartupType Disabled | out-null
-Set-Service -Name wcncsvc -StartupType Disabled | out-null
-Set-Service -Name fsvc -StartupType Disabled | out-null
-Set-Service -Name WMPNetworkSvc -StartupType Disabled | out-null
-Set-Service -Name WSearch -StartupType Disabled | out-null
+Set-Service AppMgmt -StartupType Disabled | out-null
+Set-Service bthserv -StartupType Disabled | out-null
+Set-Service PeerDistSvc -StartupType Disabled | out-null
+Set-Service CertPropSvc -StartupType Disabled | out-null
+Set-Service NfsClnt -StartupType Disabled | out-null
+Set-Service WPCSvc -StartupType Disabled | out-null
+Set-Service vmickvpexchange -StartupType Disabled | out-null
+Set-Service vmicguestinterface -StartupType Disabled | out-null
+Set-Service vmicshutdown -StartupType Disabled | out-null
+Set-Service vmicheartbeat -StartupType Disabled | out-null
+Set-Service vmicrdv -StartupType Disabled | out-null
+Set-Service vmictimesync -StartupType Disabled | out-null
+Set-Service vmicvss -StartupType Disabled | out-null
+Set-Service TrkWks -StartupType Disabled | out-null
+Set-Service IEEtwCollectorService -StartupType Disabled | out-null
+Set-Service iphlpsvc -StartupType Disabled | out-null
+Set-Service MSiSCSI -StartupType Disabled | out-null
+Set-Service Netlogon -StartupType Disabled | out-null
+Set-Service napagent -StartupType Disabled | out-null
+Set-Service CscService -StartupType Disabled | out-null
+Set-Service WPCSvc -StartupType Disabled | out-null
+Set-Service RpcLocator -StartupType Disabled | out-null
+Set-Service SensrSvc -StartupType Disabled | out-null
+Set-Service ScDeviceEnum -StartupType Disabled | out-null
+Set-Service SCPolicySvc -StartupType Disabled | out-null
+Set-Service RemoteRegistry -StartupType Disabled | out-null
+Set-Service SCardSvr -StartupType Disabled | out-null
+Set-Service SCPolicySvc -StartupType Disabled | out-null
+Set-Service SNMPTRAP -StartupType Disabled | out-null
+Set-Service StorSvc -StartupType Disabled | out-null
+Set-Service WbioSrvc -StartupType Disabled | out-null
+Set-Service wcncsvc -StartupType Disabled | out-null
+Set-Service fsvc -StartupType Disabled | out-null
+Set-Service WMPNetworkSvc -StartupType Disabled | out-null
+Set-Service WSearch -StartupType Disabled | out-null
 
 # Disables Windows Features
 Dism /online /Disable-Feature /FeatureName:WindowsGadgetPlatform /norestart | out-null
