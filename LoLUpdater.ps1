@@ -930,15 +930,14 @@ Write-Host "Installing Windows Updates, It will restart after if you are running
 Get-WUInstall -AcceptAll -IgnoreUserInput | out-null
 Get-WUInstall -Type "Software" -KBArticleID "KB968930","KB2819745","KB2858728" -AcceptAll -IgnoreUserInput -AutoReboot | out-null
 
+if($PSVersionTable.PSVersion.Major -ge 3){
 cls
 Write-Host "Unblocking Windows files..."
 Get-ChildItem -Recurse -Force C:\ | Unblock-File
 Get-ChildItem -Recurse -Force  D:\  | Unblock-File
 Get-ChildItem -Recurse -Force  X:\ | Unblock-File
+}
 cls
-
-
-
 Write-Host "Patching LoL..."
 Start-BitsTransfer https://www.bugsplatsoftware.com/files/BugSplatNative.zip
 Start-Process 7z.exe "x BugSplatNative.zip -oBugSplatNative -y"
