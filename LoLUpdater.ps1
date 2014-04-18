@@ -1,10 +1,12 @@
 $dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
-$sScriptVersion = "2.0"
+$sScriptVersion = "2.0.1"
 $Host.UI.RawUI.WindowTitle = "LoLUpdater $sScriptVersion"
-$sLogPath = "C:\Windows\Temp"
+$sLogPath = "$dir"
 $sLogName = "errors.log"
 $sLogFile = $sLogPath + "\" + $sLogName
 Import-Module BitsTransfer
+New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT
+$LoL = Get-ItemProperty  "HKCR:\VirtualStore\MACHINE\SOFTWARE\Wow6432Node\Riot Games\RADS" | Select-Object -ExpandProperty "LocalRootFolder"
 
 Function Log-Start{
     
@@ -954,16 +956,17 @@ Pop-Location
 Push-Location RADS\projects\lol_air_client\releases
 $air = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
 cd $dir
-Copy-Item .\BugSplatNative\Bugsplat\bin\BsSndRpt.exe .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\BugSplatNative\Bugsplat\bin\BugSplat.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\dbghelp.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\cg.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\cgD3D9.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\cgGL.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\tbb.dll .\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\NPSWF32.dll "RADS\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources"
-Copy-Item "Adobe Air.dll" "RADS\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\"
+Copy-Item .\BugSplatNative\Bugsplat\bin\BsSndRpt.exe $LoL\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\BugSplatNative\Bugsplat\bin\BugSplat.dll $LoL\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\dbghelp.dll $LoL\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\cg.dll $LoL\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\cgD3D9.dll $LoL\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\cgGL.dll $LoL\RADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\tbb.dll $LoL\ADS\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\NPSWF32.dll "$LoL\RADS\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources"
+Copy-Item "Adobe Air.dll" "$LoL\RADS\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\"
 $PMB = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB"| Select-Object -ExpandProperty "Program Directory"
+
 Start-Process /wait $PMB\uninst.exe | out-null
 Remove-Item .\BugSplatNative -recurse
 Remove-Item .\BugSplatNative.zip
