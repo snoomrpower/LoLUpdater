@@ -9,7 +9,9 @@ Update-Help
 $dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
 
 #FUKKING BUGS out
-$PMB = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB"| Select-Object -ExpandProperty "Program Directory"
+if(Test-Path HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB){
+$PMB = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB"| Select-Object -ExpandProperty "Program Directory"}
+
 
 # Finds the LoL Directory from registry
 New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT
@@ -17,7 +19,11 @@ New-PSDrive -Name HKU -PSProvider Registry -Root HKEY_CURRENT_USER
 $LoL = Get-ItemProperty "HKCR:\VirtualStore\MACHINE\SOFTWARE\Wow6432Node\Riot Games\RADS" | Select-Object -ExpandProperty "LocalRootFolder"
 
 #Nvidia CG Directory
+if(Test-Path ("HKU:\Environment" | Select-Object -ExpandProperty "CG_BIN_PATH")){
 $CG = Get-ItemProperty "HKU:\Environment" | Select-Object -ExpandProperty "CG_BIN_PATH"
+}
+ELSE {Read-Host "You did'nt Install Nvidia CG, please read the README.MD"
+}
 
 # Sets Windows Title
 $sScriptVersion = "Github"
