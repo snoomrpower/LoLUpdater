@@ -19,9 +19,7 @@ Delete all folders except the newest one
 
 ![alt text](Unblock.png)
 
-Right click -> Edit "Location.reg" and specify the LoL directory that you want to install it on, then save it and run it.
-
-
+![alt text}(Location.png)
 
 ![alt text](Execute.png)
 
