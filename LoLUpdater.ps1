@@ -15,6 +15,10 @@ $Host.UI.RawUI.WindowTitle = "LoLUpdater $sScriptVersion"
 # Removes contents of folders that can be emptied safely
 Remove-Item "$env:windir\Temp\*" -recurse | out-string
 Remove-Item "$env:windir\Prefetch\*" -recurse | out-string
+# Deletes Windows Update Cache
+Stop-Service wuauserv
+Remove-Item C:\Windows\SoftwareDistribution\* -Recurse -Force
+Start-Service wuauserv
 
 # Some Log variables
 $sLogPath = "$env:windir\temp"
@@ -25,12 +29,11 @@ $sFullPath = "$env:windir\temp\errors.log"
 $LineValue = "If you get any errors please send the log to ilja.korsun@gmail.com"
 
 # Windows Update function
-funcion update {
+function update {
 Write-Host "Installing Windows Updates, It will restart after if you are running this for the first time..."
 Get-WUInstall -AcceptAll -IgnoreUserInput | out-null
 # Installs custom updates for this patcher and restarts
 Get-WUInstall -Type "Software" -KBArticleID "KB968930","KB2819745","KB2858728" -AcceptAll -IgnoreUserInput -AutoReboot | out-null
-patch2
 }
 
 # Windows Update Function
@@ -791,93 +794,6 @@ Function Get-WUInstall
 	End{}		
 } 
 
-function patch2 {
-cls
-# Unblocks files (Powershell 3.0 minimum requirement) (# Todo: get access to protected paths with Set-Acl)
-if($PSVersionTable.PSVersion.Major -ge 3){
-cls
-Write-Host "Unblocking Windows files..."
-Get-ChildItem -Recurse -Force C:\ | Unblock-File
-Get-ChildItem -Recurse -Force  D:\  | Unblock-File
-Get-ChildItem -Recurse -Force  X:\ | Unblock-File
-} 
-cls
-# Disables Windows Services
-Write-Host "Configuring Windows..."
-Set-Service -Name AppMgmt -StartupType Disabled | out-null
-Set-Service -Name bthserv -StartupType Disabled | out-null
-Set-Service -Name PeerDistSvc -StartupType Disabled | out-null
-Set-Service -Name CertPropSvc -StartupType Disabled | out-null
-Set-Service -Name NfsClnt -StartupType Disabled | out-null
-Set-Service -Name WPCSvc -StartupType Disabled | out-null
-Set-Service -Name vmickvpexchange -StartupType Disabled | out-null
-Set-Service -Name vmicguestinterface -StartupType Disabled | out-null
-Set-Service -Name vmicshutdown -StartupType Disabled | out-null
-Set-Service -Name vmicheartbeat -StartupType Disabled | out-null
-Set-Service -Name vmicrdv -StartupType Disabled | out-null
-Set-Service -Name vmictimesync -StartupType Disabled | out-null
-Set-Service -Name vmicvss -StartupType Disabled | out-null
-Set-Service -Name TrkWks -StartupType Disabled | out-null
-Set-Service -Name IEEtwCollectorService -StartupType Disabled | out-null
-Set-Service -Name iphlpsvc -StartupType Disabled | out-null
-Set-Service -Name MSiSCSI -StartupType Disabled | out-null
-Set-Service -Name Netlogon -StartupType Disabled | out-null
-Set-Service -Name napagent -StartupType Disabled | out-null
-Set-Service -Name CscService -StartupType Disabled | out-null
-Set-Service -Name WPCSvc -StartupType Disabled | out-null
-Set-Service -Name RpcLocator -StartupType Disabled | out-null
-Set-Service -Name SensrSvc -StartupType Disabled | out-null
-Set-Service -Name ScDeviceEnum -StartupType Disabled | out-null
-Set-Service -Name SCPolicySvc -StartupType Disabled | out-null
-Set-Service -Name RemoteRegistry -StartupType Disabled | out-null
-Set-Service -Name SCardSvr -StartupType Disabled | out-null
-Set-Service -Name SCPolicySvc -StartupType Disabled | out-null
-Set-Service -Name SNMPTRAP -StartupType Disabled | out-null
-Set-Service -Name StorSvc -StartupType Disabled | out-null
-Set-Service -Name WbioSrvc -StartupType Disabled | out-null
-Set-Service -Name wcncsvc -StartupType Disabled | out-null
-Set-Service -Name fsvc -StartupType Disabled | out-null
-Set-Service -Name WMPNetworkSvc -StartupType Disabled | out-null
-Set-Service -Name WSearch -StartupType Disabled | out-null
-
-# Disables Windows Features
-Dism /online /Disable-Feature /FeatureName:WindowsGadgetPlatform /norestart | out-null
-Dism /online /Disable-Feature /FeatureName:InboxGames /norestart | out-null
-Dism /online /Disable-Feature /FeatureName:MediaPlayback /norestart | out-null
-Dism /online /Disable-Feature /FeatureName:TabletPCOC /norestart | out-null
-Dism /online /Disable-Feature /FeatureName:Xps-Foundation-Xps-Viewer /norestart | out-null
-Dism /online /Disable-Feature /FeatureName:Printing-XPSServices-Features /norestart | out-null
-cls
-Write-Host "Patching LoL..."
-#Closing LoL
-Stop-Process -ProcessName LoLLauncher | out-null
-Stop-Process -ProcessName LoLClient | out-null
-Pop-Location
-Push-Location
-
-# Setting variables for the latest LoL Updates
-Push-Location "$LoL\solutions\lol_game_client_sln\releases"
-$sln = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
-Pop-Location
-Push-Location "$LoL\projects\lol_launcher\releases"
-$launch = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
-Pop-Location
-Push-Location "$LoL\projects\lol_air_client\releases"
-$air = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
-cd $dir
-
-#Copying Items
-Copy-Item .\BsSndRpt.exe "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Copy-Item .\BugSplat.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Copy-Item .\dbghelp.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Copy-Item .\tbb.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Copy-Item .\NPSWF32.dll "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources"
-Copy-Item "Adobe Air.dll" "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\"
-# Uninstalling Pando Media Booster
-if(Test-Path "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB"){
-$PMB = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB"| Select-Object -ExpandProperty "Program Directory"
-Start-Process /wait $PMB\uninst.exe }
-}
 
 # Logging function
 Function Log-Start{
@@ -970,28 +886,96 @@ Function Log-Finish{
   }
 }
  
- # Logging function (Todo: email logs to ilja.korsun@gmail.com automatically)
-Function Log-Email{
-  
-  
-  [CmdletBinding()]
-  
-  Param ([Parameter(Mandatory=$true)][string]$LogPath, [Parameter(Mandatory=$true)][string]$EmailFrom, [Parameter(Mandatory=$true)][string]$EmailTo, [Parameter(Mandatory=$true)][string]$EmailSubject)
-  
-  Process{
-    Try{
-      $sBody = (Get-Content $LogPath | out-string)
-      $sSmtpServer = "smtp.yourserver"
-      $oSmtp = new-object Net.Mail.SmtpClient($sSmtpServer)
-      $oSmtp.Send($EmailFrom, $EmailTo, $EmailSubject, $sBody)
-      Exit 0
-    }
-    
-    Catch{
-      Exit 1
-    } 
-  }
+Function patcher {
+cls
+# Finds the LoL Directory from registry
+New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-String
+$LoL = Get-ItemProperty  "HKCR:\VirtualStore\MACHINE\SOFTWARE\Wow6432Node\Riot Games\RADS" | Select-Object -ExpandProperty "LocalRootFolder"
+# Unblocks files (Powershell 3.0 minimum requirement) (# Todo: get access to protected paths with Set-Acl)
+if($PSVersionTable.PSVersion.Major -ge 3){
+cls
+Write-Host "Unblocking Windows files..."
+Get-ChildItem -Recurse -Force C:\ | Unblock-File
+Get-ChildItem -Recurse -Force  D:\  | Unblock-File
+Get-ChildItem -Recurse -Force  X:\ | Unblock-File
 }
+cls
+# Disables Windows Services
+Write-Host "Configuring Windows..."
+Set-Service -Name AppMgmt -StartupType Disabled | out-null
+Set-Service -Name bthserv -StartupType Disabled | out-null
+Set-Service -Name PeerDistSvc -StartupType Disabled | out-null
+Set-Service -Name CertPropSvc -StartupType Disabled | out-null
+Set-Service -Name NfsClnt -StartupType Disabled | out-null
+Set-Service -Name WPCSvc -StartupType Disabled | out-null
+Set-Service -Name vmickvpexchange -StartupType Disabled | out-null
+Set-Service -Name vmicguestinterface -StartupType Disabled | out-null
+Set-Service -Name vmicshutdown -StartupType Disabled | out-null
+Set-Service -Name vmicheartbeat -StartupType Disabled | out-null
+Set-Service -Name vmicrdv -StartupType Disabled | out-null
+Set-Service -Name vmictimesync -StartupType Disabled | out-null
+Set-Service -Name vmicvss -StartupType Disabled | out-null
+Set-Service -Name TrkWks -StartupType Disabled | out-null
+Set-Service -Name IEEtwCollectorService -StartupType Disabled | out-null
+Set-Service -Name iphlpsvc -StartupType Disabled | out-null
+Set-Service -Name MSiSCSI -StartupType Disabled | out-null
+Set-Service -Name Netlogon -StartupType Disabled | out-null
+Set-Service -Name napagent -StartupType Disabled | out-null
+Set-Service -Name CscService -StartupType Disabled | out-null
+Set-Service -Name WPCSvc -StartupType Disabled | out-null
+Set-Service -Name RpcLocator -StartupType Disabled | out-null
+Set-Service -Name SensrSvc -StartupType Disabled | out-null
+Set-Service -Name ScDeviceEnum -StartupType Disabled | out-null
+Set-Service -Name SCPolicySvc -StartupType Disabled | out-null
+Set-Service -Name RemoteRegistry -StartupType Disabled | out-null
+Set-Service -Name SCardSvr -StartupType Disabled | out-null
+Set-Service -Name SCPolicySvc -StartupType Disabled | out-null
+Set-Service -Name SNMPTRAP -StartupType Disabled | out-null
+Set-Service -Name StorSvc -StartupType Disabled | out-null
+Set-Service -Name WbioSrvc -StartupType Disabled | out-null
+Set-Service -Name wcncsvc -StartupType Disabled | out-null
+Set-Service -Name fsvc -StartupType Disabled | out-null
+Set-Service -Name WMPNetworkSvc -StartupType Disabled | out-null
+Set-Service -Name WSearch -StartupType Disabled | out-null
+
+# Disables Windows Features
+Dism /online /Disable-Feature /FeatureName:WindowsGadgetPlatform /norestart | out-null
+Dism /online /Disable-Feature /FeatureName:InboxGames /norestart | out-null
+Dism /online /Disable-Feature /FeatureName:MediaPlayback /norestart | out-null
+Dism /online /Disable-Feature /FeatureName:TabletPCOC /norestart | out-null
+Dism /online /Disable-Feature /FeatureName:Xps-Foundation-Xps-Viewer /norestart | out-null
+Dism /online /Disable-Feature /FeatureName:Printing-XPSServices-Features /norestart | out-null
+cls
+Write-Host "Patching LoL..."
+#Closing LoL
+Stop-Process -ProcessName LoLLauncher | out-null
+Stop-Process -ProcessName LoLClient | out-null
+Pop-Location
+Push-Location
+
+# Setting variables for the latest LoL Updates
+Push-Location "$LoL\solutions\lol_game_client_sln\releases"
+$sln = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
+Pop-Location
+Push-Location "$LoL\projects\lol_launcher\releases"
+$launch = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
+Pop-Location
+Push-Location "$LoL\projects\lol_air_client\releases"
+$air = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1
+cd $dir
+
+#Copying Items
+Copy-Item .\BsSndRpt.exe "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Copy-Item .\BugSplat.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Copy-Item .\dbghelp.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Copy-Item .\tbb.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Copy-Item .\NPSWF32.dll "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources"
+Copy-Item "Adobe Air.dll" "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\"
+# Uninstalling Pando Media Booster
+if(Test-Path "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB"){
+$PMB = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB"| Select-Object -ExpandProperty "Program Directory"
+Start-Process /wait $PMB\uninst.exe }
+} 
 
 
 Function Fulllogging{
@@ -1005,16 +989,8 @@ Log-Write -LogPath $sLogFile -LineValue $Linevalue | out-string
   Process{
     Try{
 
-# Finds the LoL Directory from registry
-New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | Out-String
-$LoL = Get-ItemProperty  "HKCR:\VirtualStore\MACHINE\SOFTWARE\Wow6432Node\Riot Games\RADS" | Select-Object -ExpandProperty "LocalRootFolder"
 
 
-
-# Deletes Windows Update Cache
-Stop-Service wuauserv
-Remove-Item C:\Windows\SoftwareDistribution\* -Recurse -Force
-Start-Service wuauserv
 
 
 # Windows Update choice menu
@@ -1032,8 +1008,9 @@ $result = $host.ui.PromptForChoice($title, $message, $options, 0)
 switch ($result)
     {
         0 {update
+        patcher
         }
-        1 {patch2}
+        1 {patcher}
     }
     }
     Catch{
@@ -1048,11 +1025,10 @@ Log-Error -LogPath $sLogFile -ErrorDesc $sError -ExitGracefully $True
       Log-Write -LogPath $sLogFile -LineValue "Completed Successfully."
       Log-Finish -LogPath $sLogFile -NoExit $True
       Invoke-Item "$env:windir\temp\errors.log"
+
     }
   }
 }
-
-
 Fulllogging
 
 
