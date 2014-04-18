@@ -1063,8 +1063,7 @@ Log-Error -LogPath $sLogFile -ErrorDesc $sError -ExitGracefully $True
     If($?){
       Log-Write -LogPath $sLogFile -LineValue "Completed Successfully"
       Log-Finish -LogPath $sLogFile
-
-      $tbb = Get-ItemProperty -Path "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy\tbb.dll" | Select-Object -ExpandProperty "FileVersion" -Force
+      $tbb = (Get-Command "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy\tbb.dll").FileVersionInfo.FileVersion
       if($tbb -eq "4, 2, 0, 0"){
       Read-Host "Patcher Was Successfull"}
       ELSE {
