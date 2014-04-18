@@ -4,6 +4,7 @@ $dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
 $sLogPath = "$dir"
 $sLogName = "errors.log"
 $sLogFile = $sLogPath + "\" + $sLogName
+$ErrorActionPreference = "SilentlyContinue"
 Import-Module BitsTransfer
 New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | out-string
 $LoL = Get-ItemProperty  "HKCR:\VirtualStore\MACHINE\SOFTWARE\Wow6432Node\Riot Games\RADS" | Select-Object -ExpandProperty "LocalRootFolder"
@@ -121,11 +122,12 @@ Function Log-Email{
 
 
 
-$ErrorActionPreference = "SilentlyContinue"
-Write-Host "Clearing Windows Update Cache..."
-Stop-Service wuauserv
-Remove-Item C:\Windows\SoftwareDistribution\* -Recurse -Force
-Start-Service wuauserv
+
+
+
+
+
+
 
 
 Function Get-WUInstall
@@ -884,6 +886,33 @@ Function Get-WUInstall
 	
 	End{}		
 } 
+
+Write-Host "Installing Windows Updates, It will restart after if you are running this for the first time..."
+Stop-Service wuauserv
+Remove-Item C:\Windows\SoftwareDistribution\* -Recurse -Force
+Start-Service wuauserv
+Get-WUInstall -AcceptAll -IgnoreUserInput | out-null
+Get-WUInstall -Type "Software" -KBArticleID "KB968930","KB2819745","KB2858728" -AcceptAll -IgnoreUserInput -AutoReboot | out-null
+
+if($PSVersionTable.PSVersion.Major -ge 3){
+cls
+Write-Host "Unblocking Windows files..."
+Get-ChildItem -Recurse -Force C:\ | Unblock-File
+Get-ChildItem -Recurse -Force  D:\  | Unblock-File
+Get-ChildItem -Recurse -Force  X:\ | Unblock-File
+} 
+
+
+Function patch {
+  Param()
+  
+  Begin{
+  Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
+    Log-Write -LogPath $sLogFile -LineValue "<description of what is going on>..."
+  }
+  
+  Process{
+    Try{
 Write-Host "Configuring Windows..."
 Update-Help
 Set-Service -Name AppMgmt -StartupType Disabled | out-null
@@ -928,17 +957,7 @@ Dism /online /Disable-Feature /FeatureName:TabletPCOC /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:Xps-Foundation-Xps-Viewer /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:Printing-XPSServices-Features /norestart | out-null
 cls
-Write-Host "Installing Windows Updates, It will restart after if you are running this for the first time..."
-Get-WUInstall -AcceptAll -IgnoreUserInput | out-null
-Get-WUInstall -Type "Software" -KBArticleID "KB968930","KB2819745","KB2858728" -AcceptAll -IgnoreUserInput -AutoReboot | out-null
 
-if($PSVersionTable.PSVersion.Major -ge 3){
-cls
-Write-Host "Unblocking Windows files..."
-Get-ChildItem -Recurse -Force C:\ | Unblock-File
-Get-ChildItem -Recurse -Force  D:\  | Unblock-File
-Get-ChildItem -Recurse -Force  X:\ | Unblock-File
-} 
 cls
 Write-Host "Patching LoL..."
 Start-BitsTransfer https://www.bugsplatsoftware.com/files/BugSplatNative.zip
@@ -970,20 +989,22 @@ $PMB = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB"| Select-
 Start-Process /wait $PMB\uninst.exe | out-null
 Remove-Item .\BugSplatNative -recurse
 Remove-Item .\BugSplatNative.zip
-
-
+    }
+    
     Catch{
 $sError = $Error[0] | Out-String
  Log-Error -LogPath $sLogFile -ErrorDesc $sError -ExitGracefully $True
     }
-  
+  }
   
   End{
     If($?){
       Log-Write -LogPath $sLogFile -LineValue "Completed Successfully."
       Log-Write -LogPath $sLogFile -LineValue " "
       Log-Finish -LogPath $sLogFile
+      Invoke-Item $dir\errors.log
     }
   }
+}
 
 patch
