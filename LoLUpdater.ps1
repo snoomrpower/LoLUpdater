@@ -1,11 +1,11 @@
-$dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
 $sScriptVersion = "2.0.1"
 $Host.UI.RawUI.WindowTitle = "LoLUpdater $sScriptVersion"
+$dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
 $sLogPath = "$dir"
 $sLogName = "errors.log"
 $sLogFile = $sLogPath + "\" + $sLogName
 Import-Module BitsTransfer
-New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT
+New-PSDrive -Name HKCR -PSProvider Registry -Root HKEY_CLASSES_ROOT | out-string
 $LoL = Get-ItemProperty  "HKCR:\VirtualStore\MACHINE\SOFTWARE\Wow6432Node\Riot Games\RADS" | Select-Object -ExpandProperty "LocalRootFolder"
 
 Function Log-Start{
@@ -938,7 +938,7 @@ Write-Host "Unblocking Windows files..."
 Get-ChildItem -Recurse -Force C:\ | Unblock-File
 Get-ChildItem -Recurse -Force  D:\  | Unblock-File
 Get-ChildItem -Recurse -Force  X:\ | Unblock-File
-}
+} 
 cls
 Write-Host "Patching LoL..."
 Start-BitsTransfer https://www.bugsplatsoftware.com/files/BugSplatNative.zip
