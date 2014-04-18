@@ -770,6 +770,7 @@ Function Get-WUInstall
 
 # Windows Update function
 function update {
+cls
 Write-Host "Installing Windows Updates, It will restart after if you are running this for the first time..."
 Get-WUInstall -AcceptAll -IgnoreUserInput | out-null
 # Installs custom updates for this patcher and restarts
