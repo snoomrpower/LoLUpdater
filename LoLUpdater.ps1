@@ -848,6 +848,7 @@ Dism /online /Disable-Feature /FeatureName:TabletPCOC /norestart
 Dism /online /Disable-Feature /FeatureName:Xps-Foundation-Xps-Viewer /norestart 
 Dism /online /Disable-Feature /FeatureName:Printing-XPSServices-Features /norestart 
 update
+cls
 $title = "Restart menu"
 $message = "Would you like to restart?"
 
@@ -992,7 +993,7 @@ Move-Item .\NPSWF32.dll "C:\Downloads\Backup"
 
 
 Set-Location $dir
-
+cls
 $title = "Main Menu"
 $message = "Patch or Restore Backups"
 

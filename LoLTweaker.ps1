@@ -54,7 +54,7 @@ Move-Item .\NPSWF32.dll "C:\Downloads\Backup"
 
 Start-Process $PMB\uninst.exe /s  
 Set-Location $dir
-
+cls
 $title = "Main Menu"
 $message = "Patch or Restore Backups"
 
