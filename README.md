@@ -12,7 +12,7 @@ LoLUpdater = LoLTweaker + Windows-tweaks (for Devs Only)
 
 ![alt text](Unblock.png)
 
-![alt text}(Location.png)
+![alt text](Location.png)
 
 ![alt text](Execute.png)
 
