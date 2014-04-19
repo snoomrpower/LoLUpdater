@@ -3,7 +3,10 @@
 $arguments = "& '" + $myinvocation.mycommand.definition + "'" + "-ExecutionPolicy Unrestricted"
 Start-Process "$psHome\powershell.exe" -Verb runAs -ArgumentList $arguments
 }
-Set-ExecutionPolicy RemoteSigned
+Function StartLoL {
+Set-Location $LoL
+Start-Process .\lol.launcher.exe
+}
 $sScriptVersion = "1.3"
 $Host.UI.RawUI.WindowTitle = "LoLTweaker $sScriptVersion"
 $dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition

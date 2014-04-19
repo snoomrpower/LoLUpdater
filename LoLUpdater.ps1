@@ -4,7 +4,6 @@ $arguments = "& '" + $myinvocation.mycommand.definition + "'" + "-ExecutionPolic
 Start-Process "$psHome\powershell.exe" -Verb runAs -ArgumentList $arguments
 }
 $dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
-Set-ExecutionPolicy RemoteSigned
 $PMB = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB" | Select-Object -ExpandProperty "Program Directory"
 $LoL = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Riot Games\RADS" | Select-Object -ExpandProperty "LocalRootFolder"
 $CG = Get-ItemProperty "HKLM:\SYSTEM\ControlSet001\Control\Session Manager\Environment" | Select-Object -ExpandProperty "CG_BIN_PATH"
