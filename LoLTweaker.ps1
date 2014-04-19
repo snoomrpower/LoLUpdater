@@ -1,7 +1,7 @@
-﻿If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
-{
-$arguments = "& '" + $myinvocation.mycommand.definition + "'"
-Start-Process "$psHome\powershell.exe" -ExecutionPolicy RemoteSigned -Verb runAs -ArgumentList $arguments
+﻿if(!([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
+{   
+$arguments = "& '" + $myinvocation.mycommand.definition + "'" + "-ExecutionPolicy Bypass"
+Start-Process "$psHome\powershell.exe" -Verb runAs -ArgumentList $arguments 
 }
 Set-ExecutionPolicy RemoteSigned
 $sScriptVersion = "1.3"

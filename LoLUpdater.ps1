@@ -1,7 +1,7 @@
-If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
+if(!([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
 {   
-$arguments = "& '" + $myinvocation.mycommand.definition + "'"
-Start-Process "$psHome\powershell.exe" -ExecutionPolicy RemoteSigned -Verb runAs -ArgumentList $arguments
+$arguments = "& '" + $myinvocation.mycommand.definition + "'" + "-ExecutionPolicy Bypass"
+Start-Process "$psHome\powershell.exe" -Verb runAs -ArgumentList $arguments 
 }
 $dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
 Set-ExecutionPolicy RemoteSigned
@@ -13,11 +13,9 @@ $sScriptVersion = "Development"
 $Host.UI.RawUI.WindowTitle = "LoLUpdater $sScriptVersion"
 Remove-Item "$env:windir\Temp\*" -recurse 
 Remove-Item "$env:windir\Prefetch\*" -recurse
-
 Function StartLoL {
 Set-Location $LoL
 Start-Process .\lol.launcher.exe}
-
 Function restore {
 Set-Location C:\Downloads\Backup
 Copy-Item .\dbghelp.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
@@ -40,10 +38,10 @@ exit
 }
 Function Get-WUInstall
 {
-	[OutputType('PSWindowsUpdate.WUInstall')]
-	[CmdletBinding(
-		SupportsShouldProcess=$True,
-		ConfirmImpact="High"
+[OutputType('PSWindowsUpdate.WUInstall')]
+[CmdletBinding(
+SupportsShouldProcess=$True,
+ConfirmImpact="High"
 	)]	
 	Param
 	(
