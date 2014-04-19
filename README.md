@@ -13,7 +13,6 @@ Installation
 
 LoLTweaker (Stable)
 ==============
-Barebone Patch/Restore Utility
 
 ![alt text](loltweaker.png)
 
