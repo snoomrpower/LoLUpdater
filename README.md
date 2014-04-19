@@ -22,3 +22,8 @@ This patcher does extra things if you have Powershell 3.0, if you choose to do u
 
 It creates a log in C:\Windows Temp
 
+
+LoLTweaker
+==========
+LoLTweaker is the DLL patch Only
+

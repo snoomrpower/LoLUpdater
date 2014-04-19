@@ -2,13 +2,29 @@
 $sScriptVersion = "Github"
 $Host.UI.RawUI.WindowTitle = "LoLUpdater $sScriptVersion"
 
-# Some Log variables
-$sLogPath = "$env:windir\temp"
-$sLogName = "errors.log"
-$sLogFile = $sLogPath + "\" + $sLogName
-$ErrorActionPreference = "SilentlyContinue"
-$sFullPath = "$env:windir\temp\errors.log"
-$LineValue = "If you get any errors please send the log to ilja.korsun@gmail.com"
+# Removes contents of folders that can be emptied safely
+Remove-Item "$env:windir\Temp\*" -recurse | out-string
+Remove-Item "$env:windir\Prefetch\*" -recurse | out-string
+
+Function restore {
+cd "C:\Downloads\Backup"
+Move-Item "dbghelp.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Move-Item "msvcp120.dll." "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Move-Item "msvcr120.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Move-Item "cg.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Move-Item "cgD3D9.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Move-Item "cgGL.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Move-Item "dbghelp.dll" "$LoL\projects\lol_air_client\releases\$air\deploy"
+Move-Item "tbb.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
+Move-Item "NPSWF32.dll" "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources"
+Move-Item "Adobe Air.dll" "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0"
+Move-Item "cg.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
+Move-Item "cgD3D9.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
+Move-Item "cgGL.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
+Move-Item "msvcp120.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
+Move-Item "msvcr120.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
+exit
+}
 
 
 
@@ -770,109 +786,9 @@ Function Get-WUInstall
 	End{}		
 } 
 
-# Logging function
-Function Log-Start{
-
     
-  [CmdletBinding()]
-  
-  Param ([Parameter(Mandatory=$true)][string]$LogPath, [Parameter(Mandatory=$true)][string]$LogName, [Parameter(Mandatory=$true)][string]$ScriptVersion)
-  
-  Process{
-    
-    
-    New-Item "$env:windir\Temp\errors.log" -type file | out-string
+function tweaks {
 
-    
-    Add-Content -Path $sFullPath -Value "***************************************************************************************************"
-    Add-Content -Path $sFullPath -Value "Started processing at [$([DateTime]::Now)]."
-    Add-Content -Path $sFullPath -Value "***************************************************************************************************"
-    Add-Content -Path $sFullPath -Value ""
-    Add-Content -Path $sFullPath -Value "Running script version [$ScriptVersion]."
-    Add-Content -Path $sFullPath -Value ""
-    Add-Content -Path $sFullPath -Value "***************************************************************************************************"
-    Add-Content -Path $sFullPath -Value ""
-  
-    Write-Debug "***************************************************************************************************"
-    Write-Debug "Started processing at [$([DateTime]::Now)]."
-    Write-Debug "***************************************************************************************************"
-    Write-Debug ""
-    Write-Debug "Running script version [$ScriptVersion]."
-    Write-Debug ""
-    Write-Debug "***************************************************************************************************"
-    Write-Debug ""
-  }
-}
-
-# Logging function
-Function Log-Write{
- 
-  
-  [CmdletBinding()]
-  
-  Param ([Parameter(Mandatory=$true)][string]$LogPath, [Parameter(Mandatory=$true)][string]$LineValue)
-  
-  Process{
-    Add-Content -Path $LogPath -Value $LineValue
-
-    Write-Debug $LineValue
-  }
-}
-
- # Logging function
-Function Log-Error{
-  
-  [CmdletBinding()]
-  
-  Param ([Parameter(Mandatory=$true)][string]$LogPath, [Parameter(Mandatory=$true)][string]$ErrorDesc, [Parameter(Mandatory=$true)][boolean]$ExitGracefully)
-  
-  Process{
-    Add-Content -Path $LogPath -Value "Error: An error has occurred [$ErrorDesc]."
-  
-    Write-Debug "Error: An error has occurred [$ErrorDesc]."
-    
-    If ($ExitGracefully -eq $True){
-      Log-Finish -LogPath $LogPath
-    }
-  }
-}
- # Logging function
-Function Log-Finish{
-
-  
-  [CmdletBinding()]
-  
-  Param ([Parameter(Mandatory=$true)][string]$LogPath, [Parameter(Mandatory=$false)][string]$NoExit)
-  
-  Process{
-    Add-Content -Path $LogPath -Value ""
-    Add-Content -Path $LogPath -Value "***************************************************************************************************"
-    Add-Content -Path $LogPath -Value "Finished processing at [$([DateTime]::Now)]."
-    Add-Content -Path $LogPath -Value "***************************************************************************************************"
-  
-    Write-Debug ""
-    Write-Debug "***************************************************************************************************"
-    Write-Debug "Finished processing at [$([DateTime]::Now)]."
-    Write-Debug "***************************************************************************************************"
-  
-    If(!($NoExit) -or ($NoExit -eq $False)){
-      Exit
-    }    
-  }
-}
- 
-Function update {
-cls
-Write-Host "Installing Windows Updates, It will restart after if you are running this for the first time..."
-Get-WUInstall -AcceptAll -IgnoreUserInput -IgnoreReboot | out-null
-# Installs custom updates for this patcher and restarts
-Get-WUInstall -KBArticleID "KB968930","KB2506146","KB2506143","KB2819745","KB2858728" -AcceptAll -IgnoreReboot | out-null
-}
-
-Function patcher {
-
-cls
-# Unblocks files (Powershell 3.0 minimum requirement) (# Todo: get access to protected paths with Set-Acl)
 if($PSVersionTable.PSVersion.Major -ge 3){
 cls
 Write-Host "Unblocking Windows files..."
@@ -918,7 +834,6 @@ Set-Service wcncsvc -StartupType Disabled | out-null
 Set-Service fsvc -StartupType Disabled | out-null
 Set-Service WMPNetworkSvc -StartupType Disabled | out-null
 Set-Service WSearch -StartupType Disabled | out-null
-
 # Disables Windows Features
 Dism /online /Disable-Feature /FeatureName:WindowsGadgetPlatform /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:InboxGames /norestart | out-null
@@ -926,69 +841,14 @@ Dism /online /Disable-Feature /FeatureName:MediaPlayback /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:TabletPCOC /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:Xps-Foundation-Xps-Viewer /norestart | out-null
 Dism /online /Disable-Feature /FeatureName:Printing-XPSServices-Features /norestart | out-null
-cls
-Write-Host "Patching LoL..."
-#Closing LoL
-Stop-Process -ProcessName LoLLauncher | out-null
-Stop-Process -ProcessName LoLClient | out-null
+update
+$title = "Restart menu"
+$message = "Would you like to restart?"
 
-# These are not included in Powershell by default
-New-PSDrive HKCR Registry HKEY_CLASSES_ROOT
-cls
-New-PSDrive HKU Registry HKEY_CURRENT_USER
-cls
+$yes = New-Object System.Management.Automation.Host.ChoiceDescription "Yes"
 
-#Finds script directory
-$dir = "Split-Path -Parent -Path $MyInvocation.MyCommand.Definition"
+$no = New-Object System.Management.Automation.Host.ChoiceDescription "No"
 
-#Todo: Add PMB Uninstall
-
-
-# Finds the LoL Directory from registry
-$LoL = Get-ItemProperty "HKCR:\VirtualStore\MACHINE\SOFTWARE\Wow6432Node\Riot Games\RADS" | Select-Object -ExpandProperty "LocalRootFolder"
-
-#Nvidia CG Directory
-
-$CG = Get-ItemProperty "HKU:\Environment" | Select-Object -ExpandProperty "CG_BIN_PATH"
-
-# Setting variables for the latest LoL Updates
-Pop-Location
-Push-Location "$LoL\solutions\lol_game_client_sln\releases"
-$sln = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1 | Select-Object -ExpandProperty "Name"
-Pop-Location
-Push-Location "$LoL\projects\lol_launcher\releases"
-$launch = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1 | Select-Object -ExpandProperty "Name"
-Pop-Location
-Push-Location "$LoL\projects\lol_air_client\releases"
-$air = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1 | Select-Object -ExpandProperty "Name"
-
-cd "$dir"
-#Copying Items
-Copy-Item .\dbghelp.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Copy-Item .\dbghelp.dll "$LoL\projects\lol_air_client\releases\$air\deploy"
-Copy-Item .\tbb.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Copy-Item .\NPSWF32.dll "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources"
-Copy-Item ".\Adobe Air.dll" "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\"
-Copy-Item "$CG\cg.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Copy-Item "$CG\cgD3D9.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Copy-Item "$CG\cgGL.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Copy-Item $CG\cg.dll "$LoL\projects\lol_launcher\releases\$launch\deploy"
-Copy-Item "$CG\cgD3D9.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
-Copy-Item "$CG\cgGL.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
-Copy-Item .\msvcp120.dll "$LoL\projects\lol_launcher\releases\$launch\deploy"
-Copy-Item .\msvcr120.dll "$LoL\projects\lol_launcher\releases\$launch\deploy"
-Copy-Item .\msvcp120.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Copy-Item .\msvcr120.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-cls
-Set-Location $LoL
-Set-Location ..
-Start-Process .\lol.launcher.exe
-
-$message = "Would you like to Restart?"
-
-$yes = New-Object System.Management.Automation.Host.ChoiceDescription "&Yes"
-
-$no = New-Object System.Management.Automation.Host.ChoiceDescription "&No"
 
 $options = [System.Management.Automation.Host.ChoiceDescription[]]($yes, $no)
 
@@ -996,27 +856,65 @@ $result = $host.ui.PromptForChoice($title, $message, $options, 0)
 
 switch ($result)
     {
-        0 {Restart-Computer -Force
-        }
+        0 {Restart-Computer -Force}
         1 {exit}
-}
+        }
+        }
+
+
+
+Function update {
+cls
+Write-Host "Installing Windows Updates, It will restart after if you are running this for the first time..."
+Get-WUInstall -AcceptAll -IgnoreUserInput -IgnoreReboot | out-null
+# Installs custom updates for this patcher and restarts
+Get-WUInstall -KBArticleID "KB968930","KB2506146","KB2506143","KB2819745","KB2858728" -AcceptAll -IgnoreReboot | out-null
 }
 
-Function Fulllogging {
-  Param()
-  
-  Begin{
+Function patcher {
+cls
+Write-Host "Patching..."
 
-# Removes contents of folders that can be emptied safely
-Remove-Item "$env:windir\Temp\*" -recurse | out-string
-Remove-Item "$env:windir\Prefetch\*" -recurse | out-string
-#Starting Logs
-Log-Start -LogPath $sLogPath -LogName $sLogName -ScriptVersion $sScriptVersion
-Log-Write -LogPath $sLogFile -LineValue $Linevalue | out-string
-  }
-  
-  Process{
-    Try{
+#Copying Items
+Copy-Item .\dbghelp.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy" | Out-String
+Copy-Item .\msvcp120.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy" | Out-String
+Copy-Item .\msvcr120.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy" | Out-String
+Copy-Item "$CG\cg.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy" | Out-String
+Copy-Item "$CG\cgD3D9.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy" | Out-String
+Copy-Item "$CG\cgGL.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy" | Out-String
+Copy-Item .\dbghelp.dll "$LoL\projects\lol_air_client\releases\$air\deploy" | Out-String
+Copy-Item .\tbb.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy" | Out-String
+Copy-Item .\NPSWF32.dll "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources" | Out-String
+Copy-Item ".\Adobe Air.dll" "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\" | Out-String
+Copy-Item "$CG\cg.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy" | Out-String
+Copy-Item "$CG\cgD3D9.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy" | Out-String
+Copy-Item "$CG\cgGL.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy" | Out-String
+Copy-Item .\msvcp120.dll "$LoL\projects\lol_launcher\releases\$launch\deploy" | Out-String
+Copy-Item .\msvcr120.dll "$LoL\projects\lol_launcher\releases\$launch\deploy" | Out-String
+
+cls
+Set-Location $LoL
+Set-Location ..
+Start-Process .\lol.launcher.exe
+$tbb = (Get-Command "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy\tbb.dll").FileVersionInfo.FileVersion
+      if($tbb -eq "4, 2, 0, 0"){
+      Read-Host "Patch Successfull, Press any Key to do Windows Tweaks"
+      tweaks
+         exit }
+      ELSE {
+      Read-Host "Patch Failed, Press any Key to do Windows Tweaks"
+      tweaks
+      exit}
+      }
+cls
+
+
+
+
+function patch {
+#Closing LoL
+Stop-Process -ProcessName LoLLauncher | out-null
+Stop-Process -ProcessName LoLClient | out-null
 
 # Imports the module for BITS
 Import-Module BitsTransfer
@@ -1024,58 +922,87 @@ Import-Module BitsTransfer
 # Updates "Help" (for devs to help out with this patch)
 Update-Help
 
-
-
-
 # Deletes Windows Update Cache
 Stop-Service wuauserv
 Remove-Item C:\Windows\SoftwareDistribution\* -Recurse -Force
 Start-Service wuauser
-
-# Windows Update choice menu
 cls
-$message = "Do you want to perform a Windows Update before patching?"
 
-$yes = New-Object System.Management.Automation.Host.ChoiceDescription "&Yes"
+# These are not included in Powershell by default
+cls
+New-PSDrive HKCR Registry HKEY_CLASSES_ROOT
+cls
+New-PSDrive HKU Registry HKEY_CURRENT_USER
+cls
 
-$no = New-Object System.Management.Automation.Host.ChoiceDescription "&No"
+#Finds script directory
+$dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
+
+
+#Todo: Add PMB Uninstall
+
+
+# Finds the LoL Directory from registry
+
+$LoL = Get-ItemProperty "HKCR:\VirtualStore\MACHINE\SOFTWARE\Wow6432Node\Riot Games\RADS" | Select-Object -ExpandProperty "LocalRootFolder"
+
+#Nvidia CG Directory
+
+$CG = Get-ItemProperty "HKU:\Environment" | Select-Object -ExpandProperty "CG_BIN_PATH"
+
+# Setting variables for the latest LoL Updates
+
+Set-Location $LoL\solutions\lol_game_client_sln\releases
+$sln = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1 | Select-Object -ExpandProperty "Name"
+
+Move-Item "dbghelp.dll" "C:\Downloads\Backup" | Out-string
+Move-Item "msvcp120.dll" "C:\Downloads\Backup" | Out-string
+Move-Item "msvcr120.dll" "C:\Downloads\Backup" | Out-string
+Move-Item "cg.dll" "C:\Downloads\Backup" | Out-string
+Move-Item "cgD3D9.dll" "C:\Downloads\Backup" | Out-string
+Move-Item "cgGL.dll" "C:\Downloads\Backup" | Out-string
+Move-Item "tbb.dll" "C:\Downloads\Backup" | Out-string
+
+
+Set-Location "$LoL\projects\lol_launcher\releases"
+$launch = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1 | Select-Object -ExpandProperty "Name"
+
+Move-Item "dbghelp.dll" "C:\Downloads\Backup" | Out-string
+
+Move-Item "msvcp120.dll" "C:\Downloads\Backup" | Out-string
+Move-Item "msvcr120.dll" "C:\Downloads\Backup" | Out-string
+Move-Item "cg.dll" "C:\Downloads\Backup" | Out-string
+Move-Item "cgD3D9.dll" "C:\Downloads\Backup" | Out-string
+Move-Item "cgGL.dll" "C:\Downloads\Backup" | Out-string
+
+
+Set-Location $LoL\solutions\lol_air_client\releases
+$air = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1 | Select-Object -ExpandProperty "Name"
+Set-Location "$air\deploy\adobe air\versions\1.0\"
+Move-Item "Adobe Air.dll" "C:\Downloads\Backup" | Out-string
+
+Set-Location .\resources
+Move-Item "NPSWF32.dll" "C:\Downloads\Backup" | Out-string
+
+
+Set-Location $dir
+
+$title = "Main Menu"
+$message = "Patch or Restore Backups"
+
+$yes = New-Object System.Management.Automation.Host.ChoiceDescription "Patch"
+
+$no = New-Object System.Management.Automation.Host.ChoiceDescription "Restore"
 
 $options = [System.Management.Automation.Host.ChoiceDescription[]]($yes, $no)
 
-$result = $host.ui.PromptForChoice($title, $message, $options, 0) 
+$result1 = $host.ui.PromptForChoice($title, $message, $options, 0) 
 
-switch ($result)
+switch ($result1)
     {
-        0 {update
-        patcher
-        }
-        1 {patcher}
+        0 {patcher}
+        1 {restore}
     }
     }
-    Catch{
-$sError = $Error[0] | Out-String
-Log-Error -LogPath $sLogFile -ErrorDesc $sError -ExitGracefully $True
-    }
-  }
 
-  
-  End{
-    If($?){
- 
-      Log-Finish -LogPath $sLogFile
-      $tbb = (Get-Command "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy\tbb.dll").FileVersionInfo.FileVersion
-      if($tbb -eq "4, 2, 0, 0"){
-
-      Read-Host "Patcher Was Successfull"
-           Log-Write -LogPath $sLogFile -LineValue "Completed Successfully"}
-      ELSE {
-      Read-Host "Patcher Failed"
-           Log-Write -LogPath $sLogFile -LineValue "Failed"
-      }
-      }
-      }
-      }
-     
-
-
-Fulllogging
+   patch
