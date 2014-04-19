@@ -5,9 +5,9 @@ GUI
 LoLUpdater (Powershell 4.0)
 ==========
 
-![alt text](Certificate.png)
-
 ![alt text](Unblock.png)
+
+![alt text](Certificate.png)
 
 [Download this first](http://developer.download.nvidia.com/cg/Cg_3.1/Cg-3.1_April2012_Setup.exe)
 
