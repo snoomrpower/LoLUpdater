@@ -8,8 +8,8 @@ $sScriptVersion = "Github"
 $Host.UI.RawUI.WindowTitle = "LoLUpdater $sScriptVersion"
 
 # Removes contents of folders that can be emptied safely
-Remove-Item "$env:windir\Temp\*" -recurse | out-string
-Remove-Item "$env:windir\Prefetch\*" -recurse | out-string
+Remove-Item "$env:windir\Temp\*" -recurse 
+Remove-Item "$env:windir\Prefetch\*" -recurse 
 
 Function restore {
 Set-Location C:\Downloads\Backup
@@ -484,7 +484,7 @@ Function Get-WUInstall
 				} 
 				Else
 				{
-					$objCollectionUpdate.Add($Update) | Out-Null
+					$objCollectionUpdate.Add($Update) 
 					$UpdatesExtraDataCollection.Add($Update.Identity.UpdateID,@{KB = $KB; Size = $size})
 				}
 			}
@@ -543,7 +543,7 @@ Function Get-WUInstall
 					} 
 			
 					Write-Debug "Add update to collection"
-					$objCollectionChoose.Add($Update) | Out-Null
+					$objCollectionChoose.Add($Update) 
 				}
 				ElseIf($AutoSelectOnly)  
 				{  
@@ -557,7 +557,7 @@ Function Get-WUInstall
 						} 
   
 						Write-Debug "Add update to collection"  
-						$objCollectionChoose.Add($Update) | Out-Null  
+						$objCollectionChoose.Add($Update)   
 					} 
 					Else  
 					{  
@@ -577,7 +577,7 @@ Function Get-WUInstall
 						} 
 				
 						Write-Debug "Add update to collection"
-						$objCollectionChoose.Add($Update) | Out-Null 
+						$objCollectionChoose.Add($Update)  
 					} 
 					Else
 					{
@@ -628,7 +628,7 @@ Function Get-WUInstall
 				
 				Write-Debug "Send update to download collection"
 				$objCollectionTmp = New-Object -ComObject "Microsoft.Update.UpdateColl"
-				$objCollectionTmp.Add($Update) | Out-Null
+				$objCollectionTmp.Add($Update) 
 					
 				$Downloader = $objSession.CreateUpdateDownloader() 
 				$Downloader.Updates = $objCollectionTmp
@@ -675,7 +675,7 @@ Function Get-WUInstall
 				If($DownloadResult.ResultCode -eq 2)
 				{
 					Write-Debug "Downloaded then send update to next stage"
-					$objCollectionDownload.Add($Update) | Out-Null
+					$objCollectionDownload.Add($Update) 
 				} 
 				
 				$NumberOfUpdate++
@@ -709,7 +709,7 @@ Function Get-WUInstall
 					
 					Write-Debug "Send update to install collection"
 					$objCollectionTmp = New-Object -ComObject "Microsoft.Update.UpdateColl"
-					$objCollectionTmp.Add($Update) | Out-Null
+					$objCollectionTmp.Add($Update) 
 					
 					$objInstaller = $objSession.CreateUpdateInstaller()
 					$objInstaller.Updates = $objCollectionTmp
@@ -806,47 +806,47 @@ Get-ChildItem -Recurse -Force  $dir | Unblock-File
 cls
 # Disables Windows Services
 Write-Host "Configuring Windows..."
-Set-Service AppMgmt -StartupType Disabled | out-null
-Set-Service bthserv -StartupType Disabled | out-null
-Set-Service PeerDistSvc -StartupType Disabled | out-null
-Set-Service CertPropSvc -StartupType Disabled | out-null
-Set-Service NfsClnt -StartupType Disabled | out-null
-Set-Service WPCSvc -StartupType Disabled | out-null
-Set-Service vmickvpexchange -StartupType Disabled | out-null
-Set-Service vmicguestinterface -StartupType Disabled | out-null
-Set-Service vmicshutdown -StartupType Disabled | out-null
-Set-Service vmicheartbeat -StartupType Disabled | out-null
-Set-Service vmicrdv -StartupType Disabled | out-null
-Set-Service vmictimesync -StartupType Disabled | out-null
-Set-Service vmicvss -StartupType Disabled | out-null
-Set-Service TrkWks -StartupType Disabled | out-null
-Set-Service IEEtwCollectorService -StartupType Disabled | out-null
-Set-Service iphlpsvc -StartupType Disabled | out-null
-Set-Service MSiSCSI -StartupType Disabled | out-null
-Set-Service Netlogon -StartupType Disabled | out-null
-Set-Service napagent -StartupType Disabled | out-null
-Set-Service CscService -StartupType Disabled | out-null
-Set-Service WPCSvc -StartupType Disabled | out-null
-Set-Service RpcLocator -StartupType Disabled | out-null
-Set-Service SensrSvc -StartupType Disabled | out-null
-Set-Service ScDeviceEnum -StartupType Disabled | out-null
-Set-Service SCPolicySvc -StartupType Disabled | out-null
-Set-Service RemoteRegistry -StartupType Disabled | out-null
-Set-Service SCardSvr -StartupType Disabled | out-null
-Set-Service SCPolicySvc -StartupType Disabled | out-null
-Set-Service SNMPTRAP -StartupType Disabled | out-null
-Set-Service StorSvc -StartupType Disabled | out-null
-Set-Service wcncsvc -StartupType Disabled | out-null
-Set-Service fsvc -StartupType Disabled | out-null
-Set-Service WMPNetworkSvc -StartupType Disabled | out-null
-Set-Service WSearch -StartupType Disabled | out-null
+Set-Service AppMgmt -StartupType Disabled 
+Set-Service bthserv -StartupType Disabled 
+Set-Service PeerDistSvc -StartupType Disabled 
+Set-Service CertPropSvc -StartupType Disabled 
+Set-Service NfsClnt -StartupType Disabled 
+Set-Service WPCSvc -StartupType Disabled 
+Set-Service vmickvpexchange -StartupType Disabled 
+Set-Service vmicguestinterface -StartupType Disabled 
+Set-Service vmicshutdown -StartupType Disabled 
+Set-Service vmicheartbeat -StartupType Disabled 
+Set-Service vmicrdv -StartupType Disabled 
+Set-Service vmictimesync -StartupType Disabled 
+Set-Service vmicvss -StartupType Disabled 
+Set-Service TrkWks -StartupType Disabled 
+Set-Service IEEtwCollectorService -StartupType Disabled 
+Set-Service iphlpsvc -StartupType Disabled 
+Set-Service MSiSCSI -StartupType Disabled 
+Set-Service Netlogon -StartupType Disabled 
+Set-Service napagent -StartupType Disabled 
+Set-Service CscService -StartupType Disabled 
+Set-Service WPCSvc -StartupType Disabled 
+Set-Service RpcLocator -StartupType Disabled 
+Set-Service SensrSvc -StartupType Disabled 
+Set-Service ScDeviceEnum -StartupType Disabled 
+Set-Service SCPolicySvc -StartupType Disabled 
+Set-Service RemoteRegistry -StartupType Disabled 
+Set-Service SCardSvr -StartupType Disabled 
+Set-Service SCPolicySvc -StartupType Disabled 
+Set-Service SNMPTRAP -StartupType Disabled 
+Set-Service StorSvc -StartupType Disabled 
+Set-Service wcncsvc -StartupType Disabled 
+Set-Service fsvc -StartupType Disabled 
+Set-Service WMPNetworkSvc -StartupType Disabled 
+Set-Service WSearch -StartupType Disabled 
 # Disables Windows Features
-Dism /online /Disable-Feature /FeatureName:WindowsGadgetPlatform /norestart | out-null
-Dism /online /Disable-Feature /FeatureName:InboxGames /norestart | out-null
-Dism /online /Disable-Feature /FeatureName:MediaPlayback /norestart | out-null
-Dism /online /Disable-Feature /FeatureName:TabletPCOC /norestart | out-null
-Dism /online /Disable-Feature /FeatureName:Xps-Foundation-Xps-Viewer /norestart | out-null
-Dism /online /Disable-Feature /FeatureName:Printing-XPSServices-Features /norestart | out-null
+Dism /online /Disable-Feature /FeatureName:WindowsGadgetPlatform /norestart 
+Dism /online /Disable-Feature /FeatureName:InboxGames /norestart 
+Dism /online /Disable-Feature /FeatureName:MediaPlayback /norestart 
+Dism /online /Disable-Feature /FeatureName:TabletPCOC /norestart 
+Dism /online /Disable-Feature /FeatureName:Xps-Foundation-Xps-Viewer /norestart 
+Dism /online /Disable-Feature /FeatureName:Printing-XPSServices-Features /norestart 
 update
 $title = "Restart menu"
 $message = "Would you like to restart?"
@@ -872,9 +872,9 @@ switch ($result)
 Function update {
 cls
 Write-Host "Installing Windows Updates, It will restart after if you are running this for the first time..."
-Get-WUInstall -AcceptAll -IgnoreUserInput -IgnoreReboot | out-null
+Get-WUInstall -AcceptAll -IgnoreUserInput -IgnoreReboot 
 # Installs custom updates for this patcher and restarts
-Get-WUInstall -KBArticleID "KB968930","KB2506146","KB2506143","KB2819745","KB2858728" -AcceptAll -IgnoreReboot | out-null
+Get-WUInstall -KBArticleID "KB968930","KB2506146","KB2506143","KB2819745","KB2858728" -AcceptAll -IgnoreReboot 
 }
 
 Function patcher {
