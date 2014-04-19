@@ -2,7 +2,7 @@ GUI
 ===
 (coming soon)
 
-LoLUpdater (Powershell 4.0)
+LoLUpdater
 ==========
 
 ![alt text](Unblock.png)
@@ -20,7 +20,7 @@ LoLUpdater (Powershell 4.0)
 ![alt text](Execute.png)
 
 
-LoLTweaker.ps1 (Powershell 1.0-4.0)
+LoLTweaker.ps1
 ==============
 Barebone Patch/Restore Utility
 
