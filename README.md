@@ -1,4 +1,4 @@
-LoLUpdater (SDK)
+LoLUpdater
 ==========
 
 [Download this first](http://developer.download.nvidia.com/cg/Cg_3.1/Cg-3.1_April2012_Setup.exe)
@@ -15,7 +15,7 @@ This IE tweak is for 64bit only
 Then Restart!
 
 [Download](https://github.com/Loggan08/LoLUpdater/archive/master.zip)
-
+==========
 ![alt text](Unblock.png)
 
 ![alt text](Location.png)
