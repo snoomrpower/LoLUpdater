@@ -13,13 +13,15 @@ LoLUpdater (SDK)
 
 Then Restart!
 
+[Download](https://github.com/Loggan08/LoLUpdater/archive/master.zip)
+
+![alt text](Unblock.png)
+
 ![alt text](Location.png)
 
 ![alt text](Execute.png)
 
-[Download](https://github.com/Loggan08/LoLUpdater/archive/master.zip)
 
-![alt text](Unblock.png)
 
 
 
