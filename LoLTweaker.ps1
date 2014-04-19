@@ -2,71 +2,11 @@
 $sScriptVersion = "v1.3"
 $Host.UI.RawUI.WindowTitle = "LoLTweaker $sScriptVersion"
 
-Function restore {
-cd "C:\Downloads\Backup"
-Move-Item "dbghelp.dll" "RADS\solutions\lol_game_client_sln\releases\$sln\deploy"
-Move-Item "msvcp120.dll." "RADS\solutions\lol_game_client_sln\releases\$sln\deploy"
-Move-Item "msvcr120.dll" "RADS\solutions\lol_game_client_sln\releases\$sln\deploy"
-Move-Item "cg.dll" "RADS\solutions\lol_game_client_sln\releases\$sln\deploy"
-Move-Item "cgD3D9.dll" "RADS\solutions\lol_game_client_sln\releases\$sln\deploy"
-Move-Item "cgGL.dll" "RADS\solutions\lol_game_client_sln\releases\$sln\deploy"
-Move-Item "dbghelp.dll" "RADS\projects\lol_air_client\releases\$air\deploy"
-Move-Item "tbb.dll" "RADS\solutions\lol_game_client_sln\releases\$sln\deploy"
-Move-Item "NPSWF32.dll" "RADS\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources"
-Move-Item "Adobe Air.dll" "RADS\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0"
-Move-Item "cg.dll" "RADS\projects\lol_launcher\releases\$launch\deploy"
-Move-Item "cgD3D9.dll" "RADS\projects\lol_launcher\releases\$launch\deploy"
-Move-Item "cgGL.dll" "RADS\projects\lol_launcher\releases\$launch\deploy"
-Move-Item "msvcp120.dll" "RADS\projects\lol_launcher\releases\$launch\deploy"
-Move-Item "msvcr120.dll" "RADS\projects\lol_launcher\releases\$launch\deploy"
-exit
-}
-
-
-
-Function patcher {
-cls
-Write-Host "Patching..."
-
-#Copying Items
-Copy-Item .\dbghelp.dll "RADS\solutions\lol_game_client_sln\releases\$sln\deploy" | Out-String
-Copy-Item .\msvcp120.dll "RADS\solutions\lol_game_client_sln\releases\$sln\deploy" | Out-String
-Copy-Item .\msvcr120.dll "RADS\solutions\lol_game_client_sln\releases\$sln\deploy" | Out-String
-Copy-Item "$CG\cg.dll" "RADS\solutions\lol_game_client_sln\releases\$sln\deploy" | Out-String
-Copy-Item "$CG\cgD3D9.dll" "RADS\solutions\lol_game_client_sln\releases\$sln\deploy" | Out-String
-Copy-Item "$CG\cgGL.dll" "RADS\solutions\lol_game_client_sln\releases\$sln\deploy" | Out-String
-Copy-Item .\dbghelp.dll "RADS\projects\lol_air_client\releases\$air\deploy" | Out-String
-Copy-Item .\tbb.dll "RADS\solutions\lol_game_client_sln\releases\$sln\deploy" | Out-String
-Copy-Item .\NPSWF32.dll "RADS\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources" | Out-String
-Copy-Item ".\Adobe Air.dll" "RADS\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\" | Out-String
-Copy-Item "$CG\cg.dll" "RADS\projects\lol_launcher\releases\$launch\deploy" | Out-String
-Copy-Item "$CG\cgD3D9.dll" "RADS\projects\lol_launcher\releases\$launch\deploy" | Out-String
-Copy-Item "$CG\cgGL.dll" "RADS\projects\lol_launcher\releases\$launch\deploy" | Out-String
-Copy-Item .\msvcp120.dll "RADS\projects\lol_launcher\releases\$launch\deploy" | Out-String
-Copy-Item .\msvcr120.dll "RADS\projects\lol_launcher\releases\$launch\deploy" | Out-String
-
-cls
-Set-Location RADS
-Set-Location ..
-Start-Process .\lol.launcher.exe
-$tbb = (Get-Command "RADS\solutions\lol_game_client_sln\releases\$sln\deploy\tbb.dll").FileVersionInfo.FileVersion
-      if($tbb -eq "4, 2, 0, 0"){
-      Read-Host "Patch Successfull, Press any Key to do Windows Tweaks"
-         exit }
-      ELSE {
-      Read-Host "Patch Failed, Press any Key to do Windows Tweaks"
-      exit}
-      }
-cls
-
-
-function patch {
 #Closing LoL
 Stop-Process -ProcessName LoLLauncher | out-null
 Stop-Process -ProcessName LoLClient | out-null
 
 
-# These are not included in Powershell by default
 
 #Finds script directory
 $dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
@@ -132,9 +72,53 @@ $result1 = $host.ui.PromptForChoice($title, $message, $options, 0)
 
 switch ($result1)
     {
-        0 {patcher}
-        1 {restore}
-    }
-    }
+        0 {cls
+Write-Host "Patching..."
 
-   patch
+#Copying Items
+Copy-Item .\dbghelp.dll "RADS\solutions\lol_game_client_sln\releases\$sln\deploy" | Out-String
+Copy-Item .\msvcp120.dll "RADS\solutions\lol_game_client_sln\releases\$sln\deploy" | Out-String
+Copy-Item .\msvcr120.dll "RADS\solutions\lol_game_client_sln\releases\$sln\deploy" | Out-String
+Copy-Item "$CG\cg.dll" "RADS\solutions\lol_game_client_sln\releases\$sln\deploy" | Out-String
+Copy-Item "$CG\cgD3D9.dll" "RADS\solutions\lol_game_client_sln\releases\$sln\deploy" | Out-String
+Copy-Item "$CG\cgGL.dll" "RADS\solutions\lol_game_client_sln\releases\$sln\deploy" | Out-String
+Copy-Item .\dbghelp.dll "RADS\projects\lol_air_client\releases\$air\deploy" | Out-String
+Copy-Item .\tbb.dll "RADS\solutions\lol_game_client_sln\releases\$sln\deploy" | Out-String
+Copy-Item .\NPSWF32.dll "RADS\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources" | Out-String
+Copy-Item ".\Adobe Air.dll" "RADS\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\" | Out-String
+Copy-Item "$CG\cg.dll" "RADS\projects\lol_launcher\releases\$launch\deploy" | Out-String
+Copy-Item "$CG\cgD3D9.dll" "RADS\projects\lol_launcher\releases\$launch\deploy" | Out-String
+Copy-Item "$CG\cgGL.dll" "RADS\projects\lol_launcher\releases\$launch\deploy" | Out-String
+Copy-Item .\msvcp120.dll "RADS\projects\lol_launcher\releases\$launch\deploy" | Out-String
+Copy-Item .\msvcr120.dll "RADS\projects\lol_launcher\releases\$launch\deploy" | Out-String
+
+
+Start-Process .\lol.launcher.exe
+$tbb = (Get-Command "RADS\solutions\lol_game_client_sln\releases\$sln\deploy\tbb.dll").FileVersionInfo.FileVersion
+      if($tbb -eq "4, 2, 0, 0"){
+      Read-Host "Patch Successfull, Press any Key to do Windows Tweaks"
+         exit }
+      ELSE {
+      Read-Host "Patch Failed, Press any Key to do Windows Tweaks"
+      exit}
+      }
+        1 {cd "C:\Downloads\Backup"
+Move-Item "dbghelp.dll" "RADS\solutions\lol_game_client_sln\releases\$sln\deploy"
+Move-Item "msvcp120.dll." "RADS\solutions\lol_game_client_sln\releases\$sln\deploy"
+Move-Item "msvcr120.dll" "RADS\solutions\lol_game_client_sln\releases\$sln\deploy"
+Move-Item "cg.dll" "RADS\solutions\lol_game_client_sln\releases\$sln\deploy"
+Move-Item "cgD3D9.dll" "RADS\solutions\lol_game_client_sln\releases\$sln\deploy"
+Move-Item "cgGL.dll" "RADS\solutions\lol_game_client_sln\releases\$sln\deploy"
+Move-Item "dbghelp.dll" "RADS\projects\lol_air_client\releases\$air\deploy"
+Move-Item "tbb.dll" "RADS\solutions\lol_game_client_sln\releases\$sln\deploy"
+Move-Item "NPSWF32.dll" "RADS\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources"
+Move-Item "Adobe Air.dll" "RADS\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0"
+Move-Item "cg.dll" "RADS\projects\lol_launcher\releases\$launch\deploy"
+Move-Item "cgD3D9.dll" "RADS\projects\lol_launcher\releases\$launch\deploy"
+Move-Item "cgGL.dll" "RADS\projects\lol_launcher\releases\$launch\deploy"
+Move-Item "msvcp120.dll" "RADS\projects\lol_launcher\releases\$launch\deploy"
+Move-Item "msvcr120.dll" "RADS\projects\lol_launcher\releases\$launch\deploy"
+Read-Host Restoring Successfull!
+exit}
+    }
+   

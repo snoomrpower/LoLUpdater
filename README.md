@@ -1,10 +1,5 @@
-LoLUpdater
+LoLUpdater (Powershell 4.0)
 ==========
-
-
-Win7+ Exclusives:
-This patcher does extra things if you have Powershell 3.0, if you choose to do updates it will install it for you (if you are on Win 7+) then you can just restart and run the patcher again.
-
 
 [Download this first](http://developer.download.nvidia.com/cg/Cg_3.1/Cg-3.1_April2012_Setup.exe)
 
@@ -20,10 +15,10 @@ This patcher does extra things if you have Powershell 3.0, if you choose to do u
 
 ![alt text](Execute.png)
 
-It creates a log in C:\Windows Temp
 
-
-LoLTweaker
+LoLTweaker (Powershell 1.0)
 ==========
 LoLTweaker is the DLL patch Only
+
+(Link comming soon)
 
