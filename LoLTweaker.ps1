@@ -90,7 +90,8 @@ Copy-Item "$CG\cgGL.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
 Copy-Item .\msvcp120.dll "$LoL\projects\lol_launcher\releases\$launch\deploy" 
 Copy-Item .\msvcr120.dll "$LoL\projects\lol_launcher\releases\$launch\deploy" 
 
-
+Set-Location $LoL
+Set-Location ..
 Start-Process .\lol.launcher.exe
 $tbb = [System.Diagnostics.FileVersionInfo]::GetVersionInfo("$LoL\solutions\lol_game_client_sln\releases\$sln\deploy\tbb.dll") | select -f 1 | Select-Object -ExpandProperty "FileVersion"
       if($tbb -eq "4, 2, 0, 0"){
@@ -103,7 +104,7 @@ $tbb = [System.Diagnostics.FileVersionInfo]::GetVersionInfo("$LoL\solutions\lol_
       }
       
         1 
-        cd C:\Downloads\Backup
+Set-Location C:\Downloads\Backup
 Move-Item "dbghelp.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
 Move-Item "msvcp120.dll." "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
 Move-Item "msvcr120.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"

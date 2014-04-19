@@ -12,7 +12,7 @@ Remove-Item "$env:windir\Temp\*" -recurse | out-string
 Remove-Item "$env:windir\Prefetch\*" -recurse | out-string
 
 Function restore {
-        cd C:\Downloads\Backup
+Set-Location C:\Downloads\Backup
 Move-Item "dbghelp.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
 Move-Item "msvcp120.dll." "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
 Move-Item "msvcr120.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
