@@ -2,6 +2,7 @@
 {
 $arguments = "& '" + $myinvocation.mycommand.definition + "'" + "-ExecutionPolicy RemoteSigned"
 Start-Process "$psHome\powershell.exe" -Verb runAs -ArgumentList $arguments
+break
 }
 $dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
 $PMB = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB" | Select-Object -ExpandProperty "Program Directory"

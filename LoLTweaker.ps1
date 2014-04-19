@@ -2,6 +2,7 @@
 {
 $arguments = "& '" + $myinvocation.mycommand.definition + "'" + "-ExecutionPolicy Unrestricted"
 Start-Process "$psHome\powershell.exe" -Verb runAs -ArgumentList $arguments
+break
 }
 Function StartLoL {
 Set-Location $LoL
