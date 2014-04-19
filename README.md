@@ -12,6 +12,7 @@ Installation
 
 ![alt text](CG.png)
 
+Edit the path:
 ![alt text](Location.png)
 
 [Download](https://github.com/Loggan08/LoLUpdater/archive/master.zip)
