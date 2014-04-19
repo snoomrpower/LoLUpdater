@@ -1,30 +1,29 @@
-[Download](https://github.com/Loggan08/LoLUpdater/archive/master.zip)
+LoLUpdater (SDK)
 ==========
-
-Installation of Sample script (LoLTweaker.ps1)
-============
-
 ![alt text](Unblock.png)
 
-![alt text](Certificate.png)
-
 [Download this first](http://developer.download.nvidia.com/cg/Cg_3.1/Cg-3.1_April2012_Setup.exe)
+
+![alt text](Unblock.png)
 
 ![alt text](CG.png)
 
 ![alt text](Location.png)
 
-LoLTweaker
-==============
+![alt text](IEx64)
 
-![alt text](loltweaker.png)
+Then Restart!
 
-![alt text](loltweakerexecute.png)
+[Download](https://github.com/Loggan08/LoLUpdater/archive/master.zip)
 
-LoLUpdater (SDK)
-==========
+![alt text](Location.png)
 
 ![alt text](Execute.png)
+
+
+
+
+
 
 
 
