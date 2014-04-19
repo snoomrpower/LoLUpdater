@@ -1,7 +1,7 @@
 LoLUpdater
 ==========
 Dont forget to:
-![alt text](https://github.com/Loggan08/LoLUpdater/raw/master/Pictures/Unblock.png)
+![alt text](Unblock)
 Everything
 
 
@@ -11,14 +11,14 @@ Installation
 [Download this first](http://developer.download.nvidia.com/cg/Cg_3.1/Cg-3.1_April2012_Setup.exe)
 
 
-![alt text](https://github.com/Loggan08/LoLUpdater/raw/master/Pictures/CG.png)
+![alt text](CG)
 
-![alt text](https://github.com/Loggan08/LoLUpdater/raw/master/Pictures/Location.png)
+![alt text](Location)
 
 [Download](https://github.com/Loggan08/LoLUpdater/archive/master.zip)
 ==========
 
-![alt text](https://github.com/Loggan08/LoLUpdater/raw/master/Pictures/Execute.png)
+![alt text](Execute)
 
 
 
