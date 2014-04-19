@@ -1,9 +1,9 @@
+I was on Win7, I am on Win8.1 now to update everything in the script.
+
 [Download](https://github.com/Loggan08/LoLUpdater/archive/master.zip)
-========
+==========
 
-
-
-Installation
+Installation of Sample script (LoLTweaker.ps1)
 ============
 
 ![alt text](Unblock.png)
@@ -16,14 +16,14 @@ Installation
 
 ![alt text](Location.png)
 
-LoLTweaker (Stable)
+LoLTweaker
 ==============
 
 ![alt text](loltweaker.png)
 
 ![alt text](loltweakerexecute.png)
 
-LoLUpdater (Development Build)
+LoLUpdater (SDK)
 ==========
 
 ![alt text](Execute.png)
