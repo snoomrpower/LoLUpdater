@@ -1,6 +1,3 @@
-"RemoteSigned" should be replaced by "Unrestricted" for the time being
-When you are done, set it to "Restricted"
-
 [Download](https://github.com/Loggan08/LoLUpdater/archive/master.zip)
 ==========
 
