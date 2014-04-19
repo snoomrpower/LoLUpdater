@@ -4,8 +4,14 @@ $arguments = "& '" + $myinvocation.mycommand.definition + "'" + "-ExecutionPolic
 Start-Process "$psHome\powershell.exe" -Verb runAs -ArgumentList $arguments
 break
 }
+Import-Module BitsTransfer
+Update-Help
+Stop-Service wuauserv
+Remove-Item C:\Windows\SoftwareDistribution\* -Recurse -Force
+Start-Service wuauserv
+New-Item -Path C:\Downloads\Backup -ItemType Directory
 New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers" -Name NewKey -Value "Default Value" -Force
-New-ItemProperty  -Path  "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layer" -Name "C:\Windows\Explorer.exe" -PropertyType "String" -Value 'NoDTToDITMouseBatch'
+New-ItemProperty  -Path  "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers" -Name "C:\Windows\Explorer.exe" -PropertyType "String" -Value 'NoDTToDITMouseBatch'
 Invoke-Expression "Rundll32 apphelp.dll,ShimFlushCache"
 $dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
 $PMB = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB" | Select-Object -ExpandProperty "Program Directory"
@@ -16,6 +22,7 @@ $sScriptVersion = "Development"
 $Host.UI.RawUI.WindowTitle = "LoLUpdater $sScriptVersion"
 Remove-Item "$env:windir\Temp\*" -recurse
 Remove-Item "$env:windir\Prefetch\*" -recurse
+
 Function StartLoL {
 Set-Location $LoL
 Set-Location ..
@@ -729,12 +736,6 @@ tweaks
 exit
 }
 }
-Import-Module BitsTransfer
-Update-Help
-Stop-Service wuauserv
-Remove-Item C:\Windows\SoftwareDistribution\* -Recurse -Force
-Start-Service wuauserv
-New-Item -Path C:\Downloads\Backup -ItemType Directory
 Stop-Process -ProcessName LoLLauncher
 Stop-Process -ProcessName LoLClient
 Set-Location $LoL\solutions\lol_game_client_sln\releases
