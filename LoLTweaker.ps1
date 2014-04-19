@@ -24,7 +24,7 @@ $CG = Get-ItemProperty "HKU:\Environment" | Select-Object -ExpandProperty "CG_BI
 
 # Setting variables for the latest LoL Updates
 
-Set-Location RADS\solutions\lol_game_client_sln\releases
+Set-Location $dir\RADS\solutions\lol_game_client_sln\releases
 $sln = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1 | Select-Object -ExpandProperty "Name"
 
 Move-Item "dbghelp.dll" "C:\Downloads\Backup" | Out-string
@@ -36,7 +36,7 @@ Move-Item "cgGL.dll" "C:\Downloads\Backup" | Out-string
 Move-Item "tbb.dll" "C:\Downloads\Backup" | Out-string
 
 
-Set-Location "RADS\projects\lol_launcher\releases"
+Set-Location $dir\RADS\projects\lol_launcher\releases
 $launch = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1 | Select-Object -ExpandProperty "Name"
 
 Move-Item "dbghelp.dll" "C:\Downloads\Backup" | Out-string
@@ -48,7 +48,7 @@ Move-Item "cgD3D9.dll" "C:\Downloads\Backup" | Out-string
 Move-Item "cgGL.dll" "C:\Downloads\Backup" | Out-string
 
 
-Set-Location RADS\solutions\lol_air_client\releases
+Set-Location $dir\RADS\solutions\lol_air_client\releases
 $air = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1 | Select-Object -ExpandProperty "Name"
 Set-Location "$air\deploy\adobe air\versions\1.0\"
 Move-Item "Adobe Air.dll" "C:\Downloads\Backup" | Out-string
