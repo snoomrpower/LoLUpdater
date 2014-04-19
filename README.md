@@ -1,9 +1,8 @@
 LoLUpdater
 ==========
 
-Loggan is back with his original style patcher but much improved upon.
-
-Updates LoLs DLL files to newer versions.
+[Releases are here](https://github.com/Loggan08/LoLUpdater/releases)
+Use this in conjuction with the source.
 
 
 Installation
@@ -16,8 +15,6 @@ Installation
 ![alt text](Pictures\CG.png)
 
 ![alt text](Pictures\Location.png)
-
-Then Restart!
 
 [Download](https://github.com/Loggan08/LoLUpdater/archive/master.zip)
 ==========
