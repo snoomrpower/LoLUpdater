@@ -1,5 +1,10 @@
+Download
+========
+
+[Download](https://github.com/Loggan08/LoLUpdater/archive/master.zip)
+
 Installation
-===
+============
 
 ![alt text](Unblock.png)
 
@@ -20,8 +25,6 @@ LoLTweaker (Stable)
 
 LoLUpdater (Development Build)
 ==========
-
-[Download](https://github.com/Loggan08/LoLUpdater/archive/master.zip)
 
 ![alt text](Execute.png)
 
