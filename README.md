@@ -9,7 +9,7 @@ LoLUpdater (SDK)
 
 ![alt text](Location.png)
 
-![alt text](IEx64)
+![alt text](IEx64.png)
 
 Then Restart!
 
