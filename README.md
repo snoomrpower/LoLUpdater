@@ -1,7 +1,7 @@
-Download
+[Download](https://github.com/Loggan08/LoLUpdater/archive/master.zip)
 ========
 
-[Download](https://github.com/Loggan08/LoLUpdater/archive/master.zip)
+
 
 Installation
 ============
