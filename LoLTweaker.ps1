@@ -20,8 +20,9 @@ Stop-Process -ProcessName LoLClient
 
 #Finds script directory
 $dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
-Write-Host "Removing Read-Only"
-attrib  -r $dir /s
+Write-Host "Removing Read-Only and unblocking"
+attrib  -r $LoL\* /s
+Get-ChildItem -Recurse -Force  $LoL | Unblock-File
 # Setting variables for the latest LoL Updates
 Set-Location "$LoL\solutions\lol_game_client_sln\releases"  
 $sln = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1 | Select-Object -ExpandProperty "Name"

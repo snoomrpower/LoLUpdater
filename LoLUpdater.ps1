@@ -1,8 +1,8 @@
 $dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
 
 Write-Host "Removing Read-Only"
-attrib  -r C:\ /s
-attrib  -r $dir /s
+attrib  -r C:\* /s
+attrib  -r $LoL\* /s
 
 Set-ExecutionPolicy RemoteSigned
 $PMB = Get-ItemProperty "HKLM:\\SOFTWARE\Wow6432Node\Pando Networks\PMB" | Select-Object -ExpandProperty "Program Directory"
@@ -806,7 +806,7 @@ Write-Host "Unblocking Windows files..."
 Get-ChildItem -Recurse -Force C:\ | Unblock-File
 Get-ChildItem -Recurse -Force  D:\  | Unblock-File
 Get-ChildItem -Recurse -Force  X:\ | Unblock-File
-Get-ChildItem -Recurse -Force  $dir | Unblock-File
+Get-ChildItem -Recurse -Force  $LoL | Unblock-File
 }
 cls
 # Disables Windows Services
