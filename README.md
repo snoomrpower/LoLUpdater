@@ -4,7 +4,6 @@ Dont forget to:
 ![alt text](Unblock.png)
 Everything
 
-
 Installation
 ============
 
@@ -19,6 +18,10 @@ Installation
 ==========
 
 ![alt text](Execute.png)
+
+LoLTweaker
+==========
+This is a slimmed down version of LoLUpdater
 
 
 
