@@ -1,3 +1,5 @@
+Make a copy of you dbghelp.dll in the game folder, the one included is currently under testing.
+
 [Download](https://github.com/Loggan08/LoLUpdater/archive/master.zip)
 ==========
 

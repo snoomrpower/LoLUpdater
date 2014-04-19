@@ -1,8 +1,18 @@
+If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
+{   
+#"No Administrative rights, it will display a popup window asking user for Admin rights"
+
+$arguments = "& '" + $myinvocation.mycommand.definition + "'"
+Start-Process "$psHome\powershell.exe" -ExecutionPolicy RemoteSigned -Verb runAs -ArgumentList $arguments
+
+break
+}
+
 $dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
 
-Write-Host "Removing Read-Only"
-attrib  -r C:\* /s
-attrib  -r $LoL\* /s
+# Write-Host "Removing Read-Only"
+# attrib  -r C:\* /s
+# attrib  -r $LoL\* /s
 
 Set-ExecutionPolicy RemoteSigned
 $PMB = Get-ItemProperty "HKLM:\\SOFTWARE\Wow6432Node\Pando Networks\PMB" | Select-Object -ExpandProperty "Program Directory"
@@ -933,7 +943,7 @@ Update-Help
 # Deletes Windows Update Cache
 Stop-Service wuauserv
 Remove-Item C:\Windows\SoftwareDistribution\* -Recurse -Force
-Start-Service wuauser
+Start-Service wuauserv
 cls
 
 
@@ -1010,65 +1020,3 @@ switch ($result1)
     }
 
    patch
-# SIG # Begin signature block
-# MIILEgYJKoZIhvcNAQcCoIILAzCCCv8CAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
-# gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQURb0XNbA/u5XjfTV2F+m3gzD+
-# TrGgggbUMIICOTCCAaagAwIBAgIQCVuLJg8bsJ5DkjKoLRDVEzAJBgUrDgMCHQUA
-# MCwxKjAoBgNVBAMTIVBvd2VyU2hlbGwgTG9jYWwgQ2VydGlmaWNhdGUgUm9vdDAe
-# Fw0xNDA0MTkwNTI5MTFaFw0zOTEyMzEyMzU5NTlaMBoxGDAWBgNVBAMTD1Bvd2Vy
-# U2hlbGwgVXNlcjCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAujzfOXRdZ2fB
-# 1gdLwK7w+8SATjn0nn9xzMOxbIEH/HJ1lk3T7kGVwQSua6By8KqW7nU6xpurgPM5
-# K9PkstwNDPLCD5t8Ak2hhAJjBzr2c5odhyG2ot/mejEqJaHmL5uJQ4AnFz6yJZVx
-# XiTjktUhag9n5FjPXSPEBsd82CdlLiUCAwEAAaN2MHQwEwYDVR0lBAwwCgYIKwYB
-# BQUHAwMwXQYDVR0BBFYwVIAQqu1u6zdlP2iYkg4pMtB0v6EuMCwxKjAoBgNVBAMT
-# IVBvd2VyU2hlbGwgTG9jYWwgQ2VydGlmaWNhdGUgUm9vdIIQ5ATHA5ft0YdOFtc/
-# 7d0ZQTAJBgUrDgMCHQUAA4GBAEuTw0i/fZef+7StkPXIPo38Eqn+WkKZr5bx8FwS
-# NOsPmqEC+Y75FwpypUycrc/3ZcwTlSRxTbS9HbOZWwaiyGs5pgJo4cOD+hwzzleL
-# ys8EBpZXoER1qYK8XTtL2mEHhkw5PQe826Wq5dGX8DLL5Y1P/DB3+MMUoi80i5Y4
-# iD/GMIIEkzCCA3ugAwIBAgIQR4qO+1nh2D8M4ULSoocHvjANBgkqhkiG9w0BAQUF
-# ADCBlTELMAkGA1UEBhMCVVMxCzAJBgNVBAgTAlVUMRcwFQYDVQQHEw5TYWx0IExh
-# a2UgQ2l0eTEeMBwGA1UEChMVVGhlIFVTRVJUUlVTVCBOZXR3b3JrMSEwHwYDVQQL
-# ExhodHRwOi8vd3d3LnVzZXJ0cnVzdC5jb20xHTAbBgNVBAMTFFVUTi1VU0VSRmly
-# c3QtT2JqZWN0MB4XDTEwMDUxMDAwMDAwMFoXDTE1MDUxMDIzNTk1OVowfjELMAkG
-# A1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMH
-# U2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxJDAiBgNVBAMTG0NP
-# TU9ETyBUaW1lIFN0YW1waW5nIFNpZ25lcjCCASIwDQYJKoZIhvcNAQEBBQADggEP
-# ADCCAQoCggEBALw1oDZwIoERw7KDudMoxjbNJWupe7Ic9ptRnO819O0Ijl44CPh3
-# PApC4PNw3KPXyvVMC8//IpwKfmjWCaIqhHumnbSpwTPi7x8XSMo6zUbmxap3veN3
-# mvpHU0AoWUOT8aSB6u+AtU+nCM66brzKdgyXZFmGJLs9gpCoVbGS06CnBayfUyUI
-# EEeZzZjeaOW0UHijrwHMWUNY5HZufqzH4p4fT7BHLcgMo0kngHWMuwaRZQ+Qm/S6
-# 0YHIXGrsFOklCb8jFvSVRkBAIbuDlv2GH3rIDRCOovgZB1h/n703AmDypOmdRD8w
-# BeSncJlRmugX8VXKsmGJZUanavJYRn6qoAcCAwEAAaOB9DCB8TAfBgNVHSMEGDAW
-# gBTa7WR0FJwUPKvdmam9WyhNizzJ2DAdBgNVHQ4EFgQULi2wCkRK04fAAgfOl31Q
-# YiD9D4MwDgYDVR0PAQH/BAQDAgbAMAwGA1UdEwEB/wQCMAAwFgYDVR0lAQH/BAww
-# CgYIKwYBBQUHAwgwQgYDVR0fBDswOTA3oDWgM4YxaHR0cDovL2NybC51c2VydHJ1
-# c3QuY29tL1VUTi1VU0VSRmlyc3QtT2JqZWN0LmNybDA1BggrBgEFBQcBAQQpMCcw
-# JQYIKwYBBQUHMAGGGWh0dHA6Ly9vY3NwLnVzZXJ0cnVzdC5jb20wDQYJKoZIhvcN
-# AQEFBQADggEBAMj7Y/gLdXUsOvHyE6cttqManK0BB9M0jnfgwm6uAl1IT6TSIbY2
-# /So1Q3xr34CHCxXwdjIAtM61Z6QvLyAbnFSegz8fXxSVYoIPIkEiH3Cz8/dC3mxR
-# zUv4IaybO4yx5eYoj84qivmqUk2MW3e6TVpY27tqBMxSHp3iKDcOu+cOkcf42/GB
-# mOvNN7MOq2XTYuw6pXbrE6g1k8kuCgHswOjMPX626+LB7NMUkoJmh1Dc/VCXrLNK
-# dnMGxIYROrNfQwRSb+qz0HQ2TMrxG3mEN3BjrXS5qg7zmLCGCOvb4B+MEPI5ZJuu
-# TwoskopPGLWR5Y0ak18frvGm8C6X0NL2KzwxggOoMIIDpAIBATBAMCwxKjAoBgNV
-# BAMTIVBvd2VyU2hlbGwgTG9jYWwgQ2VydGlmaWNhdGUgUm9vdAIQCVuLJg8bsJ5D
-# kjKoLRDVEzAJBgUrDgMCGgUAoHgwGAYKKwYBBAGCNwIBDDEKMAigAoAAoQKAADAZ
-# BgkqhkiG9w0BCQMxDAYKKwYBBAGCNwIBBDAcBgorBgEEAYI3AgELMQ4wDAYKKwYB
-# BAGCNwIBFTAjBgkqhkiG9w0BCQQxFgQUbOJf0QzTlZUWKPlEdS1w4dUnOH8wDQYJ
-# KoZIhvcNAQEBBQAEgYBvzNLvXxHowEaQUhV8UBF1jPvKKyDiyUNH0UF5tCVdmJwO
-# yP4gJ5SLfsjTTo8xnUZWkmoPqCotZazvEsFOhfcjwYDIWH2xFcpqnKMHQOVpL8gB
-# GYwpRuOIdMSfQHr1E4cxtyX97fgG/l9dDXJFHsQezmqNZjV2/wYNXnyuEjfYr6GC
-# AkQwggJABgkqhkiG9w0BCQYxggIxMIICLQIBADCBqjCBlTELMAkGA1UEBhMCVVMx
-# CzAJBgNVBAgTAlVUMRcwFQYDVQQHEw5TYWx0IExha2UgQ2l0eTEeMBwGA1UEChMV
-# VGhlIFVTRVJUUlVTVCBOZXR3b3JrMSEwHwYDVQQLExhodHRwOi8vd3d3LnVzZXJ0
-# cnVzdC5jb20xHTAbBgNVBAMTFFVUTi1VU0VSRmlyc3QtT2JqZWN0AhBHio77WeHY
-# PwzhQtKihwe+MAkGBSsOAwIaBQCgXTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcB
-# MBwGCSqGSIb3DQEJBTEPFw0xNDA0MTkwNzE4NTFaMCMGCSqGSIb3DQEJBDEWBBQk
-# CBHvTI1wtMGT2LOzrRyAh6E1XzANBgkqhkiG9w0BAQEFAASCAQCBDlTjIGQD64wg
-# OCRKFUQikSxGVY5jeCXFCdDkXOuChvjKvWifAsiqpnFYEk6u9VMfb/pb/jVB9Q4z
-# Bt61crGEbA6MCTGWVRdvrGMWa08xe2oz0j3GHzQepN2C2iIL9jfq4nYzk99fVhvo
-# B2ArLVenN/f2EZKMx1aHgz9hUdtf8cZyMDONuAowvwK8sJTZqXX49B9F2YDTGzfC
-# dXHvJNNQyK/13gkr4UeKdU6/yJkiY2L1n7xnADQyEHo4LZ8T8WOVfuDBsAAPGo64
-# ZvMltnnkpKijB5Cg0+Gpa8WJI5EMLw/N1i8YsBO9XmxLx2AzmJq686T7URQbXdsk
-# JPRZr890
-# SIG # End signature block
