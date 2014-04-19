@@ -1,3 +1,7 @@
+GUI
+===
+(coming soon)
+
 LoLUpdater (Powershell 4.0 Exclusive)
 ==========
 LoLUpdater = LoLTweaker + Windows-tweaks (for Devs Only)
@@ -15,16 +19,14 @@ LoLUpdater = LoLTweaker + Windows-tweaks (for Devs Only)
 ![alt text](Execute.png)
 
 
-LoLTweaker (Powershell 1.0-4.0)
-==========
-LoLTweaker is the DLL patch Only
+LoLTweaker.ps1 (Powershell 1.0-4.0)
+==============
+Barebones patch/restore
 
 ![alt text](loltweaker.png)
 
 ![alt text](loltweakerexecute.png)
 
 
-LoLUpdater/Tweaker GUI
-==========
-(coming soon)
+
 
