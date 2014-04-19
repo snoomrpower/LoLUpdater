@@ -4,6 +4,7 @@ GUI
 
 LoLUpdater (Powershell 4.0)
 ==========
+![alt text](Certificate.png)
 
 ![alt text](Unblock.png)
 
