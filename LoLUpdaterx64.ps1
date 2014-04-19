@@ -17,7 +17,6 @@ $Host.UI.RawUI.WindowTitle = "LoLUpdater $sScriptVersion"
 Remove-Item "$env:windir\Temp\*" -recurse
 Remove-Item "$env:windir\Prefetch\*" -recurse
 Set-Location $dir
-Set-Location ..
 Invoke-Item Mouseaccel.vbs
 Set-Location $dir
 Function StartLoL {

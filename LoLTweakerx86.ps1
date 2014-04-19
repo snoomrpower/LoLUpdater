@@ -20,7 +20,6 @@ $sScriptVersion = "1.3"
 $Host.UI.RawUI.WindowTitle = "LoLTweaker $sScriptVersion"
 Start-Process $PMB\uninst.exe /s
 Set-Location $dir
-Set-Location ..
 Invoke-Item Mouseaccel.vbs
 Set-Location $dir
 New-Item -Path C:\Downloads\Backup -ItemType Directory

@@ -22,7 +22,6 @@ Set-Location ..
 Start-Process .\lol.launcher.exe
 }
 Set-Location $dir
-Set-Location ..
 Invoke-Item Mouseaccel.vbs
 Set-Location $dir
 Function restore {
