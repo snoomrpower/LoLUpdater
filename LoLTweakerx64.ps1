@@ -13,8 +13,8 @@ Set-Location $LoL
 Set-Location ..
 Start-Process .\lol.launcher.exe
 }
-New-Item -Path HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers -Name NewKey -Value "Default Value" -Force
-New-ItemProperty  -Path  HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layer -Name "C:\Windows\Explorer.exe" -PropertyType "String" -Value 'NoDTToDITMouseBatch'
+New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers" -Name NewKey -Value "Default Value" -Force
+New-ItemProperty  -Path  "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layer" -Name "C:\Windows\Explorer.exe" -PropertyType "String" -Value 'NoDTToDITMouseBatch'
 Invoke-Expression "Rundll32 apphelp.dll,ShimFlushCache"
 $sScriptVersion = "1.3"
 $Host.UI.RawUI.WindowTitle = "LoLTweaker $sScriptVersion"
