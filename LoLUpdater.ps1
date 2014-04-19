@@ -940,22 +940,16 @@ $LoL = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Riot Games\RADS" | Select-Ob
 #Nvidia CG Directory
 $CG = Get-ItemProperty "HKLM:\SYSTEM\ControlSet001\Control\Session Manager\Environment" | Select-Object -ExpandProperty "CG_BIN_PATH"
 
-if(-not(Test-Path C:\Downloads\Backup)){
 New-Item -Path C:\Downloads\Backup -ItemType Directory
-}
+
 # Sets Windows Title
 $sScriptVersion = "Github"
 $Host.UI.RawUI.WindowTitle = "LoLTweaker $sScriptVersion"
 
 #Closing LoL
-if((Get-Process -ProcessName LoLLauncher )){
+
 Stop-Process -ProcessName LoLLauncher
-}
-if(Get-Process -ProcessName LoLClient){
 Stop-Process -ProcessName LoLClient
-}
-
-
 
 
 #Finds script directory

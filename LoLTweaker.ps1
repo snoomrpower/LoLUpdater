@@ -2,20 +2,16 @@
 $LoL = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Riot Games\RADS" | Select-Object -ExpandProperty "LocalRootFolder"
 $CG = Get-ItemProperty "HKLM:\SYSTEM\ControlSet001\Control\Session Manager\Environment" | Select-Object -ExpandProperty "CG_BIN_PATH"
 $PMB = Get-ItemProperty "HKLM:\\SOFTWARE\Wow6432Node\Pando Networks\PMB" | Select-Object -ExpandProperty "Program Directory"
-if(-not(Test-Path C:\Downloads\Backup)){
-New-Item -Path C:\Downloads\Backup -ItemType Directory  
-}
+
+New-Item -Path C:\Downloads\Backup -ItemType Directory
 # Sets Windows Title
 $sScriptVersion = "v1.3"
 $Host.UI.RawUI.WindowTitle = "LoLTweaker $sScriptVersion"
 
 #Closing LoL
-if((Get-Process -ProcessName LoLLauncher )){
 Stop-Process -ProcessName LoLLauncher  
-}
-if(Get-Process -ProcessName LoLClient){
 Stop-Process -ProcessName LoLClient  
-}
+
 
 
 
