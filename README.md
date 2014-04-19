@@ -2,9 +2,8 @@ GUI
 ===
 (coming soon)
 
-LoLUpdater (Powershell 4.0 Exclusive)
+LoLUpdater (Powershell 4.0)
 ==========
-LoLUpdater = LoLTweaker + Windows-tweaks (for Devs Only)
 
 ![alt text](Unblock.png)
 
@@ -21,7 +20,7 @@ LoLUpdater = LoLTweaker + Windows-tweaks (for Devs Only)
 
 LoLTweaker.ps1 (Powershell 1.0-4.0)
 ==============
-Barebones patch/restore
+Barebone Patch/Restore Utility
 
 ![alt text](loltweaker.png)
 
