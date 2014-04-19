@@ -1,5 +1,6 @@
-LoLUpdater (Powershell 4.0)
+LoLUpdater (Powershell 4.0 Exclusive)
 ==========
+LoLUpdater = LoLTweaker + Windows-tweaks (for Devs Only)
 
 [Download this first](http://developer.download.nvidia.com/cg/Cg_3.1/Cg-3.1_April2012_Setup.exe)
 
@@ -16,9 +17,16 @@ LoLUpdater (Powershell 4.0)
 ![alt text](Execute.png)
 
 
-LoLTweaker (Powershell 1.0)
+LoLTweaker (Powershell 1.0-4.0)
 ==========
 LoLTweaker is the DLL patch Only
 
-(Link comming soon)
+![alt text](loltweaker.png)
+
+![alt text](loltweakerexecute.png)
+
+
+LoLUpdater/Tweaker GUI
+==========
+(coming soon)
 
