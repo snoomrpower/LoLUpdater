@@ -4,6 +4,8 @@ $arguments = "& '" + $myinvocation.mycommand.definition + "'" + "-ExecutionPolic
 Start-Process "$psHome\powershell.exe" -Verb runAs -ArgumentList $arguments
 break
 }
+New-Item -Path HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers -Name NewKey -Value "Default Value" -Force
+New-ItemProperty  -Path  HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layer -Name "C:\Windows\Explorer.exe" -PropertyType "String" -Value 'NoDTToDITMouseBatch'
 $dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
 $PMB = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB" | Select-Object -ExpandProperty "Program Directory"
 $LoL = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Riot Games\RADS" | Select-Object -ExpandProperty "LocalRootFolder"
