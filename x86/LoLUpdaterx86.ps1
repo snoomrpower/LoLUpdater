@@ -1,6 +1,6 @@
 ﻿if(!([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
 {
-$arguments = "-ExecutionPolicy Unrestricted" + "& '" + $myinvocation.mycommand.definition + "'"
+$arguments = "& '" + $myinvocation.mycommand.definition + "'" + "-ExecutionPolicy Unrestricted"
 Start-Process "$psHome\powershell.exe" -Verb runAs -ArgumentList $arguments
 break
 }
