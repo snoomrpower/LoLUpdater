@@ -27,32 +27,30 @@ Start-Process .\lol.launcher.exe
 }
 Function restore {
 Set-Location C:\Downloads\Backup
-Copy-Item .\dbghelp.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\msvcp120.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\msvcr120.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\cg.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\cgD3D9.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\cgGL.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\dbghelp.dll $LoL\projects\lol_air_client\releases\$air\deploy
-Copy-Item .\tbb.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item "Adobe Air.dll" "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe Air\Versions\1.0"
-Copy-Item .\msvcp110.dll $LoL\projects\lol_air_client\releases\$air\deploy
-Copy-Item .\msvcr110.dll $LoL\projects\lol_air_client\releases\$air\deploy
-Copy-Item .\cg.dll $LoL\projects\lol_launcher\releases\$launch\deploy
-Copy-Item .\cgD3D9.dll $LoL\projects\lol_launcher\releases\$launch\deploy
-Copy-Item .\cgGL.dll $LoL\projects\lol_launcher\releases\$launch\deploy
-Copy-Item .\msvcp120.dll $LoL\projects\lol_launcher\releases\$launch\deploy
-Copy-Item .\msvcr120.dll $LoL\projects\lol_launcher\releases\$launch\deploy
-
-Copy-Item .\dbghelp.dll $LoL\projects\lol_game_client\releases\$game\deploy
-Copy-Item .\msvcp120.dll $LoL\projects\lol_game_client\releases\$game\deploy
-Copy-Item .\msvcr120.dll $LoL\projects\lol_game_client\releases\$game\deploy
-Copy-Item .\msvcp110.dll $LoL\projects\lol_game_client\releases\$game\deploy
-Copy-Item .\msvcr110.dll $LoL\projects\lol_game_client\releases\$game\deploy
-Copy-Item .\cg.dll $LoL\projects\lol_game_client\releases\$game\deploy
-Copy-Item .\cgD3D9.dll $LoL\projects\lol_game_client\releases\$game\deploy
-Copy-Item .\cgGL.dll $LoL\projects\lol_game_client\releases\$game\deploy
-Copy-Item .\tbb.dll $LoL\projects\lol_game_client\releases\$game\deploy
+Copy-Item .\dbghelp.dll.bak $LoL\solutions\lol_game_client_sln\releases\$sln\deploy\dbghelp.dll
+Copy-Item .\msvcp110.dll.bak $LoL\solutions\lol_game_client_sln\releases\$sln\deploy\msvcp110.dll
+Copy-Item .\msvcr110.dll.bak $LoL\solutions\lol_game_client_sln\releases\$sln\deploy\msvcr110.dll
+Copy-Item .\msvcp120.dll.bak $LoL\solutions\lol_game_client_sln\releases\$sln\deploy\msvcp120.dll
+Copy-Item .\msvcr120.dll.bak $LoL\solutions\lol_game_client_sln\releases\$sln\deploy\msvcr120.dll
+Copy-Item .\cg.dll.bak  $LoL\solutions\lol_game_client_sln\releases\$sln\deploy\cg.dll
+Copy-Item .\cgD3D9.dll.bak $LoL\solutions\lol_game_client_sln\releases\$sln\deploy\cgD3D9.dll
+Copy-Item .\cgGL.dll.bak $LoL\solutions\lol_game_client_sln\releases\$sln\deploy\cgGL.dll
+Copy-Item .\NPSWF32.dll "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources\NPSWF32.dll"
+Copy-Item .\Adobe Air.dll "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Adobe Air.dll"
+Copy-Item .\cg.dll.bak $LoL\projects\lol_launcher\releases\$launch\deploy\cg.dll.bak\cg.dll
+Copy-Item .\cgD3D9.dll.bak $LoL\projects\lol_launcher\releases\$launch\deploy\cgD3D9.dll
+Copy-Item .\cgGL.dll.bak $LoL\projects\lol_launcher\releases\$launch\deploy\cgGL.dll
+Copy-Item .\msvcp120.dll.bak $LoL\projects\lol_launcher\releases\$launch\deploy\msvcp120.dll
+Copy-Item .\msvcr120.dll.bak $LoL\projects\lol_launcher\releases\$launch\deploy\msvcr120.dll
+Copy-Item .\dbghelp.dll.bak $LoL\projects\lol_game_client\releases\$game\deploy\dbghelp.dll
+Copy-Item .\msvcp120.dll.bak $LoL\projects\lol_game_client\releases\$game\deploy\msvcp120.dll
+Copy-Item .\msvcr120.dll.bak $LoL\projects\lol_game_client\releases\$game\deploy\msvcr120.dll
+Copy-Item .\msvcp110.dll.bak $LoL\projects\lol_game_client\releases\$game\deploy\msvcp110.dll
+Copy-Item .\msvcr110.dll.bak $LoL\projects\lol_game_client\releases\$game\deploy\msvcr110.dll
+Copy-Item .\cg.dll.bak $LoL\projects\lol_game_client\releases\$game\deploy\cg.dll
+Copy-Item .\cgD3D9.dll.bak $LoL\projects\lol_game_client\releases\$game\deploy\cgD3D9.dll
+Copy-Item .\cgGL.dll.bak $LoL\projects\lol_game_client\releases\$game\deploy\cgGL.dll
+Copy-Item .\tbb.dll.bak $LoL\projects\lol_game_client\releases\$game\deploy\tbb.dll
 StartLoL
 exit
 }
@@ -716,7 +714,6 @@ Copy-Item $CG\cgD3D9.dll $LoL\projects\lol_launcher\releases\$launch\deploy
 Copy-Item $CG\cgGL.dll $LoL\projects\lol_launcher\releases\$launch\deploy
 Copy-Item .\msvcp120.dll $LoL\projects\lol_launcher\releases\$launch\deploy
 Copy-Item .\msvcr120.dll $LoL\projects\lol_launcher\releases\$launch\deploy
-
 Copy-Item .\dbghelp.dll $LoL\projects\lol_game_client\releases\$game\deploy
 Copy-Item .\msvcp120.dll $LoL\projects\lol_game_client\releases\$game\deploy
 Copy-Item .\msvcr120.dll $LoL\projects\lol_game_client\releases\$game\deploy
@@ -726,15 +723,14 @@ Copy-Item $CG\cg.dll $LoL\projects\lol_game_client\releases\$game\deploy
 Copy-Item $CG\cgD3D9.dll $LoL\projects\lol_game_client\releases\$game\deploy
 Copy-Item $CG\cgGL.dll $LoL\projects\lol_game_client\releases\$game\deploy
 Copy-Item .\tbb.dll $LoL\projects\lol_game_client\releases\$game\deploy
-
 $tbb = [System.Diagnostics.FileVersionInfo]::GetVersionInfo("$LoL\solutions\lol_game_client_sln\releases\$sln\deploy\tbb.dll") | select -f 1 | Select-Object -ExpandProperty "FileVersion"
 if($tbb -eq "4, 2, 0, 0"){StartLoL
-Read-Host "Patch Complete, Press Enter to do Windows Tweaks (BETA)"
+Read-Host "Patch Complete, Press Enter to do Windows Tweaks"
 tweaks
 exit
 }
 ELSE {
-Read-Host "Patch Failed, Press Enter to do Windows Tweaks (BETA)"
+Read-Host "Patch Failed, Press Enter to do Windows Tweaks"
 tweaks
 exit
 }
@@ -750,45 +746,25 @@ Stop-Process -ProcessName LoLClient
 Set-Location $LoL\solutions\lol_game_client_sln\releases
 $sln = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1 | Select-Object -ExpandProperty "Name"
 Set-Location $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
-Copy-Item .\dbghelp.dll C:\Downloads\Backup
-Copy-Item .\msvcp120.dll C:\Downloads\Backup
-Copy-Item .\msvcr120.dll C:\Downloads\Backup
-Copy-Item .\cg.dll C:\Downloads\Backup
-Copy-Item .\cgD3D9.dll C:\Downloads\Backup
-Copy-Item .\cgGL.dll C:\Downloads\Backup
-Copy-Item .\tbb.dll C:\Downloads\Backup
+Copy-Item .\dbghelp.dll C:\Downloads\Backup\dbghelp.dll.bak
+Copy-Item .\msvcp110.dll C:\Downloads\Backup\msvcp110.dll.bak
+Copy-Item .\msvcr110.dll C:\Downloads\Backup\msvcr110.dll.bak
+Copy-Item .\msvcp120.dll C:\Downloads\Backup\msvcp120.dll.bak
+Copy-Item .\msvcr120.dll C:\Downloads\Backup\msvcr120.dll.bak
+Copy-Item .\cg.dll C:\Downloads\Backup\cg.dll.bak
+Copy-Item .\cgD3D9.dll C:\Downloads\Backup\cgD3D9.dll.bak
+Copy-Item .\cgGL.dll C:\Downloads\Backup\cgGL.dll.bak
+Copy-Item .\tbb.dll C:\Downloads\Backup\tbb.dll.bak
 Set-Location $LoL\projects\lol_launcher\releases
 $launch = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1 | Select-Object -ExpandProperty "Name"
-Set-Location $LoL\projects\lol_launcher\releases\$launch\deploy
-Copy-Item .\msvcp120.dll C:\Downloads\Backup
-Copy-Item .\msvcr120.dll C:\Downloads\Backup
-Copy-Item .\cg.dll C:\Downloads\Backup
-Copy-Item .\cgD3D9.dll C:\Downloads\Backup
-Copy-Item .\cgGL.dll C:\Downloads\Backup
 Set-Location $LoL\projects\lol_air_client\releases
 $air = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1 | Select-Object -ExpandProperty "Name"
 Set-Location "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe Air\versions\1.0"
 Remove-Item "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe Air\versions\1.0\Resources\NPSWF32.dll"
-Copy-Item "Adobe Air.dll" C:\Downloads\Backup
-Set-Location $LoL\projects\lol_air_client\releases\$air\deploy
-Copy-Item .\msvcp110.dll C:\Downloads\Backup
-Copy-Item .\msvcr110.dll C:\Downloads\Backup
-
+Copy-Item "Adobe Air.dll" "C:\Downloads\Backup\Adobe Air.dll.bak"
 Set-Location $LoL\projects\lol_game_client\releases
 $game = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1 | Select-Object -ExpandProperty "Name"
-Set-Location $LoL\projects\lol_game_client\releases\$game\deploy
-Copy-Item .\dbghelp.dll C:\Downloads\Backup
-Copy-Item .\msvcp120.dll C:\Downloads\Backup
-Copy-Item .\msvcr120.dll C:\Downloads\Backup
-Copy-Item .\msvcp110.dll C:\Downloads\Backup
-Copy-Item .\msvcr110.dll C:\Downloads\Backup
-Copy-Item .\cg.dll C:\Downloads\Backup
-Copy-Item .\cgD3D9.dll C:\Downloads\Backup
-Copy-Item .\cgGL.dll C:\Downloads\Backup
-Copy-Item .\tbb.dll C:\Downloads\Backup
-
 Set-Location $dir
-
 $message = "Patch or Restore Backups"
 $yes = New-Object System.Management.Automation.Host.ChoiceDescription "&Patch"
 $no = New-Object System.Management.Automation.Host.ChoiceDescription "&Restore"
