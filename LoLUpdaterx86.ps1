@@ -22,7 +22,6 @@ $sScriptVersion = "Development"
 $Host.UI.RawUI.WindowTitle = "LoLUpdater $sScriptVersion"
 Remove-Item "$env:windir\Temp\*" -recurse
 Remove-Item "$env:windir\Prefetch\*" -recurse
-
 Function StartLoL {
 Set-Location $LoL
 Set-Location ..
