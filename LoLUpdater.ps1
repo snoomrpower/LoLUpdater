@@ -936,7 +936,7 @@ New-PSDrive HKU Registry HKEY_CURRENT_USER
 cls
 
 #Finds script directory
-$dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
+$dir = $PSScriptRoot
 
 
 #Todo: Add PMB Uninstall
