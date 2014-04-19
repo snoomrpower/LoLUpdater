@@ -44,10 +44,6 @@ Move-Item .\cg.dll "C:\Downloads\Backup"
 Move-Item .\cgD3D9.dll "C:\Downloads\Backup" 
 Move-Item .\cgGL.dll "C:\Downloads\Backup" 
 
-
-Set-Location "$LoL\projects\lol_air_client\releases"
-gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1 | Select-Object -ExpandProperty "Name"
-
 Set-Location "$LoL\projects\lol_air_client\releases"
 $air = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1 | Select-Object -ExpandProperty "Name"
 Set-Location "$LoL\projects\lol_air_client\releases\$air\deploy\adobe air\versions\1.0"
