@@ -21,7 +21,6 @@ Stop-Process -ProcessName LoLClient
 #Finds script directory
 $dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
 Write-Host "Removing Read-Only"
-attrib  -r C:\ /s
 attrib  -r $dir /s
 # Setting variables for the latest LoL Updates
 Set-Location "$LoL\solutions\lol_game_client_sln\releases"  
