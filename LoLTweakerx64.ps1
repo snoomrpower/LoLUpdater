@@ -107,8 +107,8 @@ Copy-Item .\msvcr120.dll.bak $LoL\solutions\lol_game_client_sln\releases\$sln\de
 Copy-Item .\cg.dll.bak  $LoL\solutions\lol_game_client_sln\releases\$sln\deploy\cg.dll
 Copy-Item .\cgD3D9.dll.bak $LoL\solutions\lol_game_client_sln\releases\$sln\deploy\cgD3D9.dll
 Copy-Item .\cgGL.dll.bak $LoL\solutions\lol_game_client_sln\releases\$sln\deploy\cgGL.dll
-Copy-Item .\NPSWF32.dll "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources\NPSWF32.dll"
-Copy-Item .\Adobe Air.dll "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Adobe Air.dll"
+Copy-Item .\NPSWF32.dll.bak "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources\NPSWF32.dll"
+Copy-Item "Adobe Air.dll.bak" "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Adobe Air.dll"
 Copy-Item .\cg.dll.bak $LoL\projects\lol_launcher\releases\$launch\deploy\cg.dll.bak\cg.dll
 Copy-Item .\cgD3D9.dll.bak $LoL\projects\lol_launcher\releases\$launch\deploy\cgD3D9.dll
 Copy-Item .\cgGL.dll.bak $LoL\projects\lol_launcher\releases\$launch\deploy\cgGL.dll
