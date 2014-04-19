@@ -4,7 +4,7 @@ $PMB = Get-ItemProperty "HKLM:\\SOFTWARE\Wow6432Node\Pando Networks\PMB" | Selec
 Start-Process $PMB\uninst.exe /s
 
 # Sets Windows Title
-$sScriptVersion = "Github"
+$sScriptVersion = "Development"
 $Host.UI.RawUI.WindowTitle = "LoLUpdater $sScriptVersion"
 
 # Removes contents of folders that can be emptied safely
