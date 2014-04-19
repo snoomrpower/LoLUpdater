@@ -943,7 +943,7 @@ if(-not(Test-Path C:\Downloads\Backup)){
 New-Item -Path C:\Downloads\Backup -ItemType Directory
 }
 # Sets Windows Title
-$sScriptVersion = "v1.3"
+$sScriptVersion = "Github"
 $Host.UI.RawUI.WindowTitle = "LoLTweaker $sScriptVersion"
 
 #Closing LoL
