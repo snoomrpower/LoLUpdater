@@ -1,4 +1,5 @@
-Make a copy of you dbghelp.dll in the game folder, the one included is currently under testing.
+"RemoteSigned" should be replaced by "Unrestricted" for the time being
+When you are done, set it to "Restricted"
 
 [Download](https://github.com/Loggan08/LoLUpdater/archive/master.zip)
 ==========
