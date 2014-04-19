@@ -1,9 +1,5 @@
-GUI
+Installation
 ===
-(coming soon)
-
-LoLUpdater
-==========
 
 ![alt text](Unblock.png)
 
@@ -13,20 +9,25 @@ LoLUpdater
 
 ![alt text](CG.png)
 
-[Download](https://github.com/Loggan08/LoLUpdater/archive/master.zip)
-
 ![alt text](Location.png)
 
-![alt text](Execute.png)
-
-
-LoLTweaker.ps1
+LoLTweaker (Stable)
 ==============
 Barebone Patch/Restore Utility
 
 ![alt text](loltweaker.png)
 
 ![alt text](loltweakerexecute.png)
+
+LoLUpdater (Development Build)
+==========
+
+[Download](https://github.com/Loggan08/LoLUpdater/archive/master.zip)
+
+![alt text](Execute.png)
+
+
+
 
 
 
