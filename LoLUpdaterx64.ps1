@@ -29,6 +29,7 @@ Function StartLoL {
 Set-Location $LoL
 Set-Location ..
 Start-Process .\lol.launcher.exe
+Set-location $LoL
 }
 Function restore {
 Set-Location C:\Downloads\Backup

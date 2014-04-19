@@ -12,6 +12,7 @@ Function StartLoL {
 Set-Location $LoL
 Set-Location ..
 Start-Process .\lol.launcher.exe
+Set-location $LoL
 }
 New-Item -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers" -Name NewKey -Value "Default Value" -Force
 New-ItemProperty  -Path  "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers" -Name "C:\Windows\Explorer.exe" -PropertyType "String" -Value 'NoDTToDITMouseBatch'

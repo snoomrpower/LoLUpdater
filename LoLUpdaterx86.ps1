@@ -27,6 +27,7 @@ Function StartLoL {
 Set-Location $LoL
 Set-Location ..
 Start-Process .\lol.launcher.exe
+Set-location $LoL
 }
 Set-Location $dir
 Invoke-Item Mouseaccel.vbs
