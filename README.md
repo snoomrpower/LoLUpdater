@@ -1,10 +1,5 @@
 LoLUpdater
 ==========
-
-[Releases are here](https://github.com/Loggan08/LoLUpdater/releases)
-Use this in conjuction with the source.
-EDIT: Rename "Adobe.Air.dll" to "Adobe Air.dll" otherwise the air client wont be patched.
-
 Dont forget to:
 ![alt text](https://github.com/Loggan08/LoLUpdater/raw/master/Pictures/Unblock.png)
 Everything
