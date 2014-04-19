@@ -1,4 +1,6 @@
 ﻿Set-ExecutionPolicy RemoteSigned
+
+
 $LoL = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Riot Games\RADS" | Select-Object -ExpandProperty "LocalRootFolder"
 $CG = Get-ItemProperty "HKLM:\SYSTEM\ControlSet001\Control\Session Manager\Environment" | Select-Object -ExpandProperty "CG_BIN_PATH"
 $PMB = Get-ItemProperty "HKLM:\\SOFTWARE\Wow6432Node\Pando Networks\PMB" | Select-Object -ExpandProperty "Program Directory"
@@ -18,6 +20,9 @@ Stop-Process -ProcessName LoLClient
 
 #Finds script directory
 $dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
+Write-Host "Removing Read-Only"
+attrib  -r C:\ /s
+attrib  -r $dir /s
 # Setting variables for the latest LoL Updates
 Set-Location "$LoL\solutions\lol_game_client_sln\releases"  
 $sln = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1 | Select-Object -ExpandProperty "Name"

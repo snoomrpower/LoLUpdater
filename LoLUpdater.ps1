@@ -1,4 +1,9 @@
 $dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
+
+Write-Host "Removing Read-Only"
+attrib  -r C:\ /s
+attrib  -r $dir /s
+
 Set-ExecutionPolicy RemoteSigned
 $PMB = Get-ItemProperty "HKLM:\\SOFTWARE\Wow6432Node\Pando Networks\PMB" | Select-Object -ExpandProperty "Program Directory"
 Start-Process $PMB\uninst.exe /s
