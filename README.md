@@ -9,6 +9,7 @@ LoLUpdater (SDK)
 
 ![alt text](Location.png)
 
+This IE tweak is for 64bit only
 ![alt text](IEx64.png)
 
 Then Restart!
