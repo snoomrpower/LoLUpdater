@@ -1,55 +1,43 @@
 If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
 {   
-#"No Administrative rights, it will display a popup window asking user for Admin rights"
-
 $arguments = "& '" + $myinvocation.mycommand.definition + "'"
 Start-Process "$psHome\powershell.exe" -ExecutionPolicy RemoteSigned -Verb runAs -ArgumentList $arguments
-
-break
 }
-
 $dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
-
-# Write-Host "Removing Read-Only"
-# attrib  -r C:\* /s
-# attrib  -r $LoL\* /s
-
 Set-ExecutionPolicy RemoteSigned
-$PMB = Get-ItemProperty "HKLM:\\SOFTWARE\Wow6432Node\Pando Networks\PMB" | Select-Object -ExpandProperty "Program Directory"
+$PMB = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Pando Networks\PMB" | Select-Object -ExpandProperty "Program Directory"
+$LoL = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Riot Games\RADS" | Select-Object -ExpandProperty "LocalRootFolder"
+$CG = Get-ItemProperty "HKLM:\SYSTEM\ControlSet001\Control\Session Manager\Environment" | Select-Object -ExpandProperty "CG_BIN_PATH"
 Start-Process $PMB\uninst.exe /s
-
-# Sets Windows Title
 $sScriptVersion = "Development"
 $Host.UI.RawUI.WindowTitle = "LoLUpdater $sScriptVersion"
-
-# Removes contents of folders that can be emptied safely
 Remove-Item "$env:windir\Temp\*" -recurse 
-Remove-Item "$env:windir\Prefetch\*" -recurse 
+Remove-Item "$env:windir\Prefetch\*" -recurse
+
+Function StartLoL {
+Set-Location $LoL
+Start-Process .\lol.launcher.exe}
 
 Function restore {
 Set-Location C:\Downloads\Backup
-Move-Item "dbghelp.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Move-Item "msvcp120.dll." "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Move-Item "msvcr120.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Move-Item "cg.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Move-Item "cgD3D9.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Move-Item "cgGL.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Move-Item "dbghelp.dll" "$LoL\projects\lol_air_client\releases\$air\deploy"
-Move-Item "tbb.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Move-Item "NPSWF32.dll" "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources"
-Move-Item "Adobe Air.dll" "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0"
-Move-Item "cg.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
-Move-Item "cgD3D9.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
-Move-Item "cgGL.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
-Move-Item "msvcp120.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
-Move-Item "msvcr120.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy"
-Read-Host "Restoring Successfull"
+Copy-Item .\dbghelp.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\msvcp120.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\msvcr120.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\cg.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\cgD3D9.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\cgGL.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\dbghelp.dll $LoL\projects\lol_air_client\releases\$air\deploy
+Copy-Item .\tbb.dll $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\NPSWF32.dll "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe Air\Versions\1.0\Resources"
+Copy-Item "Adobe Air.dll" "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe Air\Versions\1.0"
+Copy-Item .\cg.dll $LoL\projects\lol_launcher\releases\$launch\deploy
+Copy-Item .\cgD3D9.dll $LoL\projects\lol_launcher\releases\$launch\deploy
+Copy-Item .\cgGL.dll $LoL\projects\lol_launcher\releases\$launch\deploy
+Copy-Item .\msvcp120.dll $LoL\projects\lol_launcher\releases\$launch\deploy
+Copy-Item .\msvcr120.dll $LoL\projects\lol_launcher\releases\$launch\deploy
+StartLoL
 exit
 }
-
-
-
-# Windows Update Function
 Function Get-WUInstall
 {
 	[OutputType('PSWindowsUpdate.WUInstall')]
@@ -59,7 +47,6 @@ Function Get-WUInstall
 	)]	
 	Param
 	(
-		
 		[parameter(ValueFromPipelineByPropertyName=$true)]
 		[ValidateSet("Driver", "Software")]
 		[String]$UpdateType="",
@@ -77,34 +64,26 @@ Function Get-WUInstall
 		[Switch]$WithHidden,
 		[String]$Criteria,
 		[Switch]$ShowSearchCriteria,
-		
-		
 		[parameter(ValueFromPipelineByPropertyName=$true)]
 		[String[]]$Category="",
 		[parameter(ValueFromPipelineByPropertyName=$true)]
 		[String[]]$KBArticleID,
 		[parameter(ValueFromPipelineByPropertyName=$true)]
 		[String]$Title,
-		
 		[parameter(ValueFromPipelineByPropertyName=$true)]
 		[String[]]$NotCategory="",
 		[parameter(ValueFromPipelineByPropertyName=$true)]
 		[String[]]$NotKBArticleID,
 		[parameter(ValueFromPipelineByPropertyName=$true)]
 		[String]$NotTitle,
-		
 		[parameter(ValueFromPipelineByPropertyName=$true)]
 		[Alias("Silent")]
 		[Switch]$IgnoreUserInput,
 		[parameter(ValueFromPipelineByPropertyName=$true)]
 		[Switch]$IgnoreRebootRequired,
-		
-		
 		[String]$ServiceID,
 		[Switch]$WindowsUpdate,
 		[Switch]$MicrosoftUpdate,
-		
-		
 		[Switch]$ListOnly,
 		[Switch]$DownloadOnly,
 		[Alias("All")]
@@ -114,34 +93,25 @@ Function Get-WUInstall
 		[Switch]$AutoSelectOnly,
 		[Switch]$Debuger
 	)
-
 	Begin
 	{
 		If($PSBoundParameters['Debuger'])
 		{
 			$DebugPreference = "Continue"
 		} 
-		
 		$User = [Security.Principal.WindowsIdentity]::GetCurrent()
 		$Role = (New-Object Security.Principal.WindowsPrincipal $user).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
-
 		if(!$Role)
 		{
 			Write-Warning "To perform some operations you must run an elevated Windows PowerShell console."	
 		} 
 	}
-
 	Process
 	{
-		
-		Write-Debug "STAGE 0: Prepare environment"
 		If($IsInstalled)
 		{
 			$ListOnly = $true
-			Write-Debug "Change to ListOnly mode"
 		} 
-
-		Write-Debug "Check reboot status only for local instance"
 		Try
 		{
 			$objSystemInfo = New-Object -ComObject "Microsoft.Update.SystemInfo"	
@@ -152,20 +122,16 @@ Function Get-WUInstall
 				{
 					Restart-Computer -Force
 				} 
-
 				If(!$ListOnly)
 				{
 					Return
 				} 
-				
 			}
 		} 
 		Catch
 		{
 			Write-Warning "Support local instance only, Continue..."
 		} 
-		
-		Write-Debug "Set number of stage"
 		If($ListOnly)
 		{
 			$NumberOfStage = 2
@@ -178,27 +144,17 @@ Function Get-WUInstall
 		{
 			$NumberOfStage = 4
 		} 
-			
-		
-		Write-Debug "STAGE 1: Get updates list"
-		Write-Debug "Create Microsoft.Update.ServiceManager object"
 		$objServiceManager = New-Object -ComObject "Microsoft.Update.ServiceManager" 
-		
-		Write-Debug "Create Microsoft.Update.Session object"
 		$objSession = New-Object -ComObject "Microsoft.Update.Session" 
-		
-		Write-Debug "Create Microsoft.Update.Session.Searcher object"
 		$objSearcher = $objSession.CreateUpdateSearcher()
 
 		If($WindowsUpdate)
 		{
-			Write-Debug "Set source of updates to Windows Update"
 			$objSearcher.ServerSelection = 2
 			$serviceName = "Windows Update"
 		} 
 		ElseIf($MicrosoftUpdate)
 		{
-			Write-Debug "Set source of updates to Microsoft Update"
 			$serviceName = $null
 			Foreach ($objService in $objServiceManager.Services) 
 			{
@@ -238,7 +194,6 @@ Function Get-WUInstall
 				} 
 			} 
 		} 
-		Write-Debug "Set source of updates to $serviceName"
 		
 		Write-Verbose "Connecting to $serviceName server. Please wait..."
 		Try
@@ -254,23 +209,19 @@ Function Get-WUInstall
 				If($IsInstalled) 
 				{
 					$search = "IsInstalled = 1"
-					Write-Debug "Set pre search criteria: IsInstalled = 1"
 				} 
 				Else
 				{
 					$search = "IsInstalled = 0"	
-					Write-Debug "Set pre search criteria: IsInstalled = 0"
 				} 
 				
 				If($UpdateType -ne "")
 				{
-					Write-Debug "Set pre search criteria: Type = $UpdateType"
 					$search += " and Type = '$UpdateType'"
 				} 				
 				
 				If($UpdateID)
 				{
-					Write-Debug "Set pre search criteria: UpdateID = '$([string]::join(", ", $UpdateID))'"
 					$tmp = $search
 					$search = ""
 					$LoopCount = 0
@@ -281,8 +232,7 @@ Function Get-WUInstall
 							$search += " or "
 						} 
 						If($RevisionNumber)
-						{
-							Write-Debug "Set pre search criteria: RevisionNumber = '$RevisionNumber'"	
+						{	
 							$search += "($tmp and UpdateID = '$ID' and RevisionNumber = $RevisionNumber)"
 						}
 						Else
@@ -295,7 +245,6 @@ Function Get-WUInstall
 
 				If($CategoryIDs)
 				{
-					Write-Debug "Set pre search criteria: CategoryIDs = '$([string]::join(", ", $CategoryIDs))'"
 					$tmp = $search
 					$search = ""
 					$LoopCount =0
@@ -312,28 +261,21 @@ Function Get-WUInstall
 				
 				If($IsHidden) 
 				{
-					Write-Debug "Set pre search criteria: IsHidden = 1"
 					$search += " and IsHidden = 1"	
 				} 
 				ElseIf($WithHidden) 
 				{
-					Write-Debug "Set pre search criteria: IsHidden = 1 and IsHidden = 0"
 				} 
 				Else
 				{
-					Write-Debug "Set pre search criteria: IsHidden = 0"
 					$search += " and IsHidden = 0"	
 				} 
 				
 				If($IgnoreRebootRequired) 
 				{
-					Write-Debug "Set pre search criteria: RebootRequired = 0"
 					$search += " and RebootRequired = 0"	
 				} 
 			} 
-			
-			Write-Debug "Search criteria is: $search"
-			
 			If($ShowSearchCriteria)
 			{
 				Write-Output $search
@@ -351,7 +293,6 @@ Function Get-WUInstall
 		} 
 
 		$objCollectionUpdate = New-Object -ComObject "Microsoft.Update.UpdateColl" 
-		
 		$NumberOfUpdate = 1
 		$UpdateCollection = @()
 		$UpdatesExtraDataCollection = @{}
@@ -362,17 +303,14 @@ Function Get-WUInstall
 		{	
 			$UpdateAccess = $true
 			Write-Progress -Activity "Post search updates for $Computer" -Status "[$NumberOfUpdate/$PreFoundUpdatesToDownload] $($Update.Title) $size" -PercentComplete ([int]($NumberOfUpdate/$PreFoundUpdatesToDownload * 100))
-			Write-Debug "Set post search criteria: $($Update.Title)"
 			
 			If($Category -ne "")
 			{
-				$UpdateCategories = $Update.Categories | Select-Object Name
-				Write-Debug "Set post search criteria: Categories = '$([string]::join(", ", $Category))'"	
+				$UpdateCategories = $Update.Categories | Select-Object Name	
 				Foreach($Cat in $Category)
 				{
 					If(!($UpdateCategories -match $Cat))
 					{
-						Write-Debug "UpdateAccess: false"
 						$UpdateAccess = $false
 					}
 					Else
@@ -381,83 +319,61 @@ Function Get-WUInstall
 					} 
 				} 
 			}
-
 			If($NotCategory -ne "" -and $UpdateAccess -eq $true)
 			{
-				$UpdateCategories = $Update.Categories | Select-Object Name
-				Write-Debug "Set post search criteria: NotCategories = '$([string]::join(", ", $NotCategory))'"	
+				$UpdateCategories = $Update.Categories | Select-Object Name	
 				Foreach($Cat in $NotCategory)
 				{
 					If($UpdateCategories -match $Cat)
 					{
-						Write-Debug "UpdateAccess: false"
 						$UpdateAccess = $false
 					} 
 				} 
 			} 		
-			
 			If($KBArticleID -ne $null -and $UpdateAccess -eq $true)
 			{
-				Write-Debug "Set post search criteria: KBArticleIDs = '$([string]::join(", ", $KBArticleID))'"
 				If(!($KBArticleID -match $Update.KBArticleIDs -and "" -ne $Update.KBArticleIDs))
 				{
-					Write-Debug "UpdateAccess: false"
 					$UpdateAccess = $false
 				}								
 			} 
 			If($NotKBArticleID -ne $null -and $UpdateAccess -eq $true)
 			{
-				Write-Debug "Set post search criteria: NotKBArticleIDs = '$([string]::join(", ", $NotKBArticleID))'"
 				If($NotKBArticleID -match $Update.KBArticleIDs -and "" -ne $Update.KBArticleIDs)
 				{
-					Write-Debug "UpdateAccess: false"
 					$UpdateAccess = $false
 				}				
 			}
-			
 			If($Title -and $UpdateAccess -eq $true)
 			{
-				Write-Debug "Set post search criteria: Title = '$Title'"
 				If($Update.Title -notmatch $Title)
 				{
-					Write-Debug "UpdateAccess: false"
 					$UpdateAccess = $false
 				} 
 			} 
-
 			If($NotTitle -and $UpdateAccess -eq $true)
 			{
-				Write-Debug "Set post search criteria: NotTitle = '$NotTitle'"
 				If($Update.Title -match $NotTitle)
 				{
-					Write-Debug "UpdateAccess: false"
 					$UpdateAccess = $false
 				} 
 			} 
-			
 			If($IgnoreUserInput -and $UpdateAccess -eq $true)
 			{
-				Write-Debug "Set post search criteria: CanRequestUserInput"
 				If($Update.InstallationBehavior.CanRequestUserInput -eq $true)
 				{
-					Write-Debug "UpdateAccess: false"
 					$UpdateAccess = $false
 				} 
 			} 
-
 			If($IgnoreRebootRequired -and $UpdateAccess -eq $true) 
 			{
-				Write-Debug "Set post search criteria: RebootBehavior"
 				If($Update.InstallationBehavior.RebootBehavior -ne 0)
 				{
-					Write-Debug "UpdateAccess: false"
 					$UpdateAccess = $false
 				} 
 			}  
-
 			If($UpdateAccess -eq $true)
 			{
-				Write-Debug "Convert size"
 				Switch($Update.MaxDownloadSize)
 				{
 					{[System.Math]::Round($_/1KB,0) -lt 1024} { $size = [String]([System.Math]::Round($_/1KB,0))+" KB"}
@@ -466,8 +382,6 @@ Function Get-WUInstall
 					{[System.Math]::Round($_/1TB,0) -lt 1024} { $size = [String]([System.Math]::Round($_/1TB,0))+" TB"}
 					default { $size = $_+"B" }
 				} 
-			
-				Write-Debug "Convert KBArticleIDs"
 				If($Update.KBArticleIDs -ne "")    
 				{
 					$KB = "KB"+$Update.KBArticleIDs
@@ -476,7 +390,6 @@ Function Get-WUInstall
 				{
 					$KB = ""
 				} 
-				
 				If($ListOnly)
 				{
 					$Status = ""
@@ -503,7 +416,6 @@ Function Get-WUInstall
 					$UpdatesExtraDataCollection.Add($Update.Identity.UpdateID,@{KB = $KB; Size = $size})
 				}
 			}
-			
 			$NumberOfUpdate++
 		} 			
 		Write-Progress -Activity "[1/$NumberOfStage] Post search updates" -Status "Completed" -Completed
@@ -521,43 +433,28 @@ Function Get-WUInstall
 		If($FoundUpdatesToDownload -eq 0)
 		{
 			Return
-		} 
-		
+		}
 		If($ListOnly)
 		{
-			Write-Debug "Return only list of updates"
 			Return $UpdateCollection				
 		} 
-
-		
-
 		If(!$ListOnly) 
-		{
-
-			
-			Write-Debug "STAGE 2: Choose updates"			
+		{		
 			$NumberOfUpdate = 1
 			$logCollection = @()
-			
 			$objCollectionChoose = New-Object -ComObject "Microsoft.Update.UpdateColl"
-
 			Foreach($Update in $objCollectionUpdate)
 			{	
 				$size = $UpdatesExtraDataCollection[$Update.Identity.UpdateID].Size
 				Write-Progress -Activity "[2/$NumberOfStage] Choose updates" -Status "[$NumberOfUpdate/$FoundUpdatesToDownload] $($Update.Title) $size" -PercentComplete ([int]($NumberOfUpdate/$FoundUpdatesToDownload * 100))
-				Write-Debug "Show update to accept: $($Update.Title)"
-				
 				If($AcceptAll)
 				{
 					$Status = "Accepted"
 
 					If($Update.EulaAccepted -eq 0)
 					{ 
-						Write-Debug "Accept Eula"
 						$Update.AcceptEula() 
 					} 
-			
-					Write-Debug "Add update to collection"
 					$objCollectionChoose.Add($Update) 
 				}
 				ElseIf($AutoSelectOnly)  
@@ -567,11 +464,8 @@ Function Get-WUInstall
 						$Status = "Accepted"  
 						If($Update.EulaAccepted -eq 0)  
 						{  
-							Write-Debug "Accept Eula"  
 							$Update.AcceptEula()  
 						} 
-  
-						Write-Debug "Add update to collection"  
 						$objCollectionChoose.Add($Update)   
 					} 
 					Else  
@@ -587,11 +481,8 @@ Function Get-WUInstall
 						
 						If($Update.EulaAccepted -eq 0)
 						{ 
-							Write-Debug "Accept Eula"
 							$Update.AcceptEula() 
 						} 
-				
-						Write-Debug "Add update to collection"
 						$objCollectionChoose.Add($Update)  
 					} 
 					Else
@@ -599,8 +490,6 @@ Function Get-WUInstall
 						$Status = "Rejected"
 					} 
 				} 
-				
-				Write-Debug "Add to log collection"
 				$log = New-Object PSObject -Property @{
 					Title = $Update.Title
 					KB = $UpdatesExtraDataCollection[$Update.Identity.UpdateID].KB
@@ -608,7 +497,6 @@ Function Get-WUInstall
 					Status = $Status
 					X = 2
 				} 
-				
 				$log.PSTypeNames.Clear()
 				$log.PSTypeNames.Add('PSWindowsUpdate.WUInstall')
 				
@@ -629,22 +517,13 @@ Function Get-WUInstall
 			{
 				Return
 			} 
-				
-
-			
-			Write-Debug "STAGE 3: Download updates"
 			$NumberOfUpdate = 1
-			$objCollectionDownload = New-Object -ComObject "Microsoft.Update.UpdateColl" 
-
+			$objCollectionDownload = New-Object -ComObject "Microsoft.Update.UpdateColl"
 			Foreach($Update in $objCollectionChoose)
 			{
 				Write-Progress -Activity "[3/$NumberOfStage] Downloading updates" -Status "[$NumberOfUpdate/$AcceptUpdatesToDownload] $($Update.Title) $size" -PercentComplete ([int]($NumberOfUpdate/$AcceptUpdatesToDownload * 100))
-				Write-Debug "Show update to download: $($Update.Title)"
-				
-				Write-Debug "Send update to download collection"
 				$objCollectionTmp = New-Object -ComObject "Microsoft.Update.UpdateColl"
-				$objCollectionTmp.Add($Update) 
-					
+				$objCollectionTmp.Add($Update) 	
 				$Downloader = $objSession.CreateUpdateDownloader() 
 				$Downloader.Updates = $objCollectionTmp
 				Try
@@ -658,11 +537,8 @@ Function Get-WUInstall
 					{
 						Write-Warning "Your security policy don't allow a non-administator identity to perform this task"
 					} 
-					
 					Return
 				} 
-				
-				Write-Debug "Check ResultCode"
 				Switch -exact ($DownloadResult.ResultCode)
 				{
 					0   { $Status = "NotStarted" }
@@ -672,8 +548,6 @@ Function Get-WUInstall
 					4   { $Status = "Failed" }
 					5   { $Status = "Aborted" }
 				} 
-				
-				Write-Debug "Add to log collection"
 				$log = New-Object PSObject -Property @{
 					Title = $Update.Title
 					KB = $UpdatesExtraDataCollection[$Update.Identity.UpdateID].KB
@@ -681,12 +555,9 @@ Function Get-WUInstall
 					Status = $Status
 					X = 3
 				} 
-				
 				$log.PSTypeNames.Clear()
 				$log.PSTypeNames.Add('PSWindowsUpdate.WUInstall')
-				
 				$log
-				
 				If($DownloadResult.ResultCode -eq 2)
 				{
 					Write-Debug "Downloaded then send update to next stage"
@@ -694,44 +565,27 @@ Function Get-WUInstall
 				} 
 				
 				$NumberOfUpdate++
-				
 			} 
 			Write-Progress -Activity "[3/$NumberOfStage] Downloading updates" -Status "Completed" -Completed
-
 			$ReadyUpdatesToInstall = $objCollectionDownload.count
 			Write-Verbose "Downloaded [$ReadyUpdatesToInstall] Updates to Install"
-		
 			If($ReadyUpdatesToInstall -eq 0)
 			{
 				Return
 			} 
-		
-
-			
 			If(!$DownloadOnly)
 			{
-
-				
-				Write-Debug "STAGE 4: Install updates"
 				$NeedsReboot = $false
-				$NumberOfUpdate = 1
-				
-					
+				$NumberOfUpdate = 1	
 				Foreach($Update in $objCollectionDownload)
 				{   
 					Write-Progress -Activity "[4/$NumberOfStage] Installing updates" -Status "[$NumberOfUpdate/$ReadyUpdatesToInstall] $($Update.Title)" -PercentComplete ([int]($NumberOfUpdate/$ReadyUpdatesToInstall * 100))
-					Write-Debug "Show update to install: $($Update.Title)"
-					
-					Write-Debug "Send update to install collection"
 					$objCollectionTmp = New-Object -ComObject "Microsoft.Update.UpdateColl"
 					$objCollectionTmp.Add($Update) 
-					
 					$objInstaller = $objSession.CreateUpdateInstaller()
 					$objInstaller.Updates = $objCollectionTmp
-						
 					Try
 					{
-						Write-Debug "Try install update"
 						$InstallResult = $objInstaller.Install()
 					}
 					Catch
@@ -740,16 +594,12 @@ Function Get-WUInstall
 						{
 							Write-Warning "Your security policy don't allow a non-administator identity to perform this task"
 						} 
-						
 						Return
 					} 
-					
 					If(!$NeedsReboot) 
 					{ 
-						Write-Debug "Set instalation status RebootRequired"
 						$NeedsReboot = $installResult.RebootRequired 
 					} 
-					
 					Switch -exact ($InstallResult.ResultCode)
 					{
 						0   { $Status = "NotStarted"}
@@ -759,8 +609,6 @@ Function Get-WUInstall
 						4   { $Status = "Failed"}
 						5   { $Status = "Aborted"}
 					} 
-				   
-					Write-Debug "Add to log collection"
 					$log = New-Object PSObject -Property @{
 						Title = $Update.Title
 						KB = $UpdatesExtraDataCollection[$Update.Identity.UpdateID].KB
@@ -768,16 +616,12 @@ Function Get-WUInstall
 						Status = $Status
 						X = 4
 					} 
-					
 					$log.PSTypeNames.Clear()
 					$log.PSTypeNames.Add('PSWindowsUpdate.WUInstall')
-					
 					$log
-				
 					$NumberOfUpdate++
 				} 
 				Write-Progress -Activity "[4/$NumberOfStage] Installing updates" -Status "Completed" -Completed
-				
 				If($NeedsReboot)
 				{
 					If($AutoReboot)
@@ -794,31 +638,16 @@ Function Get-WUInstall
 						{
 							
 						} 
-						
 					}
-					
 				}
-
-			
 			}
 		}
 	}
-	
 	End{}		
 } 
-
-    
 function tweaks {
-
-if($PSVersionTable.PSVersion.Major -ge 3){
-cls
-Write-Host "Unblocking Windows files..."
 Get-ChildItem -Recurse -Force C:\ | Unblock-File
 Get-ChildItem -Recurse -Force  $LoL | Unblock-File
-}
-cls
-# Disables Windows Services
-Write-Host "Configuring Windows..."
 Set-Service AppMgmt -StartupType Disabled 
 Set-Service bthserv -StartupType Disabled 
 Set-Service PeerDistSvc -StartupType Disabled 
@@ -853,7 +682,6 @@ Set-Service wcncsvc -StartupType Disabled
 Set-Service fsvc -StartupType Disabled 
 Set-Service WMPNetworkSvc -StartupType Disabled 
 Set-Service WSearch -StartupType Disabled 
-# Disables Windows Features
 Dism /online /Disable-Feature /FeatureName:WindowsGadgetPlatform /norestart 
 Dism /online /Disable-Feature /FeatureName:InboxGames /norestart 
 Dism /online /Disable-Feature /FeatureName:MediaPlayback /norestart 
@@ -861,13 +689,12 @@ Dism /online /Disable-Feature /FeatureName:TabletPCOC /norestart
 Dism /online /Disable-Feature /FeatureName:Xps-Foundation-Xps-Viewer /norestart 
 Dism /online /Disable-Feature /FeatureName:Printing-XPSServices-Features /norestart 
 update
-cls
 $title = "Restart menu"
 $message = "Would you like to restart?"
 
-$yes = New-Object System.Management.Automation.Host.ChoiceDescription "Yes"
+$yes = New-Object System.Management.Automation.Host.ChoiceDescription "&Yes"
 
-$no = New-Object System.Management.Automation.Host.ChoiceDescription "No"
+$no = New-Object System.Management.Automation.Host.ChoiceDescription "&No"
 
 
 $options = [System.Management.Automation.Host.ChoiceDescription[]]($yes, $no)
@@ -880,143 +707,79 @@ switch ($result)
         1 {exit}
         }
         }
-
-
-
 Function update {
-cls
-Write-Host "Installing Windows Updates, It will restart after if you are running this for the first time..."
 Get-WUInstall -AcceptAll -IgnoreUserInput -IgnoreReboot 
-# Installs custom updates for this patcher and restarts
 Get-WUInstall -KBArticleID "KB968930","KB2506146","KB2506143","KB2819745","KB2858728" -AcceptAll -IgnoreReboot 
 }
-
 Function patcher {
-cls
-Write-Host "Patching..."
-
-#Copying Items
 Set-Location $dir
 Copy-Item .\dbghelp.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy" 
 Copy-Item .\msvcp120.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy" 
 Copy-Item .\msvcr120.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy" 
-Copy-Item "$CG\cg.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy" 
-Copy-Item "$CG\cgD3D9.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy" 
-Copy-Item "$CG\cgGL.dll" "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy" 
+Copy-Item $CG\cg.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy" 
+Copy-Item $CG\cgD3D9.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy" 
+Copy-Item $CG\cgGL.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy" 
 Copy-Item .\dbghelp.dll "$LoL\projects\lol_air_client\releases\$air\deploy" 
 Copy-Item .\tbb.dll "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy" 
-Copy-Item .\NPSWF32.dll "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\Resources" 
-Copy-Item ".\Adobe Air.dll" "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe AIR\Versions\1.0\" 
-Copy-Item "$CG\cg.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy" 
-Copy-Item "$CG\cgD3D9.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy" 
-Copy-Item "$CG\cgGL.dll" "$LoL\projects\lol_launcher\releases\$launch\deploy" 
+Copy-Item .\NPSWF32.dll "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe Air\Versions\1.0\Resources" 
+Copy-Item "Adobe Air.dll" "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe Air\Versions\1.0\" 
+Copy-Item $CG\cg.dll "$LoL\projects\lol_launcher\releases\$launch\deploy" 
+Copy-Item $CG\cgD3D9.dll "$LoL\projects\lol_launcher\releases\$launch\deploy" 
+Copy-Item $CG\cgGL.dll "$LoL\projects\lol_launcher\releases\$launch\deploy" 
 Copy-Item .\msvcp120.dll "$LoL\projects\lol_launcher\releases\$launch\deploy" 
 Copy-Item .\msvcr120.dll "$LoL\projects\lol_launcher\releases\$launch\deploy" 
-
-Set-Location $LoL
-Start-Process .\lol.launcher.exe
 $tbb = [System.Diagnostics.FileVersionInfo]::GetVersionInfo("$LoL\solutions\lol_game_client_sln\releases\$sln\deploy\tbb.dll") | select -f 1 | Select-Object -ExpandProperty "FileVersion"
-      if($tbb -eq "4, 2, 0, 0"){
-      Read-Host "Patch Successfull, Press any Key to do Windows Tweaks"
-      tweaks
-         exit }
-      ELSE {
-      Read-Host "Patch Failed, Press any Key to do Windows Tweaks"
-      tweaks
-      exit}
-      }
-      
-cls
-
-
-
-
-function patch {
-
-
-# Imports the module for BITS
+if($tbb -eq "4, 2, 0, 0"){StartLoL
+Read-Host "Patch Complete, Press Enter to do Windows Tweaks (BETA)"
+tweaks
+exit }
+ELSE {
+Read-Host "Patch Failed, Press Enter to do Windows Tweaks (BETA)"
+tweaks
+exit}
+}
 Import-Module BitsTransfer
-
-# Updates "Help" (for devs to help out with this patch)
 Update-Help
-
-# Deletes Windows Update Cache
 Stop-Service wuauserv
 Remove-Item C:\Windows\SoftwareDistribution\* -Recurse -Force
 Start-Service wuauserv
-cls
-
-
-# Finds the LoL Directory from registry
-$LoL = Get-ItemProperty "HKLM:\SOFTWARE\Wow6432Node\Riot Games\RADS" | Select-Object -ExpandProperty "LocalRootFolder"
-
-#Nvidia CG Directory
-$CG = Get-ItemProperty "HKLM:\SYSTEM\ControlSet001\Control\Session Manager\Environment" | Select-Object -ExpandProperty "CG_BIN_PATH"
-
 New-Item -Path C:\Downloads\Backup -ItemType Directory
-
-# Sets Windows Title
-$sScriptVersion = "Github"
-$Host.UI.RawUI.WindowTitle = "LoLTweaker $sScriptVersion"
-
-#Closing LoL
-
 Stop-Process -ProcessName LoLLauncher
 Stop-Process -ProcessName LoLClient
-
-
-#Finds script directory
-$dir = Split-Path -Parent -Path $MyInvocation.MyCommand.Definition
-# Setting variables for the latest LoL Updates
-Set-Location "$LoL\solutions\lol_game_client_sln\releases"
+Set-Location $LoL\solutions\lol_game_client_sln\releases
 $sln = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1 | Select-Object -ExpandProperty "Name"
-Set-Location "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy"
-Move-Item .\dbghelp.dll -destination "C:\Downloads\Backup"
-Move-Item .\msvcp120.dll "C:\Downloads\Backup" 
-Move-Item .\msvcr120.dll "C:\Downloads\Backup"
-Move-Item .\cg.dll "C:\Downloads\Backup"
-Move-Item .\cgD3D9.dll "C:\Downloads\Backup"
-Move-Item .\cgGL.dll "C:\Downloads\Backup"
-Move-Item .\tbb.dll "C:\Downloads\Backup"
-
-
-Set-Location "$LoL\projects\lol_launcher\releases"
+Set-Location $LoL\solutions\lol_game_client_sln\releases\$sln\deploy
+Copy-Item .\dbghelp.dll C:\Downloads\Backup
+Copy-Item .\msvcp120.dll C:\Downloads\Backup 
+Copy-Item .\msvcr120.dll C:\Downloads\Backup
+Copy-Item .\cg.dll C:\Downloads\Backup
+Copy-Item .\cgD3D9.dll C:\Downloads\Backup
+Copy-Item .\cgGL.dll C:\Downloads\Backup
+Copy-Item .\tbb.dll C:\Downloads\Backup
+Set-Location $LoL\projects\lol_launcher\releases
 $launch = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1 | Select-Object -ExpandProperty "Name"
-Set-Location "$LoL\projects\lol_launcher\releases\$launch\deploy"
-Move-Item .\msvcp120.dll "C:\Downloads\Backup" 
-Move-Item .\msvcr120.dll "C:\Downloads\Backup" 
-Move-Item .\cg.dll "C:\Downloads\Backup" 
-Move-Item .\cgD3D9.dll "C:\Downloads\Backup" 
-Move-Item .\cgGL.dll "C:\Downloads\Backup" 
-
-
-Set-Location "$LoL\projects\lol_air_client\releases"
+Set-Location $LoL\projects\lol_launcher\releases\$launch\deploy
+Copy-Item .\msvcp120.dll C:\Downloads\Backup
+Copy-Item .\msvcr120.dll C:\Downloads\Backup
+Copy-Item .\cg.dll C:\Downloads\Backup
+Copy-Item .\cgD3D9.dll C:\Downloads\Backup 
+Copy-Item .\cgGL.dll C:\Downloads\Backup 
+Set-Location $LoL\projects\lol_air_client\releases
 $air = gci | ? {$_.PSIsContainer} | sort CreationTime -desc | select -f 1 | Select-Object -ExpandProperty "Name"
-Set-Location "$LoL\projects\lol_air_client\releases\$air\deploy\adobe air\versions\1.0"
-Move-Item "Adobe Air.dll" "C:\Downloads\Backup" 
-
-Set-Location "$LoL\projects\lol_air_client\releases\$air\deploy\adobe air\versions\1.0\Resources"
-Move-Item .\NPSWF32.dll "C:\Downloads\Backup" 
-
-
+Set-Location "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe Air\versions\1.0"
+Copy-Item "Adobe Air.dll" C:\Downloads\Backup
+Set-Location "$LoL\projects\lol_air_client\releases\$air\deploy\Adobe Air\versions\1.0\Resources"
+Copy-Item .\NPSWF32.dll C:\Downloads\Backup
 Set-Location $dir
-cls
+
 $title = "Main Menu"
 $message = "Patch or Restore Backups"
-
-$yes = New-Object System.Management.Automation.Host.ChoiceDescription "Patch"
-
-$no = New-Object System.Management.Automation.Host.ChoiceDescription "Restore"
-
+$yes = New-Object System.Management.Automation.Host.ChoiceDescription "&Patch"
+$no = New-Object System.Management.Automation.Host.ChoiceDescription "&Restore"
 $options = [System.Management.Automation.Host.ChoiceDescription[]]($yes, $no)
-
-$result1 = $host.ui.PromptForChoice($title, $message, $options, 0) 
-
-switch ($result1)
+$result = $host.ui.PromptForChoice($title, $message, $options, 0) 
+switch ($result)
     {
         0 {patcher}
         1 {restore}
     }
-    }
-
-   patch
