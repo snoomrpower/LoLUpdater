@@ -24,56 +24,6 @@ exit
 
 
 
-
-
-    
-function tweaks {
-
-
-cls
-# Disables Windows Services
-Write-Host "Configuring Windows..."
-Set-Service AppMgmt -StartupType Disabled | out-null
-Set-Service bthserv -StartupType Disabled | out-null
-Set-Service PeerDistSvc -StartupType Disabled | out-null
-Set-Service CertPropSvc -StartupType Disabled | out-null
-Set-Service NfsClnt -StartupType Disabled | out-null
-Set-Service WPCSvc -StartupType Disabled | out-null
-Set-Service vmickvpexchange -StartupType Disabled | out-null
-Set-Service vmicguestinterface -StartupType Disabled | out-null
-Set-Service vmicshutdown -StartupType Disabled | out-null
-Set-Service vmicheartbeat -StartupType Disabled | out-null
-Set-Service vmicrdv -StartupType Disabled | out-null
-Set-Service vmictimesync -StartupType Disabled | out-null
-Set-Service vmicvss -StartupType Disabled | out-null
-Set-Service TrkWks -StartupType Disabled | out-null
-Set-Service IEEtwCollectorService -StartupType Disabled | out-null
-Set-Service iphlpsvc -StartupType Disabled | out-null
-Set-Service MSiSCSI -StartupType Disabled | out-null
-Set-Service Netlogon -StartupType Disabled | out-null
-Set-Service napagent -StartupType Disabled | out-null
-Set-Service CscService -StartupType Disabled | out-null
-Set-Service WPCSvc -StartupType Disabled | out-null
-Set-Service RpcLocator -StartupType Disabled | out-null
-Set-Service SensrSvc -StartupType Disabled | out-null
-Set-Service ScDeviceEnum -StartupType Disabled | out-null
-Set-Service SCPolicySvc -StartupType Disabled | out-null
-Set-Service RemoteRegistry -StartupType Disabled | out-null
-Set-Service SCardSvr -StartupType Disabled | out-null
-Set-Service SCPolicySvc -StartupType Disabled | out-null
-Set-Service SNMPTRAP -StartupType Disabled | out-null
-Set-Service StorSvc -StartupType Disabled | out-null
-Set-Service wcncsvc -StartupType Disabled | out-null
-Set-Service fsvc -StartupType Disabled | out-null
-Set-Service WMPNetworkSvc -StartupType Disabled | out-null
-Set-Service WSearch -StartupType Disabled | out-null
-
-      }
-
-
-
-
-
 Function patcher {
 cls
 Write-Host "Patching..."
@@ -102,11 +52,9 @@ Start-Process .\lol.launcher.exe
 $tbb = (Get-Command "$LoL\solutions\lol_game_client_sln\releases\$sln\deploy\tbb.dll").FileVersionInfo.FileVersion
       if($tbb -eq "4, 2, 0, 0"){
       Read-Host "Patch Successfull, Press any Key to do Windows Tweaks"
-      tweaks
          exit }
       ELSE {
       Read-Host "Patch Failed, Press any Key to do Windows Tweaks"
-      tweaks
       exit}
       }
 cls
