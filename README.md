@@ -1,5 +1,3 @@
-I was on Win7, I am on Win8.1 now to update everything in the script.
-
 [Download](https://github.com/Loggan08/LoLUpdater/archive/master.zip)
 ==========
 
