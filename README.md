@@ -17,7 +17,7 @@ Edit the path:
 
 [Download](https://github.com/Loggan08/LoLUpdater/archive/master.zip)
 ==========
-
+Put the Appropriate .PS1 file to the proper directory
 ![alt text](Execute.png)
 
 LoLTweaker
